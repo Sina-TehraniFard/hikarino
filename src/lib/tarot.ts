@@ -9,7 +9,7 @@ export type TarotCard = {
 export type DrawnCard = {
     card: TarotCard;
     isReversed: boolean;
-    position: "あの時の選択" | "その結果" | "これから";
+    position: string;
 };
 
 // 大アルカナ22枚を定義
@@ -44,6 +44,6 @@ export function drawThreeCards(): DrawnCard[] {
     return [0, 1, 2].map((i) => ({
         card: shuffled[i],
         isReversed: Math.random() < 0.5,
-        position: ["あの時の選択", "その結果", "これから"][i] as DrawnCard["position"],
+        position: "",
     }));
 }
