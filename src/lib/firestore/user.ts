@@ -11,6 +11,7 @@ export async function registerUserIfNew(user: User) {
             name: user.displayName ?? '',
             email: user.email ?? '',
             createdAt: new Date().toISOString(),
+            coins: 300,
         });
     }
 }
