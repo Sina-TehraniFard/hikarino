@@ -3,6 +3,7 @@ import { signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from 'firebas
 import { auth } from '@/lib/firebase';
 import { useEffect } from 'react';
 import { registerUserIfNew } from '@/lib/firestore/user';
+import Image from "next/image";
 
 interface LoginModalProps {
     onClose: () => void;
@@ -33,11 +34,14 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
             <div className="bg-white/90 rounded-3xl shadow-2xl p-10 max-w-md w-full flex flex-col items-center border border-purple-100 relative">
                 <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl">×</button>
-                <img
+                <Image
                     src="/hikarino-logo.png"
                     alt="ヒカリノ"
+                    width={80}
+                    height={80}
                     className="h-20 mb-4 object-cover object-top"
                     style={{ objectPosition: 'center 10%' }}
+                    priority
                 />
                 <h1 className="text-3xl font-extrabold text-purple-600 mb-2 tracking-wide drop-shadow">ようこそ</h1>
                 <p className="text-gray-600 mb-6 text-center text-base">Googleアカウントでログインして、あなたの心にそっと寄り添うタロット占いを体験しましょう。</p>

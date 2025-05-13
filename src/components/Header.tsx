@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import HomeIcon from "./icons/HomeIcon";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface HeaderProps {
     user: { uid?: string; displayName?: string | null; email?: string | null };
@@ -69,16 +70,19 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, coins, onRequireLogin, 
         return () => {
             if (animatingRef.current) clearInterval(animatingRef.current);
         };
-    }, [coins, userId]);
+    }, [coins, userId, displayCoins]);
 
     return (
         <>
             <header className="w-full border-b border-gray-200 flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                    <img
+                    <Image
                         src="/hikarino-logo.png"
                         alt="Hikarino"
+                        width={80}
+                        height={80}
                         className="h-20 w-auto object-contain"
+                        priority
                     />
                 </div>
                 <div className="flex items-center gap-4 ml-4 relative">

@@ -11,6 +11,7 @@ import Header from "@/components/Header";
 import { useCoinContext } from "@/contexts/CoinContext";
 import LoginModal from "@/components/LoginModal";
 import CoinPurchaseModal from "@/components/CoinPurchaseModal";
+import Image from "next/image";
 
 export default function Home() {
     const { user, loading } = useAuth();
@@ -120,13 +121,14 @@ export default function Home() {
             <Header user={user || { displayName: "ゲスト", email: "", uid: undefined }} coins={user ? coins : 0} onLogout={handleLogout} onRequireLogin={() => setShowLogin(true)} userId={user?.uid} />
             <div className="flex items-center rounded-xl overflow-hidden max-w-md w-full h-24 mb-8">
                 <div className="relative w-24 h-full flex-shrink-0 overflow-hidden rounded-l-xl">
-                    <img
+                    <Image
                         src="/hikarino-normal.png"
                         alt="ヒカリノ"
+                        width={96}
+                        height={96}
                         className="w-full h-full object-cover object-top"
-                        style={{
-                            objectPosition: "center 10%",
-                        }}
+                        style={{ objectPosition: "center 10%" }}
+                        priority
                     />
                 </div>
                 <div className="px-4">
@@ -163,10 +165,13 @@ export default function Home() {
                                 key={idx}
                                 className="rounded-xl shadow-md p-2 flex flex-col items-center w-28 border border-purple-100"
                             >
-                                <img
+                                <Image
                                     src={item.card.imagePath}
                                     alt={item.card.name}
+                                    width={96}
+                                    height={128}
                                     className={`w-24 aspect-[3/4] object-contain mb-2 ${item.isReversed ? "rotate-180" : ""}`}
+                                    priority={idx === 0}
                                 />
                                 <span className="w-full text-center text-xs text-gray-500 mt-1">{item.card.name}</span>
                                 <span className="w-full text-center text-xs text-gray-500 mt-1">{item.isReversed ? "逆位置" : "正位置"}</span>

@@ -140,6 +140,7 @@ const CoinPurchaseModal: React.FC<CoinPurchaseModalProps> = ({ isOpen, onClose }
                         transform: translateY(0);
                     }
                 }
+
                 @keyframes slidedown {
                     from {
                         transform: translateY(0);
