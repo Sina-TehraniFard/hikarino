@@ -1,30 +1,30 @@
 import React, { useEffect, useRef, useState } from "react";
 
+declare global {
+    interface Window {
+        user?: {
+            uid: string;
+        };
+    }
+}
+
 interface CoinPurchaseModalProps {
     isOpen: boolean;
     onClose: () => void;
+    uid?: string;
 }
 
 const ANIMATION_DURATION = 350; // ms
 
 const purchaseOptions = [
     {
-        coins: 100,
-        price: 150,
-        priceStr: "150円",
-        perFortune: "150円",
-        discount: null,
-        originalPrice: null,
-        url: "#buy-100",
-    },
-    {
-        coins: 380,
-        price: 300,
-        priceStr: "300円",
-        perFortune: "118円",
-        discount: "約21%OFF",
-        originalPrice: 570, // 100コイン×3.8
-        url: "#buy-380",
+        coins: 3000,
+        price: 1800,
+        priceStr: "1800円",
+        perFortune: "90円",
+        discount: "約40%OFF",
+        originalPrice: 4500,
+        priceId: "price_1RTEv1RmjFj4VlHm2Vuq5Rtm", // TODO: update to actual Stripe Price ID for 3000 coins
     },
     {
         coins: 1120,
@@ -32,21 +32,30 @@ const purchaseOptions = [
         priceStr: "800円",
         perFortune: "約107円",
         discount: "約29%OFF",
-        originalPrice: 1680, // 100コイン×11.2
-        url: "#buy-1120",
+        originalPrice: 1680,
+        priceId: "price_1RTEv1RmjFj4VlHm2Vuq5Rtm", // TODO: update to actual Stripe Price ID for 1120 coins
     },
     {
-        coins: 3000,
-        price: 1800,
-        priceStr: "1800円",
-        perFortune: "90円",
-        discount: "約40%OFF",
-        originalPrice: 4500, // 100コイン×30
-        url: "#buy-3000",
+        coins: 380,
+        price: 300,
+        priceStr: "300円",
+        perFortune: "118円",
+        discount: "約21%OFF",
+        originalPrice: 570,
+        priceId: "price_1RTEv1RmjFj4VlHm2Vuq5Rtm", // TODO: update to actual Stripe Price ID for 380 coins
+    },
+    {
+        coins: 100,
+        price: 150,
+        priceStr: "150円",
+        perFortune: "150円",
+        discount: null,
+        originalPrice: null,
+        priceId: "price_1RTEv1RmjFj4VlHm2Vuq5Rtm"
     },
 ];
 
-const CoinPurchaseModal: React.FC<CoinPurchaseModalProps> = ({ isOpen, onClose }) => {
+const CoinPurchaseModal: React.FC<CoinPurchaseModalProps> = ({ isOpen, onClose, uid }) => {
     const modalRef = useRef<HTMLDivElement>(null);
     const [visible, setVisible] = useState(isOpen);
     const [animate, setAnimate] = useState(false);
@@ -90,7 +99,7 @@ const CoinPurchaseModal: React.FC<CoinPurchaseModalProps> = ({ isOpen, onClose }
         <div className={`fixed inset-0 z-50 flex items-end justify-center transition-opacity duration-350 ${animate ? "bg-black/40 overlay-fadein" : "bg-black/0 overlay-fadeout"}`}>
             <div
                 ref={modalRef}
-                className={`w-full max-w-md mx-auto rounded-t-3xl bg-white shadow-2xl p-8 pb-10 flex flex-col items-center ${animate ? "animate-slideup" : "animate-slidedown"}`}
+                className={`w-full max-w-md mx-auto rounded-t-3xl bg-white shadow-2xl p-8 pb-10 flex flex-col items-center transform ${animate ? "translate-y-0" : "translate-y-full"} transition-transform duration-350 ease-out`}
                 style={{
                     minHeight: 320,
                     boxShadow: "0 8px 32px 0 rgba(80, 0, 80, 0.18)",
@@ -106,23 +115,70 @@ const CoinPurchaseModal: React.FC<CoinPurchaseModalProps> = ({ isOpen, onClose }
                     {purchaseOptions.map(opt => (
                         <button
                             key={opt.coins}
-                            onClick={() => window.open(opt.url, '_blank')}
-                            className={`w-full flex items-center justify-between px-5 py-4 rounded-2xl border-2 transition font-semibold shadow-sm
-                                ${opt.discount ? "border-yellow-400 bg-yellow-50 hover:bg-yellow-100 active:scale-[0.97]" : "border-purple-200 bg-purple-50 hover:bg-purple-100 active:scale-[0.97]"}
+                            onClick={async () => {
+                                if (!uid) {
+                                    alert('ログインが必要です');
+                                    return;
+                                }
+                                const res = await fetch('/api/create-checkout-session', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        priceId: opt.priceId,
+                                        uid,
+                                        coinAmount: opt.coins,
+                                    }),
+                                });
+                                const data = await res.json();
+                                if (data.url) {
+                                    window.location.href = data.url;
+                                } else {
+                                    alert(data.error || '決済ページの生成に失敗しました');
+                                }
+                            }}
+                            className={`w-full flex items-center justify-between px-5 py-4 rounded-2xl border-2 transition font-semibold shadow-sm relative
+                                ${opt.coins === 3000 ? "border-orange-400 bg-orange-50 hover:bg-orange-100 active:scale-[0.97]" : 
+                                  opt.coins === 100 ? "border-purple-200 bg-purple-50/50 hover:bg-purple-100/50 active:scale-[0.97]" :
+                                  "border-yellow-400 bg-yellow-50 hover:bg-yellow-100 active:scale-[0.97]"}
                             `}
                         >
+                            {opt.coins === 3000 && (
+                                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                                    おすすめ
+                                </div>
+                            )}
                             <div className="flex flex-col items-start">
-                                <span className="text-lg font-bold text-purple-700">{opt.coins}コイン</span>
+                                <span className={`text-lg font-bold ${
+                                    opt.coins === 3000 ? "text-orange-600" :
+                                    opt.coins === 100 ? "text-purple-700/70" :
+                                    "text-yellow-600"
+                                }`}>{opt.coins}コイン</span>
                                 <span className="text-xs text-gray-500">1占い相当額: {opt.perFortune}</span>
                                 {opt.discount && (
-                                    <span className="text-xs text-yellow-600 font-bold mt-1">{opt.discount}</span>
+                                    <span className={`text-base font-bold ${
+                                        opt.coins === 3000 ? "text-orange-500" : "text-yellow-600"
+                                    } mt-1`}>{opt.discount}</span>
                                 )}
                             </div>
                             <div className="flex flex-col items-end">
                                 {opt.discount && opt.originalPrice && (
                                     <span className="text-sm text-gray-400 line-through">{opt.originalPrice}円</span>
                                 )}
-                                <span className={`text-xl font-extrabold ${opt.discount ? "text-yellow-600" : "text-purple-700"}`}>{opt.priceStr}</span>
+                                <span className={`text-xl font-extrabold ${
+                                    opt.coins === 3000 ? "text-orange-500" :
+                                    opt.coins === 100 ? "text-purple-700/70" :
+                                    "text-yellow-600"
+                                }`}>{opt.priceStr}</span>
+                                <span className={`text-sm mt-1 flex items-center gap-1 ${
+                                    opt.coins === 3000 ? "text-orange-500" :
+                                    opt.coins === 100 ? "text-purple-600/70" :
+                                    "text-yellow-600"
+                                }`}>
+                                    購入する
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </span>
                             </div>
                         </button>
                     ))}

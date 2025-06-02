@@ -21,7 +21,7 @@ export default function Home() {
     const [result, setResult] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [hasFortuned, setHasFortuned] = useState(false);
-    const { consumeCoins, coins } = useCoinContext();
+    const { consumeCoins, coins, refreshCoins } = useCoinContext();
     const [error, setError] = useState<string | null>(null);
     const [showLogin, setShowLogin] = useState(false);
     const questionRef = useRef<string>("");
@@ -31,7 +31,8 @@ export default function Home() {
     useEffect(() => {
         if (user && questionRef.current) setQuestion(questionRef.current);
         if (user && cardsRef.current.length > 0) setCards(cardsRef.current);
-    }, [user]);
+        refreshCoins();
+    }, [user, refreshCoins]);
 
     if (loading) return null;
 
@@ -225,7 +226,7 @@ export default function Home() {
                     </div>
                 )}
             </div>
-            <CoinPurchaseModal isOpen={showCoinModal} onClose={() => setShowCoinModal(false)} />
+            <CoinPurchaseModal isOpen={showCoinModal} onClose={async () => { await refreshCoins(); setShowCoinModal(false); }} uid={user?.uid} />
         </main>
     );
 }

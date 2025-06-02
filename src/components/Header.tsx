@@ -22,6 +22,7 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, coins, onRequireLogin, 
     const animatingRef = useRef<NodeJS.Timeout | null>(null);
     const router = useRouter();
     const prevUserId = useRef<string | undefined>(userId);
+    const isInitialMount = useRef(true);
 
     // Close menu when clicking outside
     useEffect(() => {
@@ -41,20 +42,24 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, coins, onRequireLogin, 
     }, [menuOpen]);
 
     useEffect(() => {
-        // コイン残高のアニメーションについて
-        // - 普段はコインが減るとき（例：占いで消費したとき）だけ、数字がアニメーションで減ります。
-        // - でも、ログアウトやユーザー切り替えのときはアニメーションを使わず、すぐに「0コイン」や新しい値に切り替わります。
-        //   → ログアウトは「ユーザーが切り替わる」特別なタイミングなので、前の人のコイン残高を見せる必要がないためです。
-        // - 新しくログインした人のコイン残高は、その人の値がすぐに表示されます。
+        // 初回マウント時はアニメーションをスキップ
+        if (isInitialMount.current) {
+            setDisplayCoins(coins);
+            isInitialMount.current = false;
+            return;
+        }
+
+        // ユーザー切り替え時もアニメーションをスキップ
         if (prevUserId.current !== userId) {
             setDisplayCoins(coins);
             prevUserId.current = userId;
             return;
         }
+
         if (displayCoins > coins) {
             if (animatingRef.current) clearInterval(animatingRef.current);
             const diff = displayCoins - coins;
-            const interval = 3000 / diff; // 3秒で完了するよう間隔を計算
+            const interval = 100 / diff; // 2秒で完了するよう間隔を計算
             animatingRef.current = setInterval(() => {
                 setDisplayCoins((prev) => {
                     if (prev <= coins + 1) {
@@ -62,6 +67,19 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, coins, onRequireLogin, 
                         return coins;
                     }
                     return prev - 1;
+                });
+            }, interval);
+        } else if (displayCoins < coins) {
+            if (animatingRef.current) clearInterval(animatingRef.current);
+            const diff = coins - displayCoins;
+            const interval = 400 / diff; // 2秒で完了するよう間隔を計算
+            animatingRef.current = setInterval(() => {
+                setDisplayCoins((prev) => {
+                    if (prev >= coins - 1) {
+                        clearInterval(animatingRef.current!);
+                        return coins;
+                    }
+                    return prev + 1;
                 });
             }, interval);
         } else {

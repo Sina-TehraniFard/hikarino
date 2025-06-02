@@ -1,5 +1,8 @@
 {
-  "functions": {
-    "source": "functions-core"
-  }
+  "functions": [
+    {
+      "source": "functions-core",
+      "codebase": "default"
+    }
+  ]
 }
