@@ -5,12 +5,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/hooks/useAuth";
 import { getFunctions, httpsCallable } from "firebase/functions";
-
-interface CoinContextType {
-    coins: number;
-    refreshCoins: () => Promise<void>;
-    consumeCoins: (amount: number) => Promise<void>;
-}
+import { CoinContext as CoinContextType } from "@/types";
 
 const CoinContext = createContext<CoinContextType>({ coins: 0, refreshCoins: async () => {}, consumeCoins: async () => {} });
 

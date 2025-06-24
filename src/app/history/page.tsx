@@ -8,25 +8,12 @@ import { getUserFortunes } from "@/lib/firestore/fortune";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { useCoinContext } from "@/contexts/CoinContext";
+import { User, FortuneHistory } from "@/types";
 
-interface Fortune {
-    id: string;
-    timestamp: {
-        seconds: number;
-        nanoseconds: number;
-    };
-    question: string;
-    cards: {
-        cardName: string;
-        isReversed: boolean;
-        position: string;
-    }[];
-    result: string;
-}
 
 export default function HistoryPage() {
-    const [user, setUser] = useState<{ uid?: string; displayName: string | null; email: string | null }>({ uid: undefined, displayName: null, email: null });
-    const [fortunes, setFortunes] = useState<Fortune[]>([]);
+    const [user, setUser] = useState<User>({ uid: undefined, displayName: null, email: null });
+    const [fortunes, setFortunes] = useState<FortuneHistory[]>([]);
     const [expandedId, setExpandedId] = useState<string | null>(null);
     const router = useRouter();
     const { coins } = useCoinContext();
@@ -59,7 +46,8 @@ export default function HistoryPage() {
         }
     };
 
-    const formatDate = (timestamp: { seconds: number; nanoseconds: number }) => {
+    const formatDate = (timestamp?: { seconds: number; nanoseconds: number }) => {
+        if (!timestamp) return '日時不明';
         return format(new Date(timestamp.seconds * 1000), 'yyyy年MM月dd日 HH:mm', { locale: ja });
     };
 

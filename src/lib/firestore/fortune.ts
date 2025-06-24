@@ -1,27 +1,18 @@
 import { db } from "@/lib/firebase";
 import { collection, addDoc, serverTimestamp, getDocs, query, orderBy } from "firebase/firestore";
+import { Fortune, FortuneHistory } from "@/types";
 
-export async function saveFortune({
-                                      uid,
-                                      question,
-                                      cards,
-                                      result,
-                                  }: {
-    uid: string;
-    question: string;
-    cards: { cardName: string; isReversed: boolean; position: string }[];
-    result: string;
-}) {
-    const userFortuneRef = collection(db, "users", uid, "fortunes");
+export async function saveFortune(fortune: Fortune) {
+    const userFortuneRef = collection(db, "users", fortune.uid, "fortunes");
     await addDoc(userFortuneRef, {
-        question,
-        cards,
-        result,
+        question: fortune.question,
+        cards: fortune.cards,
+        result: fortune.result,
         timestamp: serverTimestamp(),
     });
 }
 
-export async function getUserFortunes(uid: string) {
+export async function getUserFortunes(uid: string): Promise<FortuneHistory[]> {
     const userFortuneRef = collection(db, "users", uid, "fortunes");
     const q = query(userFortuneRef, orderBy("timestamp", "desc"));
     const snapshot = await getDocs(q);
@@ -37,10 +28,11 @@ export async function getUserFortunes(uid: string) {
         }
         return {
             id: doc.id,
+            uid,
             question: data.question,
             cards: data.cards,
             result: data.result,
             timestamp,
-        };
+        } as FortuneHistory;
     });
 }
