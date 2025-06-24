@@ -1,0 +1,35 @@
+# このワークフローは、mainブランチへのpush時に自動的にバージョニングとリリースを行います
+name: Release
+on:
+  push:
+    branches: [main]  # mainブランチへのpushをトリガーに実行
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      # リポジトリのコードをチェックアウト
+      - uses: actions/checkout@v3
+      
+      # Node.js環境をセットアップ（バージョン18を使用）
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      
+      # 依存関係をクリーンインストール（package-lock.jsonを元に厳密にインストール）
+      - run: npm ci
+      
+      # テストの実行（package.jsonにtestスクリプトがない場合はこの行を削除）
+      # - run: npm test
+      
+      # semantic-releaseを実行
+      # コミットメッセージを解析して自動的にバージョンを決定し、
+      # GitHubリリースとタグを作成します
+      - run: npx semantic-release
+    
+    # 環境変数の設定
+    env:
+      # GitHub APIへのアクセスに必要（自動的に提供される）
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # NPMに公開する場合のみ必要（不要なら削除）
+      # NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
