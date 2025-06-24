@@ -1,19 +1,16 @@
 // src/lib/tarot.ts
-export type TarotCard = {
-    name: string;
+import type { TarotCard, DrawnCard } from "@/types";
+
+export type { TarotCard, DrawnCard };
+
+// 内部的なTarotCardの拡張（意味も含む）
+export type TarotCardWithMeaning = TarotCard & {
     meaning: string;
     reversedMeaning: string;
-    imagePath: string;
-};
-
-export type DrawnCard = {
-    card: TarotCard;
-    isReversed: boolean;
-    position: string;
 };
 
 // 大アルカナ22枚を定義
-export const TAROT_CARDS: TarotCard[] = [
+export const TAROT_CARDS: TarotCardWithMeaning[] = [
     { name: "愚者", meaning: "自由、無限の可能性", reversedMeaning: "無謀、無計画", imagePath: "/cards/0_fool.png" },
     { name: "魔術師", meaning: "創造力、意志", reversedMeaning: "欺瞞、自己中心", imagePath: "/cards/1_magician.png" },
     { name: "女教皇", meaning: "直感、知恵", reversedMeaning: "秘密、混乱", imagePath: "/cards/2_high_priestess.png" },
@@ -42,8 +39,11 @@ export const TAROT_CARDS: TarotCard[] = [
 export function drawThreeCards(): DrawnCard[] {
     const shuffled = TAROT_CARDS.sort(() => 0.5 - Math.random());
     return [0, 1, 2].map((i) => ({
-        card: shuffled[i],
+        card: {
+            name: shuffled[i].name,
+            imagePath: shuffled[i].imagePath,
+        },
         isReversed: Math.random() < 0.5,
-        position: "",
+        position: i + 1,
     }));
 }
