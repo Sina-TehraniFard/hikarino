@@ -4,6 +4,7 @@
 
 # 追加指示
 - gitワークフロー @docs/git-instructions.md
+- スタイリングガイド @STYLING_GUIDE.md
 
 ## プロジェクト概要
 
