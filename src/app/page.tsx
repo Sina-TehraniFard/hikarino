@@ -59,7 +59,7 @@ export default function Home() {
     };
 
     const handleCoinModalClose = async () => {
-        await refreshCoins();
+        await refreshCoins(true); // アニメーションありでリフレッシュ
         setShowCoinModal(false);
     };
 
