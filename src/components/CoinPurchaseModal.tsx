@@ -96,21 +96,14 @@ const CoinPurchaseModal: React.FC<CoinPurchaseModalProps> = ({ isOpen, onClose, 
     if (!visible) return null;
 
     return (
-        <div className={`fixed inset-0 z-50 flex items-end justify-center transition-opacity duration-350 ${animate ? "bg-black/40 overlay-fadein" : "bg-black/0 overlay-fadeout"}`}>
+        <div className={`fixed inset-0 z-50 flex items-end justify-center ${animate ? "bg-black/50 backdrop-blur-sm" : "bg-black/0"} transition-all duration-300`}>
             <div
                 ref={modalRef}
-                className={`w-full max-w-md mx-auto rounded-t-3xl bg-white shadow-2xl p-8 pb-10 flex flex-col items-center transform ${animate ? "translate-y-0" : "translate-y-full"} transition-transform duration-350 ease-out`}
-                style={{
-                    minHeight: 320,
-                    boxShadow: "0 8px 32px 0 rgba(80, 0, 80, 0.18)",
-                    borderTopLeftRadius: 32,
-                    borderTopRightRadius: 32,
-                    marginBottom: 0,
-                }}
+                className={`w-full max-w-md mx-auto rounded-t-3xl bg-white dark:bg-gray-800 shadow-2xl p-8 pb-10 flex flex-col items-center transform ${animate ? "translate-y-0" : "translate-y-full"} transition-transform duration-300 ease-out min-h-[320px]`}
             >
-                <div className="w-12 h-1.5 bg-gray-300 rounded-full mb-4" />
-                <h2 className="text-2xl font-bold mb-2 text-purple-700">コインを購入</h2>
-                <p className="mb-6 text-gray-600 text-center">コインが足りません。コインを購入して続けましょう。</p>
+                <div className="w-12 h-1.5 bg-gray-300 dark:bg-gray-600 rounded-full mb-4" />
+                <h2 className="text-2xl md:text-3xl font-semibold mb-2 text-purple-600 dark:text-purple-400">コインを購入</h2>
+                <p className="mb-6 text-gray-600 dark:text-gray-400 text-center leading-relaxed">コインが足りません。コインを購入して続けましょう。</p>
                 <div className="w-full flex flex-col gap-4 mb-2">
                     {purchaseOptions.map(opt => (
                         <button
@@ -136,27 +129,27 @@ const CoinPurchaseModal: React.FC<CoinPurchaseModalProps> = ({ isOpen, onClose, 
                                     alert(data.error || '決済ページの生成に失敗しました');
                                 }
                             }}
-                            className={`w-full flex items-center justify-between px-5 py-4 rounded-2xl border-2 transition font-semibold shadow-sm relative
-                                ${opt.coins === 3000 ? "border-orange-400 bg-orange-50 hover:bg-orange-100 active:scale-[0.97]" : 
-                                  opt.coins === 100 ? "border-purple-200 bg-purple-50/50 hover:bg-purple-100/50 active:scale-[0.97]" :
-                                  "border-yellow-400 bg-yellow-50 hover:bg-yellow-100 active:scale-[0.97]"}
+                            className={`w-full flex items-center justify-between px-6 py-4 rounded-xl border-2 transition-all duration-200 font-medium shadow-md hover:shadow-lg relative active:scale-95
+                                ${opt.coins === 3000 ? "border-purple-600 bg-purple-50 hover:bg-purple-100 dark:bg-purple-950/20 dark:hover:bg-purple-950/30 dark:border-purple-500" : 
+                                  opt.coins === 100 ? "border-gray-300 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 dark:border-gray-600" :
+                                  "border-purple-400 bg-purple-50/50 hover:bg-purple-100/50 dark:bg-purple-950/10 dark:hover:bg-purple-950/20 dark:border-purple-500"}
                             `}
                         >
                             {opt.coins === 3000 && (
-                                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
                                     おすすめ
                                 </div>
                             )}
                             <div className="flex flex-col items-start">
                                 <span className={`text-lg font-bold ${
-                                    opt.coins === 3000 ? "text-orange-600" :
-                                    opt.coins === 100 ? "text-purple-700/70" :
-                                    "text-yellow-600"
+                                    opt.coins === 3000 ? "text-purple-700 dark:text-purple-300" :
+                                    opt.coins === 100 ? "text-gray-700 dark:text-gray-300" :
+                                    "text-purple-600 dark:text-purple-400"
                                 }`}>{opt.coins}コイン</span>
-                                <span className="text-xs text-gray-500">1占い相当額: {opt.perFortune}</span>
+                                <span className="text-xs text-gray-600 dark:text-gray-400">1占い相当額: {opt.perFortune}</span>
                                 {opt.discount && (
                                     <span className={`text-base font-bold ${
-                                        opt.coins === 3000 ? "text-orange-500" : "text-yellow-600"
+                                        opt.coins === 3000 ? "text-purple-600 dark:text-purple-400" : "text-purple-500 dark:text-purple-400"
                                     } mt-1`}>{opt.discount}</span>
                                 )}
                             </div>
@@ -164,15 +157,15 @@ const CoinPurchaseModal: React.FC<CoinPurchaseModalProps> = ({ isOpen, onClose, 
                                 {opt.discount && opt.originalPrice && (
                                     <span className="text-sm text-gray-400 line-through">{opt.originalPrice}円</span>
                                 )}
-                                <span className={`text-xl font-extrabold ${
-                                    opt.coins === 3000 ? "text-orange-500" :
-                                    opt.coins === 100 ? "text-purple-700/70" :
-                                    "text-yellow-600"
+                                <span className={`text-xl font-bold ${
+                                    opt.coins === 3000 ? "text-purple-700 dark:text-purple-300" :
+                                    opt.coins === 100 ? "text-gray-700 dark:text-gray-300" :
+                                    "text-purple-600 dark:text-purple-400"
                                 }`}>{opt.priceStr}</span>
                                 <span className={`text-sm mt-1 flex items-center gap-1 ${
-                                    opt.coins === 3000 ? "text-orange-500" :
-                                    opt.coins === 100 ? "text-purple-600/70" :
-                                    "text-yellow-600"
+                                    opt.coins === 3000 ? "text-purple-600 dark:text-purple-400" :
+                                    opt.coins === 100 ? "text-gray-600 dark:text-gray-400" :
+                                    "text-purple-500 dark:text-purple-400"
                                 }`}>
                                     購入する
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -183,43 +176,10 @@ const CoinPurchaseModal: React.FC<CoinPurchaseModalProps> = ({ isOpen, onClose, 
                         </button>
                     ))}
                 </div>
-                <button onClick={onClose} className="w-full text-gray-400 hover:text-gray-600 text-base mt-2">
+                <button onClick={onClose} className="w-full text-purple-600 hover:bg-purple-50 dark:text-purple-400 dark:hover:bg-purple-950/20 font-medium px-6 py-3 rounded-lg transition-all duration-200 mt-2">
                     閉じる
                 </button>
             </div>
-            <style jsx global>{`
-                @keyframes slideup {
-                    from {
-                        transform: translateY(100%);
-                    }
-                    to {
-                        transform: translateY(0);
-                    }
-                }
-
-                @keyframes slidedown {
-                    from {
-                        transform: translateY(0);
-                    }
-                    to {
-                        transform: translateY(100%);
-                    }
-                }
-                .animate-slideup {
-                    animation: slideup 0.35s cubic-bezier(0.4,0,0.2,1);
-                }
-                .animate-slidedown {
-                    animation: slidedown 0.35s cubic-bezier(0.4,0,0.2,1);
-                }
-                .overlay-fadein {
-                    transition: background 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s cubic-bezier(0.4,0,0.2,1);
-                    background: rgba(0,0,0,0.4) !important;
-                }
-                .overlay-fadeout {
-                    transition: background 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s cubic-bezier(0.4,0,0.2,1);
-                    background: rgba(0,0,0,0) !important;
-                }
-            `}</style>
         </div>
     );
 };

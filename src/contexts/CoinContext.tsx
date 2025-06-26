@@ -7,27 +7,30 @@ import { useAuth } from "@/hooks/useAuth";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import { CoinContext as CoinContextType } from "@/types";
 
-const CoinContext = createContext<CoinContextType>({ coins: 0, refreshCoins: async () => {}, consumeCoins: async () => {} });
+const CoinContext = createContext<CoinContextType & { onCoinPurchase: (oldCoins: number, newCoins: number) => void }>({ coins: 0, refreshCoins: async () => {}, consumeCoins: async () => {}, onCoinPurchase: () => {} });
 
 export const useCoinContext = () => useContext(CoinContext);
 
 export const CoinProvider = ({ children }: { children: ReactNode }) => {
     const { user } = useAuth();
     const [coins, setCoins] = useState(0);
+    const [coinPurchaseCallback, setCoinPurchaseCallback] = useState<((oldCoins: number, newCoins: number) => void) | null>(null);
 
-    const fetchCoins = useCallback(async () => {
+    const fetchCoins = useCallback(async (triggerAnimation = false) => {
         if (!user?.uid) {
             setCoins(0);
             return;
         }
         const userRef = doc(db, "users", user.uid);
         const docSnap = await getDoc(userRef);
-        if (docSnap.exists()) {
-            setCoins(docSnap.data().coins ?? 0);
-        } else {
-            setCoins(0);
+        const newCoins = docSnap.exists() ? (docSnap.data().coins ?? 0) : 0;
+        
+        if (triggerAnimation && coinPurchaseCallback) {
+            coinPurchaseCallback(coins, newCoins);
         }
-    }, [user]);
+        
+        setCoins(newCoins);
+    }, [user, coins, coinPurchaseCallback]);
 
     // コイン消費処理（クラウドファンクション経由）
     // 必ず spendCoin 関数を使ってコインを減らします。
@@ -51,8 +54,12 @@ export const CoinProvider = ({ children }: { children: ReactNode }) => {
         fetchCoins();
     }, [fetchCoins]);
 
+    const registerPurchaseCallback = useCallback((callback: (oldCoins: number, newCoins: number) => void) => {
+        setCoinPurchaseCallback(() => callback);
+    }, []);
+
     return (
-        <CoinContext.Provider value={{ coins, refreshCoins: fetchCoins, consumeCoins }}>
+        <CoinContext.Provider value={{ coins, refreshCoins: fetchCoins, consumeCoins, onCoinPurchase: registerPurchaseCallback }}>
             {children}
         </CoinContext.Provider>
     );

@@ -56,53 +56,133 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({
     <div className="relative">
       {/* Hamburger menu button */}
       <button
-        className="flex flex-col justify-center items-center w-10 h-10 rounded hover:bg-gray-100 transition relative z-20"
+        className="flex flex-col justify-center items-center w-12 h-12 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-950/20 transition-all duration-200 relative z-20 group"
         onClick={() => setMenuOpen((open) => !open)}
         aria-label="メニューを開く"
       >
-        <span className="block w-6 h-0.5 bg-gray-700 mb-1 rounded transition-all" />
-        <span className="block w-6 h-0.5 bg-gray-700 mb-1 rounded transition-all" />
-        <span className="block w-6 h-0.5 bg-gray-700 rounded transition-all" />
+        <span className={`block w-6 h-0.5 bg-purple-600 dark:bg-purple-400 mb-1.5 rounded-full transition-all duration-300 ${menuOpen ? 'rotate-45 translate-y-2' : ''}`} />
+        <span className={`block w-6 h-0.5 bg-purple-600 dark:bg-purple-400 mb-1.5 rounded-full transition-all duration-300 ${menuOpen ? 'opacity-0' : ''}`} />
+        <span className={`block w-6 h-0.5 bg-purple-600 dark:bg-purple-400 rounded-full transition-all duration-300 ${menuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
       </button>
       
-      {/* Dropdown menu */}
+      {/* Overlay */}
       {menuOpen && (
-        <div
-          ref={menuRef}
-          className="absolute right-0 top-12 bg-white border border-gray-200 rounded-xl shadow-lg py-2 w-40 z-30 animate-fade-in"
-        >
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-20 animate-fadeIn" onClick={() => setMenuOpen(false)} />
+      )}
+      
+      {/* Slide-out menu */}
+      <div
+        ref={menuRef}
+        className={`fixed top-0 right-0 h-full w-80 bg-white dark:bg-gray-800 shadow-2xl transform transition-transform duration-300 ease-out z-30 ${
+          menuOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
+        {/* Menu Header */}
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xl font-semibold text-purple-600 dark:text-purple-400">メニュー</h3>
+            <button
+              onClick={() => setMenuOpen(false)}
+              className="w-10 h-10 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 flex items-center justify-center"
+              aria-label="メニューを閉じる"
+            >
+              <svg className="w-6 h-6 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          
+          {/* User Info */}
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-950/30 flex items-center justify-center">
+              <svg className="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{user?.displayName || "ゲスト"}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{user?.email || "ログインしていません"}</p>
+            </div>
+          </div>
+        </div>
+        
+        {/* Menu Items */}
+        <nav className="p-6 space-y-2">
           <Link
             href="/"
-            className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-xl transition flex items-center gap-2"
+            onClick={() => setMenuOpen(false)}
+            className="flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-950/20 rounded-lg transition-all duration-200 group"
           >
-            <HomeIcon />
-            ホーム
+            <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-950/30 flex items-center justify-center group-hover:bg-purple-200 dark:group-hover:bg-purple-950/40 transition-colors duration-200">
+              <HomeIcon />
+            </div>
+            <div>
+              <p className="font-medium">ホーム</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">占いを始める</p>
+            </div>
           </Link>
           
           <button
-            className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-xl transition"
+            className="w-full flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-950/20 rounded-lg transition-all duration-200 group"
             onClick={handleHistoryClick}
           >
-            あなたの記録
+            <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-950/30 flex items-center justify-center group-hover:bg-purple-200 dark:group-hover:bg-purple-950/40 transition-colors duration-200">
+              <svg className="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div className="text-left">
+              <p className="font-medium">あなたの記録</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">過去の占い結果</p>
+            </div>
           </button>
           
-          {user?.uid ? (
-            <button
-              onClick={onLogout}
-              className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-xl transition"
-            >
-              ログアウト
-            </button>
-          ) : (
-            <button
-              onClick={handleLoginClick}
-              className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-xl transition"
-            >
-              ログイン
-            </button>
-          )}
+          <div className="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700">
+            {user?.uid ? (
+              <button
+                onClick={() => {
+                  onLogout();
+                  setMenuOpen(false);
+                }}
+                className="w-full flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-rose-50 dark:hover:bg-rose-950/20 rounded-lg transition-all duration-200 group"
+              >
+                <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center group-hover:bg-rose-100 dark:group-hover:bg-rose-950/30 transition-colors duration-200">
+                  <svg className="w-5 h-5 text-gray-600 dark:text-gray-400 group-hover:text-rose-600 dark:group-hover:text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                </div>
+                <div className="text-left">
+                  <p className="font-medium">ログアウト</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">アカウントから離れる</p>
+                </div>
+              </button>
+            ) : (
+              <button
+                onClick={handleLoginClick}
+                className="w-full flex items-center gap-3 px-4 py-3 text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-600 dark:hover:bg-purple-700 rounded-lg transition-all duration-200 group hover:shadow-lg active:scale-95"
+              >
+                <div className="w-10 h-10 rounded-lg bg-purple-700/20 flex items-center justify-center">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                  </svg>
+                </div>
+                <div className="text-left">
+                  <p className="font-medium">ログイン</p>
+                  <p className="text-xs text-purple-200">アカウントを作成</p>
+                </div>
+              </button>
+            )}
+          </div>
+        </nav>
+        
+        {/* Footer */}
+        <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-200 dark:border-gray-700">
+          <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+            ヒカリノ タロット占い<br />
+            あなたの心に寄り添います
+          </p>
         </div>
-      )}
+      </div>
     </div>
   );
 };

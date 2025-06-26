@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import { useCoinAnimation } from "@/hooks/useCoinAnimation";
+import { useCoinContext } from "@/contexts/CoinContext";
 import HamburgerMenu from "@/components/ui/HamburgerMenu";
 import UserInfo from "@/components/ui/UserInfo";
 import { User } from "@/types";
@@ -16,7 +17,12 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ user, onLogout, coins, onRequireLogin, userId }) => {
-    const displayCoins = useCoinAnimation(coins, userId);
+    const { displayCoins, startAnimation } = useCoinAnimation(coins, userId);
+    const { onCoinPurchase } = useCoinContext();
+    
+    useEffect(() => {
+        onCoinPurchase(startAnimation);
+    }, [onCoinPurchase, startAnimation]);
 
 
     return (

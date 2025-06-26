@@ -21,17 +21,17 @@ const Button = ({
   fullWidth = false,
   className = "",
 }: ButtonProps) => {
-  const baseClasses = "font-semibold rounded-full shadow transition disabled:opacity-50";
+  const baseClasses = "font-medium rounded-lg transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed";
   
   const variantClasses = {
-    primary: "bg-purple-400 hover:bg-purple-500 text-white",
-    secondary: "bg-gray-200 hover:bg-gray-300 text-gray-800",
+    primary: "bg-purple-600 hover:bg-purple-700 text-white hover:shadow-lg",
+    secondary: "border-2 border-purple-600 text-purple-600 hover:bg-purple-50",
   };
   
   const sizeClasses = {
     small: "px-4 py-2 text-sm",
-    medium: "px-8 py-3 text-base",
-    large: "px-10 py-4 text-lg",
+    medium: "px-6 py-3",
+    large: "px-8 py-4 text-lg",
   };
   
   const widthClasses = fullWidth ? "w-full max-w-md" : "";
