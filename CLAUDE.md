@@ -111,6 +111,40 @@ Stripe統合には以下が必要：
 - 決済確認のためのWebbook検証
 - Cloud Functionsを通じた安全なコイン残高更新
 
+### モーダルダイアログの使用方法
+
+#### MessageDialogコンポーネント
+ユーザーへの通知、警告、エラー表示に統一されたモーダルダイアログを使用してください。
+
+**使用例：**
+```typescript
+import MessageDialog from "@/components/ui/MessageDialog";
+
+// 状態管理
+const [showMessage, setShowMessage] = useState(false);
+
+// ダイアログ表示
+<MessageDialog
+  isOpen={showMessage}
+  onClose={() => setShowMessage(false)}
+  type="warning"  // 'info' | 'warning' | 'error' | 'success'
+  title="カスタムタイトル"  // オプション（省略時は自動設定）
+  message="表示したいメッセージ"
+/>
+```
+
+**タイプ別の特徴：**
+- **info（情報）**: 💭アイコン、青色、「了解」ボタン
+- **warning（警告）**: ⚠️アイコン、黄色、「はい」ボタン
+- **error（エラー）**: ❌アイコン、赤色、「OK」ボタン
+- **success（成功）**: ✅アイコン、エメラルド色、「OK」ボタン
+
+**使用ガイドライン：**
+- ユーザーの操作を中断させる重要な通知に使用
+- 下部の小さなメッセージではなく、視認性の高いモーダルを使用
+- メッセージは簡潔に、必要な情報のみを伝える
+- 適切なタイプを選択してユーザーに状況を明確に伝える
+
 ### UIレイアウト構造
 
 #### PC版（768px以上）

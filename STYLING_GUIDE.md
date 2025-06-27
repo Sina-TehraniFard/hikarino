@@ -83,6 +83,37 @@ className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duratio
 className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all duration-300"
 ```
 
+### メッセージダイアログ
+```tsx
+// 情報（info）
+アイコン: 💭
+背景色: bg-blue-50 dark:bg-blue-950/20
+ボーダー: border-blue-200 dark:border-blue-700
+テキスト: text-blue-800 dark:text-blue-200
+ボタン: bg-blue-600 hover:bg-blue-700
+
+// 警告（warning）
+アイコン: ⚠️
+背景色: bg-amber-50 dark:bg-amber-950/20
+ボーダー: border-amber-200 dark:border-amber-700
+テキスト: text-amber-800 dark:text-amber-200
+ボタン: bg-amber-600 hover:bg-amber-700
+
+// エラー（error）
+アイコン: ❌
+背景色: bg-red-50 dark:bg-red-950/20
+ボーダー: border-red-200 dark:border-red-700
+テキスト: text-red-800 dark:text-red-200
+ボタン: bg-red-600 hover:bg-red-700
+
+// 成功（success）
+アイコン: ✅
+背景色: bg-emerald-50 dark:bg-emerald-950/20
+ボーダー: border-emerald-200 dark:border-emerald-700
+テキスト: text-emerald-800 dark:text-emerald-200
+ボタン: bg-emerald-600 hover:bg-emerald-700
+```
+
 ### フォーム要素
 ```tsx
 // インプット

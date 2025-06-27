@@ -20,6 +20,7 @@ import AppIntro from "@/components/ui/AppIntro";
 import HikarinoProfile from "@/components/ui/HikarinoProfile";
 import Sidebar from "@/components/ui/Sidebar";
 import PageBackground from "@/components/ui/PageBackground";
+import MessageDialog from "@/components/ui/MessageDialog";
 import {useState} from "react";
 
 export default function Home() {
@@ -29,6 +30,7 @@ export default function Home() {
     const {displayCoins} = useCoinAnimation(coins, user?.uid);
     const [showLogin, setShowLogin] = useState(false);
     const [showCoinModal, setShowCoinModal] = useState(false);
+    const [showMessageDialog, setShowMessageDialog] = useState(false);
 
     const {
         question,
@@ -76,6 +78,14 @@ export default function Home() {
         setShowCoinModal(false);
     };
 
+    const handleDrawCardsClick = () => {
+        if (!question.trim()) {
+            setShowMessageDialog(true);
+            return;
+        }
+        handleDrawCards();
+    };
+
     return (
         <main className="flex min-h-screen relative overflow-hidden">
             {/* PC版サイドバー（768px以上で表示） */}
@@ -119,7 +129,10 @@ export default function Home() {
             />
 
             {cards.length === 0 && (
-                <Button onClick={handleDrawCards} fullWidth>
+                <Button 
+                    onClick={handleDrawCardsClick} 
+                    fullWidth
+                >
                     タロットを引く
                 </Button>
             )}
@@ -163,6 +176,13 @@ export default function Home() {
                 isOpen={showCoinModal}
                 onClose={handleCoinModalClose}
                 uid={user?.uid}
+            />
+
+            <MessageDialog
+                isOpen={showMessageDialog}
+                onClose={() => setShowMessageDialog(false)}
+                type="warning"
+                message="質問を入力してからタロットを引いてください。"
             />
                     </div>
                 </div>
