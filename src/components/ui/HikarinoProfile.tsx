@@ -27,8 +27,8 @@ const HikarinoProfile = ({
         />
       </div>
       <div className="px-4">
-        <p className="text-gray-800 font-semibold text-sm leading-tight">{name}</p>
-        <p className="text-gray-600 text-sm leading-tight whitespace-pre-line">{description}</p>
+        <p className="text-gray-800 dark:text-gray-100 font-semibold text-sm leading-tight">{name}</p>
+        <p className="text-gray-600 dark:text-gray-300 text-sm leading-tight whitespace-pre-line">{description}</p>
       </div>
     </div>
   );
