@@ -11,18 +11,18 @@ const TarotCards = ({ cards }: TarotCardsProps) => {
   if (cards.length === 0) return null;
 
   return (
-    <div className="mt-4 mb-6 flex gap-6 justify-center">
+    <div className="mt-4 mb-6 flex gap-2 md:gap-6 justify-center overflow-x-auto">
       {cards.map((item, idx) => (
         <div
           key={idx}
-          className="rounded-xl shadow-md p-2 flex flex-col items-center w-28 border border-purple-100 dark:border-purple-700 bg-white dark:bg-gray-800"
+          className="rounded-xl shadow-md p-2 flex flex-col items-center w-20 md:w-28 border border-purple-100 dark:border-purple-700 bg-white dark:bg-gray-800 flex-shrink-0"
         >
           <Image
             src={item.card.imagePath}
             alt={item.card.name}
             width={96}
             height={128}
-            className={`w-24 aspect-[3/4] object-contain mb-2 ${
+            className={`w-16 md:w-24 aspect-[3/4] object-contain mb-2 ${
               item.isReversed ? "rotate-180" : ""
             }`}
             priority={idx === 0}

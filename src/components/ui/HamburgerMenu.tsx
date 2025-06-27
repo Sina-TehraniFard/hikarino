@@ -10,12 +10,16 @@ interface HamburgerMenuProps {
   user: User;
   onLogout: () => void;
   onRequireLogin?: () => void;
+  displayCoins: number;
+  onCoinClick?: () => void;
 }
 
 const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ 
   user, 
   onLogout, 
-  onRequireLogin 
+  onRequireLogin,
+  displayCoins,
+  onCoinClick
 }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -93,16 +97,36 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({
           </div>
           
           {/* User Info */}
-          <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-950/30 flex items-center justify-center">
-              <svg className="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
+          <div className="space-y-3">
+            <div className="flex items-center space-x-3">
+              <div className="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-950/30 flex items-center justify-center">
+                <svg className="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{user?.displayName || "ゲスト"}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user?.email || "ログインしていません"}</p>
+              </div>
             </div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{user?.displayName || "ゲスト"}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">{user?.email || "ログインしていません"}</p>
-            </div>
+            {/* コイン表示 */}
+            <button 
+              onClick={() => {
+                onCoinClick?.();
+                setMenuOpen(false);
+              }}
+              className="flex items-center gap-2 bg-white dark:bg-gray-700 px-3 py-2 rounded-lg shadow-sm border border-purple-200 dark:border-purple-700 hover:shadow-md hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer w-full"
+            >
+              <div className="w-5 h-5 relative">
+                <svg className="w-full h-full text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10"/>
+                  <text x="12" y="16" textAnchor="middle" className="text-xs font-bold fill-yellow-800">¥</text>
+                </svg>
+              </div>
+              <span className="font-bold text-purple-600 dark:text-purple-400 text-sm">
+                {typeof displayCoins === 'number' ? displayCoins.toLocaleString() : 0}
+              </span>
+            </button>
           </div>
         </div>
         
@@ -178,8 +202,7 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({
         {/* Footer */}
         <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-200 dark:border-gray-700">
           <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-            ヒカリノ タロット占い<br />
-            あなたの心に寄り添います
+            ヒカリノ タロット占い
           </p>
         </div>
       </div>
