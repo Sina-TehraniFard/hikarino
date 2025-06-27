@@ -16,6 +16,7 @@ import QuestionForm from "@/components/ui/QuestionForm";
 import FortuneResult from "@/components/ui/FortuneResult";
 import ErrorMessage from "@/components/ui/ErrorMessage";
 import HikarinoProfile from "@/components/ui/HikarinoProfile";
+import AppIntro from "@/components/ui/AppIntro";
 import {useState} from "react";
 
 export default function Home() {
@@ -40,7 +41,7 @@ export default function Home() {
 
     useEffect(() => {
         restoreGuestData(user);
-        refreshCoins();
+        refreshCoins(true);
     }, [user, refreshCoins, restoreGuestData]);
 
     if (loading) return null;
@@ -64,7 +65,9 @@ export default function Home() {
     };
 
     return (
-        <main className="flex min-h-screen flex-col items-center justify-between p-4 md:p-24">
+        <main className="flex min-h-screen flex-col items-center justify-between bg-gray-50 dark:bg-gray-900">
+            <div className="w-full max-w-lg mx-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg min-h-screen">
+                <div className="px-6 space-y-6">
             {showLogin && <LoginModal onClose={() => setShowLogin(false)}/>}
 
             <Header
@@ -77,14 +80,17 @@ export default function Home() {
 
             <HikarinoProfile/>
 
+            <AppIntro/>
+
             <QuestionForm
                 question={question}
                 onChange={setQuestion}
+                disabled={cards.length > 0}
             />
 
             {cards.length === 0 && (
                 <Button onClick={handleDrawCards} fullWidth>
-                    カードを引く
+                    占いを開始
                 </Button>
             )}
 
@@ -97,7 +103,7 @@ export default function Home() {
                         disabled={isLoading}
                         fullWidth
                     >
-                        ヒカリノに解釈してもらう
+                        占い結果を見る
                     </Button>
                     <ErrorMessage error={error}/>
                 </>
@@ -128,6 +134,8 @@ export default function Home() {
                 onClose={handleCoinModalClose}
                 uid={user?.uid}
             />
+                </div>
+            </div>
         </main>
     );
 }
