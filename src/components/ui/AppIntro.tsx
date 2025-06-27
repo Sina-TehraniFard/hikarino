@@ -1,23 +1,48 @@
-// ステップガイドコンポーネント
+// ステップガイドコンポーネント - 不安解消のための目立つデザイン
 
 const AppIntro = () => {
   return (
-    <div className="mt-8 mb-6 bg-purple-50 dark:bg-purple-950/20 rounded-xl p-4 max-w-md w-full">
-      <p className="text-xs text-gray-600 dark:text-gray-400 text-center mb-3 font-medium">
-        かんたん3ステップ
-      </p>
-      <div className="text-xs md:text-sm text-gray-700 dark:text-gray-300 space-y-2">
-        <div className="flex items-center gap-3">
-          <span className="w-5 h-5 bg-purple-600 text-white rounded-full text-xs flex items-center justify-center font-bold flex-shrink-0">1</span>
-          <span>質問を入力</span>
+    <div className="mb-8 max-w-md w-full">
+      {/* 統合されたステップガイド */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md border border-gray-200 dark:border-gray-700">
+        {/* ヘッダー */}
+        <div className="text-center mb-5">
+          <div className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-2 rounded-lg shadow-md">
+            <span className="text-xs font-bold tracking-wide">かんたん3ステップ</span>
+          </div>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="w-5 h-5 bg-purple-600 text-white rounded-full text-xs flex items-center justify-center font-bold flex-shrink-0">2</span>
-          <span>タロットカードを引く</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="w-5 h-5 bg-purple-600 text-white rounded-full text-xs flex items-center justify-center font-bold flex-shrink-0">3</span>
-          <span>ヒカリノに占ってもらう</span>
+        
+        {/* ステップ */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-4">
+            <div className="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0 shadow-md">
+              1
+            </div>
+            <div>
+              <p className="font-medium text-gray-800 dark:text-gray-200">質問を入力</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">100文字以内で占いたいことを書く</p>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <div className="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0 shadow-md">
+              2
+            </div>
+            <div>
+              <p className="font-medium text-gray-800 dark:text-gray-200">タロットカードを引く</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">3枚のタロットカードが選ばれます</p>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <div className="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0 shadow-md">
+              3
+            </div>
+            <div>
+              <p className="font-medium text-gray-800 dark:text-gray-200">結果を待つ</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">その場でタロットを読んでくれます</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

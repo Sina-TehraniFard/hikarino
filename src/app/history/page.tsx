@@ -3,20 +3,26 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
+import Sidebar from "@/components/ui/Sidebar";
+import PageBackground from "@/components/ui/PageBackground";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { getUserFortunes } from "@/lib/firestore/fortune";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { useCoinContext } from "@/contexts/CoinContext";
+import { useCoinAnimation } from "@/hooks/useCoinAnimation";
 import { User, FortuneHistory } from "@/types";
+import LoginModal from "@/components/LoginModal";
 
 
 export default function HistoryPage() {
-    const [user, setUser] = useState<User>({ uid: undefined, displayName: null, email: null });
+    const [user, setUser] = useState<User | null>(null);
     const [fortunes, setFortunes] = useState<FortuneHistory[]>([]);
     const [expandedId, setExpandedId] = useState<string | null>(null);
+    const [showLogin, setShowLogin] = useState(false);
     const router = useRouter();
     const { coins } = useCoinContext();
+    const { displayCoins } = useCoinAnimation(coins, user?.uid);
 
     useEffect(() => {
         const auth = getAuth();
@@ -29,7 +35,7 @@ export default function HistoryPage() {
                 });
                 getUserFortunes(user.uid).then(setFortunes);
             } else {
-                router.push("/login");
+                router.push("/");
             }
         });
 
@@ -52,11 +58,40 @@ export default function HistoryPage() {
     };
 
     return (
-        <>
-            <Header user={user} onLogout={handleLogout} coins={user?.uid ? coins : 0} userId={user?.uid} />
-            <main className="flex flex-col items-center p-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
-                <div className="w-full max-w-2xl">
-                    <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">占い履歴</h1>
+        <main className="flex min-h-screen relative overflow-hidden">
+            {/* PC版サイドバー（768px以上で表示） */}
+            {user && (
+                <div className="hidden md:block">
+                    <Sidebar
+                        user={user}
+                        onLogout={handleLogout}
+                        onRequireLogin={() => setShowLogin(true)}
+                        displayCoins={displayCoins}
+                        onCoinClick={() => setShowLogin(true)}
+                    />
+                </div>
+            )}
+
+            <PageBackground />
+            
+            <div className={`flex-1 ${user ? 'md:ml-64' : ''}`}>
+                <div className="w-full max-w-lg mx-auto bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border border-purple-200/30 dark:border-purple-700/30 shadow-2xl min-h-screen relative">
+                    <div className="px-6 space-y-6">
+            {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
+
+            {user && (
+                <Header
+                    user={user}
+                    coins={coins}
+                    onLogout={handleLogout}
+                    onRequireLogin={() => setShowLogin(true)}
+                    userId={user.uid}
+                    onCoinClick={() => setShowLogin(true)}
+                />
+            )}
+
+                <div className="w-full max-w-2xl mx-auto">
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">占い履歴</h1>
                     <div className="space-y-4">
                         {fortunes.map((fortune) => (
                             <div
@@ -131,7 +166,9 @@ export default function HistoryPage() {
                         ))}
                     </div>
                 </div>
-            </main>
-        </>
+                    </div>
+                </div>
+            </div>
+        </main>
     );
 }

@@ -21,17 +21,17 @@ const Button = ({
   fullWidth = false,
   className = "",
 }: ButtonProps) => {
-  const baseClasses = "relative font-serif rounded-2xl transition-all duration-300 transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden group";
+  const baseClasses = "relative font-medium rounded-xl transition-all duration-200 transform hover:scale-102 active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed group";
   
   const variantClasses = {
-    primary: "bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 text-white shadow-lg hover:shadow-2xl",
-    secondary: "bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-purple-300 dark:border-purple-700 text-purple-600 dark:text-purple-400 hover:border-purple-400 dark:hover:border-purple-600",
+    primary: "bg-purple-600 hover:bg-purple-700 text-white shadow-md hover:shadow-lg",
+    secondary: "bg-white dark:bg-gray-800 border border-purple-300 dark:border-purple-700 text-purple-600 dark:text-purple-400 hover:border-purple-400 dark:hover:border-purple-600",
   };
   
   const sizeClasses = {
-    small: "px-6 py-2.5 text-sm",
-    medium: "px-8 py-3.5 text-base",
-    large: "px-10 py-4.5 text-lg",
+    small: "px-4 py-2 text-sm",
+    medium: "px-6 py-3 text-base",
+    large: "px-8 py-4 text-lg",
   };
   
   const widthClasses = fullWidth ? "w-full max-w-md" : "";
@@ -52,23 +52,14 @@ const Button = ({
       disabled={disabled}
       className={classes}
     >
-      {/* 魔法のような背景エフェクト */}
+      {/* シンプルなホバーエフェクト */}
       {variant === "primary" && (
-        <>
-          <span className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 opacity-0 group-hover:opacity-100 blur transition-opacity duration-300" />
-          <span className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 animate-gradient" style={{ backgroundSize: "200% 200%" }} />
-        </>
+        <span className="absolute inset-0 bg-gradient-to-t from-purple-700/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
       )}
       
-      {/* きらめきエフェクト */}
-      <span className="absolute top-2 right-2 w-2 h-2 bg-white rounded-full opacity-0 group-hover:opacity-70 group-hover:animate-sparkle" />
-      <span className="absolute bottom-2 left-2 w-1.5 h-1.5 bg-white rounded-full opacity-0 group-hover:opacity-50 group-hover:animate-sparkle delay-300" />
-      
       {/* ボタンテキスト */}
-      <span className="relative z-10 flex items-center justify-center gap-2">
-        {variant === "primary" && <span className="text-lg">✨</span>}
+      <span className="relative z-10">
         {children}
-        {variant === "primary" && <span className="text-lg">✨</span>}
       </span>
     </button>
   );

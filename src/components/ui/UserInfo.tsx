@@ -6,11 +6,12 @@ import Image from "next/image";
 interface UserInfoProps {
   user: User;
   displayCoins: number;
+  onCoinClick?: () => void;
 }
 
-const UserInfo: React.FC<UserInfoProps> = ({ user, displayCoins }) => {
+const UserInfo: React.FC<UserInfoProps> = ({ user, displayCoins, onCoinClick }) => {
   return (
-    <div className="w-full bg-white dark:bg-gray-800 border-b border-purple-200 dark:border-purple-900/20">
+    <div className="w-full bg-transparent border-b border-purple-200/30 dark:border-purple-900/20">
       <div className="max-w-lg mx-auto px-6">
         <div className="flex justify-between items-center py-1 md:py-2">
           <div className="flex items-center gap-2 md:gap-3">
@@ -29,7 +30,10 @@ const UserInfo: React.FC<UserInfoProps> = ({ user, displayCoins }) => {
             今後コインの取得・消費ロジックを拡張する際も、この表示仕様を守ってください。
             コイン残高はCoinContextでグローバル管理されています。
           */}
-          <div className="flex items-center gap-2 bg-white dark:bg-gray-800 px-3 py-1.5 rounded-full shadow-sm border border-purple-200 dark:border-purple-700 hover:shadow-md transition-all duration-200">
+          <button 
+            onClick={onCoinClick}
+            className="flex items-center gap-2 bg-white dark:bg-gray-800 px-3 py-1.5 rounded-xl shadow-sm border border-purple-200 dark:border-purple-700 hover:shadow-md hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
+          >
             <div className="w-6 h-6 relative animate-pulse">
               <Image
                 src="/coin-icon.svg"
@@ -42,7 +46,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ user, displayCoins }) => {
             <span className="font-bold text-purple-600 dark:text-purple-400 text-base md:text-lg">
               {typeof displayCoins === 'number' ? displayCoins.toLocaleString() : 0}
             </span>
-          </div>
+          </button>
         </div>
       </div>
     </div>

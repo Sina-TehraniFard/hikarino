@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import { CoinContext as CoinContextType } from "@/types";
 
-const CoinContext = createContext<CoinContextType & { onCoinPurchase: (oldCoins: number, newCoins: number) => void }>({ coins: 0, refreshCoins: async () => {}, consumeCoins: async () => {}, onCoinPurchase: () => {} });
+const CoinContext = createContext<CoinContextType & { onCoinPurchase: (callback: (oldCoins: number, newCoins: number) => void) => (() => void) | undefined }>({ coins: 0, refreshCoins: async () => {}, consumeCoins: async () => {}, onCoinPurchase: () => undefined });
 
 export const useCoinContext = () => useContext(CoinContext);
 
@@ -56,6 +56,11 @@ export const CoinProvider = ({ children }: { children: ReactNode }) => {
 
     const registerPurchaseCallback = useCallback((callback: (oldCoins: number, newCoins: number) => void) => {
         setCoinPurchaseCallback(() => callback);
+        
+        // unsubscribe関数を返す
+        return () => {
+            setCoinPurchaseCallback(null);
+        };
     }, []);
 
     return (
