@@ -15,7 +15,7 @@ const TarotCards = ({ cards }: TarotCardsProps) => {
       {cards.map((item, idx) => (
         <div
           key={idx}
-          className="rounded-xl shadow-md p-2 flex flex-col items-center w-28 border border-purple-100"
+          className="rounded-xl shadow-md p-2 flex flex-col items-center w-28 border border-purple-100 dark:border-purple-700 bg-white dark:bg-gray-800"
         >
           <Image
             src={item.card.imagePath}
@@ -27,10 +27,10 @@ const TarotCards = ({ cards }: TarotCardsProps) => {
             }`}
             priority={idx === 0}
           />
-          <span className="w-full text-center text-xs text-gray-500 mt-1">
+          <span className="w-full text-center text-xs text-gray-500 dark:text-gray-400 mt-1">
             {item.card.name}
           </span>
-          <span className="w-full text-center text-xs text-gray-500 mt-1">
+          <span className="w-full text-center text-xs text-gray-500 dark:text-gray-400 mt-1">
             {item.isReversed ? "逆位置" : "正位置"}
           </span>
         </div>

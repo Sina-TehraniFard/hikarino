@@ -54,29 +54,29 @@ export default function HistoryPage() {
     return (
         <>
             <Header user={user} onLogout={handleLogout} coins={user?.uid ? coins : 0} userId={user?.uid} />
-            <main className="flex flex-col items-center p-6">
+            <main className="flex flex-col items-center p-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
                 <div className="w-full max-w-2xl">
-                    <h1 className="text-2xl font-bold text-gray-800 mb-6">占い履歴</h1>
+                    <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">占い履歴</h1>
                     <div className="space-y-4">
                         {fortunes.map((fortune) => (
                             <div
                                 key={fortune.id}
-                                className="border border-gray-200 rounded-xl overflow-hidden"
+                                className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-xl overflow-hidden"
                             >
                                 <button
-                                    className="w-full p-4 text-left hover:bg-gray-50 transition flex justify-between items-center"
+                                    className="w-full p-4 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition flex justify-between items-center"
                                     onClick={() => setExpandedId(expandedId === fortune.id ? null : fortune.id)}
                                 >
                                     <div className="flex-1">
-                                        <div className="text-sm text-gray-500 mb-1">
+                                        <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">
                                             {formatDate(fortune.timestamp)}
                                         </div>
-                                        <div className="font-medium text-gray-800">
+                                        <div className="font-medium text-gray-800 dark:text-gray-200">
                                             {fortune.question}
                                         </div>
                                     </div>
                                     <svg
-                                        className={`w-5 h-5 text-gray-500 transform transition-transform duration-300 ${
+                                        className={`w-5 h-5 text-gray-500 dark:text-gray-400 transform transition-transform duration-300 ${
                                             expandedId === fortune.id ? "rotate-180" : ""
                                         }`}
                                         fill="none"
@@ -99,19 +99,19 @@ export default function HistoryPage() {
                                     }`}
                                 >
                                     <div className="overflow-hidden">
-                                        <div className="p-4 border-t border-gray-200">
+                                        <div className="p-4 border-t border-gray-200 dark:border-gray-700">
                                             <div className="mb-4">
-                                                <h3 className="text-sm font-medium text-gray-700 mb-2">引いたカード</h3>
+                                                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">引いたカード</h3>
                                                 <div className="grid grid-cols-3 gap-2">
                                                     {fortune.cards.map((card, index) => (
                                                         <div
                                                             key={index}
-                                                            className="p-2 rounded-lg border border-gray-200 text-center"
+                                                            className="p-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-center"
                                                         >
-                                                            <div className="text-sm font-medium text-gray-800">
+                                                            <div className="text-sm font-medium text-gray-800 dark:text-gray-200">
                                                                 {card.cardName}
                                                             </div>
-                                                            <div className="text-xs text-gray-500">
+                                                            <div className="text-xs text-gray-500 dark:text-gray-400">
                                                                 {card.isReversed ? "逆位置" : "正位置"}
                                                             </div>
                                                         </div>
@@ -119,8 +119,8 @@ export default function HistoryPage() {
                                                 </div>
                                             </div>
                                             <div>
-                                                <h3 className="text-sm font-medium text-gray-700 mb-2">占い結果</h3>
-                                                <div className="p-4 rounded-lg border border-gray-200 whitespace-pre-wrap text-gray-700">
+                                                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">占い結果</h3>
+                                                <div className="p-4 rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 whitespace-pre-wrap text-gray-700 dark:text-gray-200">
                                                     {fortune.result}
                                                 </div>
                                             </div>
