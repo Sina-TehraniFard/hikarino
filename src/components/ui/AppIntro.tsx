@@ -2,7 +2,7 @@
 
 const AppIntro = () => {
   return (
-    <div className="mb-8 max-w-md w-full">
+    <div className="mb-8 w-full max-w-md">
       {/* 統合されたステップガイド */}
       <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md border border-gray-200 dark:border-gray-700">
         {/* ヘッダー */}

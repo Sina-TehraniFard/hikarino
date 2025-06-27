@@ -13,7 +13,7 @@ const HikarinoProfile = ({
   imageSrc = "/hikarino-normal.png",
 }: HikarinoProfileProps) => {
   return (
-    <div className="max-w-md w-full mb-6 relative">
+    <div className="w-full max-w-md mb-6 relative">
       {/* 案内人（ヒカリノ）- コンパクトなカード */}
       <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-3">
