@@ -31,6 +31,7 @@ export default function Home() {
     const [showLogin, setShowLogin] = useState(false);
     const [showCoinModal, setShowCoinModal] = useState(false);
     const [showMessageDialog, setShowMessageDialog] = useState(false);
+    const [allCardsFlipped, setAllCardsFlipped] = useState(false);
 
     const {
         question,
@@ -83,6 +84,7 @@ export default function Home() {
             setShowMessageDialog(true);
             return;
         }
+        setAllCardsFlipped(false); // フリップ状態をリセット
         handleDrawCards();
     };
 
@@ -135,9 +137,12 @@ export default function Home() {
                 </Button>
             )}
 
-            <TarotCards cards={cards}/>
+            <TarotCards 
+                cards={cards}
+                onAllFlipped={() => setAllCardsFlipped(true)}
+            />
 
-            {cards.length > 0 && !hasFortuned && !isLoading && (
+            {cards.length > 0 && allCardsFlipped && !hasFortuned && !isLoading && (
                 <>
                     <Button
                         onClick={handleFortuneClick}
