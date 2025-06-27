@@ -101,7 +101,7 @@ export default function Home() {
 
             <PageBackground />
             
-            <div className="flex-1 md:ml-64">
+            <div className="flex-1 md:ml-64 overflow-hidden">
                 <div className="w-full max-w-lg mx-auto bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border border-purple-200/30 dark:border-purple-700/30 shadow-2xl min-h-screen relative">
                     <div className="px-6 space-y-6 pb-12">
             {showLogin && <LoginModal onClose={() => setShowLogin(false)}/>}
@@ -119,8 +119,6 @@ export default function Home() {
             <HikarinoProfile />
             {/* 簡単3ステップ - 不安解消 */}
             <AppIntro />
-
-
             {/* 質問入力 - 実際のアクション */}
             <QuestionForm
                 question={question}
