@@ -13,14 +13,6 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// Debug: APIキーの存在確認
-if (!process.env.OPENAI_API_KEY) {
-  console.error('OPENAI_API_KEY is not set');
-} else {
-  console.log('OPENAI_API_KEY is configured, length:', process.env.OPENAI_API_KEY.length);
-  console.log('API Key starts with:', process.env.OPENAI_API_KEY.substring(0, 10) + '...');
-}
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });

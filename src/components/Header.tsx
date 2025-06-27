@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect } from "react";
-import Image from "next/image";
 import { useCoinAnimation } from "@/hooks/useCoinAnimation";
 import { useCoinContext } from "@/contexts/CoinContext";
 import HamburgerMenu from "@/components/ui/HamburgerMenu";
@@ -27,26 +26,25 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, coins, onRequireLogin, 
 
     return (
         <>
-            <header className="w-full border-b border-gray-200 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                    <Image
-                        src="/hikarino-logo.png"
-                        alt="Hikarino"
-                        width={80}
-                        height={80}
-                        className="h-20 w-auto object-contain"
-                        priority
-                    />
+            <header className="w-full bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow duration-300">
+                <div className="max-w-lg mx-auto px-6">
+                    <div className="flex items-center justify-between h-16 md:h-20">
+                        <div>
+                            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent">
+                                ヒカリノ
+                            </h1>
+                        </div>
+                        <div>
+                            <HamburgerMenu 
+                                user={user} 
+                                onLogout={onLogout} 
+                                onRequireLogin={onRequireLogin} 
+                            />
+                        </div>
+                    </div>
                 </div>
-                <div className="flex items-center gap-4 ml-4">
-                    <HamburgerMenu 
-                        user={user} 
-                        onLogout={onLogout} 
-                        onRequireLogin={onRequireLogin} 
-                    />
-                </div>
-            </header>
             <UserInfo user={user} displayCoins={displayCoins} />
+            </header>
         </>
     );
 };
