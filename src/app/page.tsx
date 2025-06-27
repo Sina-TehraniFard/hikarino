@@ -65,8 +65,16 @@ export default function Home() {
     };
 
     return (
-        <main className="flex min-h-screen flex-col items-center justify-between bg-gray-50 dark:bg-gray-900">
-            <div className="w-full max-w-lg mx-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg min-h-screen">
+        <main className="flex min-h-screen flex-col items-center justify-between relative overflow-hidden">
+            {/* 幻想的な背景 */}
+            <div className="fixed inset-0 -z-20">
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 dark:from-purple-950 dark:via-gray-900 dark:to-pink-950" />
+                <div className="absolute top-0 left-0 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse" />
+                <div className="absolute bottom-0 right-0 w-96 h-96 bg-pink-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl animate-float" />
+            </div>
+            
+            <div className="w-full max-w-lg mx-auto bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border border-purple-200/30 dark:border-purple-700/30 shadow-2xl min-h-screen relative">
                 <div className="px-6 space-y-6">
             {showLogin && <LoginModal onClose={() => setShowLogin(false)}/>}
 
@@ -80,13 +88,13 @@ export default function Home() {
 
             <HikarinoProfile/>
 
-            <AppIntro/>
-
             <QuestionForm
                 question={question}
                 onChange={setQuestion}
                 disabled={cards.length > 0}
             />
+
+            <AppIntro/>
 
             {cards.length === 0 && (
                 <Button onClick={handleDrawCards} fullWidth>
