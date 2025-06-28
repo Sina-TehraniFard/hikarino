@@ -17,7 +17,6 @@ import QuestionForm from "@/components/ui/QuestionForm";
 import FortuneResult from "@/components/ui/FortuneResult";
 import ErrorMessage from "@/components/ui/ErrorMessage";
 import AppIntro from "@/components/ui/AppIntro";
-import HikarinoProfile from "@/components/ui/HikarinoProfile";
 import Sidebar from "@/components/ui/Sidebar";
 import PageBackground from "@/components/ui/PageBackground";
 import MessageDialog from "@/components/ui/MessageDialog";
@@ -117,8 +116,6 @@ export default function Home() {
                 onCoinClick={() => setShowCoinModal(true)}
             />
 
-            {/* 案内人紹介 - 信頼構築 */}
-            <HikarinoProfile />
             {/* 簡単3ステップ - 不安解消 */}
             <AppIntro />
             {/* 質問入力 - 実際のアクション */}
