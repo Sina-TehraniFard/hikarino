@@ -250,3 +250,71 @@ const [showMessage, setShowMessage] = useState(false);
 - **レスポンシブ切り替え**: `md:`ブレークポイント（768px）で切り替え
 - **ユーザー情報表示**: 両方のメニューで同じユーザー情報を表示
 - **メニュー項目**: ホーム・履歴・ログイン/ログアウトを同じ順序で配置
+
+## ロジック分離の重要な原則
+
+### 絶対禁止事項
+**10行以上のロジックをコンポーネント（.tsx）に記述することは禁止**
+
+### ロジック分離規則
+- **10行未満**: コンポーネント内での記述を許可（基本的なイベントハンドラー、条件判断等）
+- **10行以上**: 必ず別ファイル（.tsファイル）に分離すること
+- **データ処理**: `src/utils/`または`src/lib/`に配置
+- **カスタムフック**: 状態管理とロジックを`src/hooks/`に配置
+- **ビジネスロジック**: 複雑な処理は専用ファイルに分離
+
+### 推奨ファイル構造
+```
+src/
+├── hooks/           # カスタムフック（状態管理＋ロジック）
+│   ├── useFortuneFilters.ts
+│   ├── useFormattedDate.ts
+│   └── usePagination.ts
+├── utils/           # 純粋関数のユーティリティ
+│   ├── dateUtils.ts
+│   ├── cardUtils.ts
+│   └── paginationUtils.ts
+├── lib/             # ビジネスロジック・API呼び出し
+│   ├── fortuneLogic.ts
+│   └── dataProcessing.ts
+```
+
+### 実装例
+
+#### ❌ 悪い例（10行以上のロジックをコンポーネント内に記述）
+```typescript
+// page.tsx
+const filterByText = (fortune: FortuneHistory, query: string) => {
+  if (!query) return true;
+  const lowerQuery = query.toLowerCase();
+  const questionMatch = fortune.question.toLowerCase().includes(lowerQuery);
+  const resultMatch = fortune.result.toLowerCase().includes(lowerQuery);
+  const cardMatch = fortune.cards.some(card => 
+    card.cardName.toLowerCase().includes(lowerQuery)
+  );
+  return questionMatch || resultMatch || cardMatch;
+  // 10行以上のため分離が必要
+};
+```
+
+#### ✅ 良い例（10行未満はコンポーネント内でOK）
+```typescript
+// page.tsx - 基本的なロジックはOK
+const handleToggle = () => setExpanded(!expanded);
+const isDisabled = !user || loading;
+const hasItems = items.length > 0;
+
+// hooks/useFortuneFilters.ts - 10行以上は分離
+export const useFortuneFilters = () => {
+  const filterByText = (fortune: FortuneHistory, query: string) => {
+    // 複雑なフィルタリングロジック（10行以上）
+  };
+  return { filterByText };
+};
+```
+
+### メリット
+- **テスタビリティ**: ロジックを独立してテスト可能
+- **再利用性**: 複数のコンポーネントで同じロジックを使用可能
+- **保守性**: ロジックの変更時に影響範囲を限定
+- **可読性**: UIとロジックの責任が明確に分離
