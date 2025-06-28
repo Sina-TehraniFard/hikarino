@@ -134,7 +134,7 @@ export default function HistoryPage() {
                                     </svg>
                                 </button>
                                 <div
-                                    className={`grid transition-all duration-300 ease-in-out ${
+                                    className={`grid transition-all duration-200 ease-in-out ${
                                         expandedId === fortune.id
                                             ? "grid-rows-[1fr] opacity-100"
                                             : "grid-rows-[0fr] opacity-0"
