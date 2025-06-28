@@ -13,6 +13,7 @@ import { useCoinContext } from "@/contexts/CoinContext";
 import { useCoinAnimation } from "@/hooks/useCoinAnimation";
 import { User, FortuneHistory } from "@/types";
 import LoginModal from "@/components/LoginModal";
+import CoinPurchaseModal from "@/components/CoinPurchaseModal";
 
 
 export default function HistoryPage() {
@@ -20,8 +21,9 @@ export default function HistoryPage() {
     const [fortunes, setFortunes] = useState<FortuneHistory[]>([]);
     const [expandedId, setExpandedId] = useState<string | null>(null);
     const [showLogin, setShowLogin] = useState(false);
+    const [showCoinModal, setShowCoinModal] = useState(false);
     const router = useRouter();
-    const { coins } = useCoinContext();
+    const { coins, refreshCoins } = useCoinContext();
     const { displayCoins } = useCoinAnimation(coins, user?.uid);
 
     useEffect(() => {
@@ -57,6 +59,11 @@ export default function HistoryPage() {
         return format(new Date(timestamp.seconds * 1000), 'yyyy年MM月dd日 HH:mm', { locale: ja });
     };
 
+    const handleCoinModalClose = async () => {
+        await refreshCoins(true); // アニメーションありでリフレッシュ
+        setShowCoinModal(false);
+    };
+
     return (
         <main className="flex min-h-screen relative overflow-hidden">
             {/* PC版サイドバー（768px以上で表示） */}
@@ -67,7 +74,7 @@ export default function HistoryPage() {
                         onLogout={handleLogout}
                         onRequireLogin={() => setShowLogin(true)}
                         displayCoins={displayCoins}
-                        onCoinClick={() => setShowLogin(true)}
+                        onCoinClick={() => setShowCoinModal(true)}
                     />
                 </div>
             )}
@@ -86,7 +93,7 @@ export default function HistoryPage() {
                     onLogout={handleLogout}
                     onRequireLogin={() => setShowLogin(true)}
                     userId={user.uid}
-                    onCoinClick={() => setShowLogin(true)}
+                    onCoinClick={() => setShowCoinModal(true)}
                 />
             )}
 
@@ -166,6 +173,12 @@ export default function HistoryPage() {
                         ))}
                     </div>
                 </div>
+
+                <CoinPurchaseModal
+                    isOpen={showCoinModal}
+                    onClose={handleCoinModalClose}
+                    uid={user?.uid}
+                />
                     </div>
                 </div>
             </div>
