@@ -156,7 +156,7 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({
               </svg>
             </div>
             <div className="text-left">
-              <p className="font-medium">あなたの記録</p>
+              <p className="font-medium">占い履歴</p>
               <p className="text-xs text-gray-500 dark:text-gray-400">過去の占い結果</p>
             </div>
           </button>

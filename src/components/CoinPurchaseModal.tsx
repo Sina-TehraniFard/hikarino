@@ -65,6 +65,8 @@ const CoinPurchaseModal: React.FC<CoinPurchaseModalProps> = ({ isOpen, onClose, 
     useEffect(() => {
         if (isOpen) {
             setVisible(true);
+            // モバイルでの背景スクロール防止
+            document.body.style.overflow = 'hidden';
             // requestAnimationFrameで確実に次のフレームでアニメーション開始
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
@@ -73,6 +75,8 @@ const CoinPurchaseModal: React.FC<CoinPurchaseModalProps> = ({ isOpen, onClose, 
             });
         } else if (visible) {
             setAnimate(false);
+            // 背景スクロールを元に戻す
+            document.body.style.overflow = 'unset';
             const timer = setTimeout(() => setVisible(false), ANIMATION_DURATION);
             return () => clearTimeout(timer);
         }
@@ -88,24 +92,28 @@ const CoinPurchaseModal: React.FC<CoinPurchaseModalProps> = ({ isOpen, onClose, 
         return () => document.removeEventListener("keydown", handleKeyDown);
     }, [onClose, visible]);
 
+    // クリーンアップ時にスクロールを元に戻す
     useEffect(() => {
-        if (!visible) return;
-        const handleClick = (e: MouseEvent) => {
-            if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
-                onClose();
-            }
+        return () => {
+            document.body.style.overflow = 'unset';
         };
-        document.addEventListener("mousedown", handleClick);
-        return () => document.removeEventListener("mousedown", handleClick);
-    }, [onClose, visible]);
+    }, []);
 
     if (!visible) return null;
 
     const modalContent = (
-        <div className={`fixed inset-0 z-[9999] flex items-center justify-center ${animate ? "bg-black/50 backdrop-blur-sm" : "bg-black/0"} transition-all duration-200`}>
+        <div 
+            className={`fixed inset-0 z-[9999] flex items-center justify-center p-4 ${animate ? "bg-black/50 backdrop-blur-sm" : "bg-black/0"} transition-all duration-200`}
+            onClick={(e) => {
+                // オーバーレイクリックでモーダルを閉じる
+                if (e.target === e.currentTarget) {
+                    onClose();
+                }
+            }}
+        >
             <div
                 ref={modalRef}
-                className={`w-full max-w-md mx-auto rounded-2xl bg-white dark:bg-gray-800 shadow-2xl p-8 pb-10 flex flex-col items-center transform ${animate ? "scale-100 opacity-100" : "scale-90 opacity-0"} transition-all duration-200 ease-out min-h-[320px]`}
+                className={`w-full max-w-md max-h-[90vh] overflow-y-auto rounded-2xl bg-white dark:bg-gray-800 shadow-2xl p-6 md:p-8 pb-8 md:pb-10 flex flex-col items-center transform ${animate ? "scale-100 opacity-100" : "scale-90 opacity-0"} transition-all duration-200 ease-out`}
             >
                 <div className="w-12 h-1.5 bg-gray-300 dark:bg-gray-600 rounded-full mb-4" />
                 <h2 className="text-2xl md:text-3xl font-semibold mb-2 text-purple-600 dark:text-purple-400">コインを購入</h2>
