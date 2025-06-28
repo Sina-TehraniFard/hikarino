@@ -2,6 +2,49 @@
 
 このファイルは、このリポジトリでコードを扱う際にClaude Code (claude.ai/code) に対するガイダンスを提供します。
 
+# 🚨 最重要事項 - コミットメッセージ禁止事項
+
+## 絶対に含めてはいけない内容
+以下をコミットメッセージに含めることは**重大な違反行為**です：
+
+```
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+### 理由
+- プロジェクトの専門性と信頼性を損なう
+- コミット履歴の品質を著しく低下させる
+- 開発者の貢献を不適切に表現する
+
+### 正しいコミットメッセージ
+- 機能説明と技術仕様のみを記述
+- 客観的で事実に基づく内容
+- Conventional Commits形式に従った簡潔な表現
+
+### 必須テンプレート
+コミットメッセージには以下のテンプレートを使用すること：
+
+```
+<type>: <description>
+
+<body>
+
+Developed-by: Sina TehraniFard <tf.sina.system@gmail.com>
+```
+
+**例：**
+```
+feat: ユーザー認証システムの実装
+
+- Firebase Authentication統合
+- ログイン/ログアウト機能
+- セッション管理とルート保護
+
+Developed-by: Sina TehraniFard <tf.sina.system@gmail.com>
+```
+
 # 追加指示
 - gitワークフロー @docs/git-instructions.md
 - gitガイドライン @docs/git-guidelines.md
