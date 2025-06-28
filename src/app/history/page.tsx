@@ -128,25 +128,25 @@ export default function HistoryPage() {
                                             <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 dark:from-purple-500/20 dark:to-pink-500/20 rounded-xl p-4 text-center transform hover:scale-105 transition-transform duration-200">
                                                 <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">総占い回数</p>
                                                 <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{stats.totalReadings}</p>
-                                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">回の導き</p>
+                                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">回</p>
                                             </div>
                                             
                                             {stats.mostFrequentCard && (
                                                 <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 dark:from-blue-500/20 dark:to-cyan-500/20 rounded-xl p-4 text-center transform hover:scale-105 transition-transform duration-200">
-                                                    <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">守護カード</p>
+                                                    <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">最頻出カード</p>
                                                     <p className="text-lg font-bold text-blue-600 dark:text-blue-400">{stats.mostFrequentCard.name}</p>
                                                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{stats.mostFrequentCard.count}回出現</p>
                                                 </div>
                                             )}
                                             
                                             <div className="bg-gradient-to-br from-amber-500/10 to-orange-500/10 dark:from-amber-500/20 dark:to-orange-500/20 rounded-xl p-4 text-center transform hover:scale-105 transition-transform duration-200">
-                                                <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">占い頻度</p>
+                                                <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">利用頻度</p>
                                                 <p className="text-lg font-bold text-amber-600 dark:text-amber-400">{stats.readingFrequency.average}</p>
-                                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">のペース</p>
+                                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">間隔</p>
                                             </div>
                                             
                                             <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 dark:from-green-500/20 dark:to-emerald-500/20 rounded-xl p-4 text-center transform hover:scale-105 transition-transform duration-200">
-                                                <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">支配元素</p>
+                                                <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">主要属性</p>
                                                 <p className="text-lg font-bold text-green-600 dark:text-green-400">{stats.dominantElement.element}</p>
                                                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{stats.dominantElement.percentage}%</p>
                                             </div>
@@ -167,7 +167,7 @@ export default function HistoryPage() {
                     {/* タイムラインヘッダー */}
                     <div className="mb-6">
                         <h2 className="text-lg font-light text-gray-700 dark:text-gray-300 tracking-wider">
-                            {fortunes.length === 0 ? "まだ物語は始まっていません..." : "あなたが紡いだ物語"}
+                            {fortunes.length === 0 ? "利用履歴はありません" : "利用履歴"}
                         </h2>
                     </div>
 
@@ -228,7 +228,7 @@ export default function HistoryPage() {
                                                     {fortune.cards.map((card, cardIndex) => (
                                                         <MiniTarotCard
                                                             key={cardIndex}
-                                                            card={{ name: card.cardName, number: cardIndex + 1 }}
+                                                            card={{ name: card.cardName, imagePath: "" }}
                                                             isReversed={card.isReversed}
                                                             delay={cardIndex * 50}
                                                         />
@@ -263,9 +263,8 @@ export default function HistoryPage() {
                                             <div className="p-6 border-t border-gray-200 dark:border-gray-700">
                                                 {/* 占い結果 */}
                                                 <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 rounded-xl p-6">
-                                                    <h3 className="text-sm font-medium text-purple-700 dark:text-purple-300 mb-3 flex items-center gap-2">
-                                                        <span>⭐</span>
-                                                        ヒカリノからのメッセージ
+                                                    <h3 className="text-sm font-medium text-purple-700 dark:text-purple-300 mb-3">
+                                                        結果
                                                     </h3>
                                                     <div className="prose prose-sm dark:prose-invert max-w-none">
                                                         <p className="whitespace-pre-wrap text-gray-700 dark:text-gray-200 leading-relaxed">
@@ -287,10 +286,7 @@ export default function HistoryPage() {
                         <div className="text-center py-12">
                             <div className="text-6xl mb-4 opacity-20">⭐</div>
                             <p className="text-gray-500 dark:text-gray-400">
-                                まだ占いの記録がありません
-                            </p>
-                            <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">
-                                最初の一歩を踏み出してみましょう
+                                利用記録がありません
                             </p>
                         </div>
                     )}
