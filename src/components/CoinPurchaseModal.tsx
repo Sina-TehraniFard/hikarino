@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 declare global {
     interface Window {
@@ -100,11 +101,11 @@ const CoinPurchaseModal: React.FC<CoinPurchaseModalProps> = ({ isOpen, onClose, 
 
     if (!visible) return null;
 
-    return (
-        <div className={`fixed inset-0 z-50 flex items-end justify-center ${animate ? "bg-black/50 backdrop-blur-sm" : "bg-black/0"} transition-all duration-300`}>
+    const modalContent = (
+        <div className={`fixed inset-0 z-[9999] flex items-center justify-center ${animate ? "bg-black/50 backdrop-blur-sm" : "bg-black/0"} transition-all duration-300`}>
             <div
                 ref={modalRef}
-                className={`w-full max-w-md mx-auto rounded-t-3xl bg-white dark:bg-gray-800 shadow-2xl p-8 pb-10 flex flex-col items-center transform ${animate ? "translate-y-0" : "translate-y-full"} transition-transform duration-300 ease-out min-h-[320px]`}
+                className={`w-full max-w-md mx-auto rounded-2xl bg-white dark:bg-gray-800 shadow-2xl p-8 pb-10 flex flex-col items-center transform ${animate ? "scale-100 opacity-100" : "scale-90 opacity-0"} transition-all duration-300 ease-out min-h-[320px]`}
             >
                 <div className="w-12 h-1.5 bg-gray-300 dark:bg-gray-600 rounded-full mb-4" />
                 <h2 className="text-2xl md:text-3xl font-semibold mb-2 text-purple-600 dark:text-purple-400">コインを購入</h2>
@@ -187,6 +188,9 @@ const CoinPurchaseModal: React.FC<CoinPurchaseModalProps> = ({ isOpen, onClose, 
             </div>
         </div>
     );
+
+    // React Portalを使用してbody直下にモーダルを配置
+    return createPortal(modalContent, document.body);
 };
 
 export default CoinPurchaseModal; 
