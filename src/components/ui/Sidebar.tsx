@@ -58,7 +58,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           {/* コイン表示 */}
           <button 
             onClick={onCoinClick}
-            className="flex items-center gap-2 bg-white dark:bg-gray-700 px-3 py-2 rounded-lg shadow-sm border border-purple-200 dark:border-purple-700 hover:shadow-md hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer w-full"
+            className="flex items-center gap-2 bg-white dark:bg-gray-700 px-3 py-2 rounded-lg shadow-sm border border-purple-200 dark:border-purple-700 hover:shadow-md transition-shadow duration-200 cursor-pointer w-full"
           >
             <div className="w-5 h-5 relative">
               <svg className="w-full h-full text-yellow-500" fill="currentColor" viewBox="0 0 24 24">

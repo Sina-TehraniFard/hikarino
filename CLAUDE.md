@@ -45,6 +45,32 @@ feat: ユーザー認証システムの実装
 Developed-by: Sina TehraniFard <tf.sina.system@gmail.com>
 ```
 
+# 🚨 Git操作の重要な制限事項
+
+## 絶対禁止事項
+**ユーザーの明示的な指示がない限り、いかなるGit操作も実行してはならない**
+
+### 禁止されるGit操作
+- `git add`
+- `git commit`
+- `git push`
+- `git pull`
+- `git merge`
+- `git rebase`
+- `git reset`
+- `git checkout`
+- その他すべてのGit関連コマンド
+
+### 理由
+- ユーザーの作業フローを尊重
+- 意図しない変更の防止
+- バージョン管理の主導権をユーザーに委譲
+
+### 許可される操作
+- `git status`（状況確認のため、ユーザーが明示的に要求した場合のみ）
+- `git log`（履歴確認のため、ユーザーが明示的に要求した場合のみ）
+- `git diff`（差分確認のため、ユーザーが明示的に要求した場合のみ）
+
 # 追加指示
 - gitワークフロー @docs/git-instructions.md
 - gitガイドライン @docs/git-guidelines.md

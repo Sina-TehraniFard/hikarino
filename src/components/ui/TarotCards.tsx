@@ -74,10 +74,18 @@ const TarotCards = ({ cards, onAllFlipped }: TarotCardsProps) => {
     }
   };
 
-  // 全カード一括フリップ
+  // 全カード一括フリップ（表/裏の切り替え）
   const handleFlipAll = () => {
-    setFlippedCards(new Array(cards.length).fill(true));
-    setShowFlipGuide(false);
+    const allFlipped = flippedCards.every(flipped => flipped);
+    if (allFlipped) {
+      // 全て表なら裏に戻す
+      setFlippedCards(new Array(cards.length).fill(false));
+      setShowFlipGuide(true);
+    } else {
+      // 一部または全て裏なら表にする
+      setFlippedCards(new Array(cards.length).fill(true));
+      setShowFlipGuide(false);
+    }
   };
 
   // すべてフリップされたかチェック
@@ -98,20 +106,15 @@ const TarotCards = ({ cards, onAllFlipped }: TarotCardsProps) => {
   return (
     <div className="mt-6 mb-12">
       {/* フリップガイド */}
-      {showFlipGuide && flippedCards.some(flipped => !flipped) && (
-        <div className="mb-6 text-center space-y-3">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-700 rounded-lg">
+      {!flippedCards.every(flipped => flipped) && (
+        <div className="mb-6 text-center transition-all duration-500 ease-in-out">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-700 rounded-lg cursor-pointer hover:bg-purple-100 dark:hover:bg-purple-950/30 transition-colors duration-200"
+               onClick={handleFlipAll}>
             <span className="animate-pulse text-purple-600 dark:text-purple-400">✨</span>
             <p className="text-sm text-purple-800 dark:text-purple-200 font-medium">
-              カードをタップして表に返してください
+              すべてのカードを一度に表示
             </p>
           </div>
-          <button
-            onClick={handleFlipAll}
-            className="text-xs text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 underline transition-colors duration-200"
-          >
-            すべてのカードを一度に表示
-          </button>
         </div>
       )}
       
@@ -133,7 +136,7 @@ const TarotCards = ({ cards, onAllFlipped }: TarotCardsProps) => {
               <div 
                 className={`relative preserve-3d transition-transform duration-700 cursor-pointer ${
                   flippedCards[idx] ? 'rotate-y-180' : ''
-                } ${!flippedCards[idx] ? 'hover:scale-105 hover:shadow-2xl' : ''}`}
+                }`}
                 onClick={() => !flippedCards[idx] && handleCardFlip(idx)}
                 style={{ transformStyle: 'preserve-3d' }}
               >

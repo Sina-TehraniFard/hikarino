@@ -20,6 +20,7 @@ import AppIntro from "@/components/ui/AppIntro";
 import Sidebar from "@/components/ui/Sidebar";
 import PageBackground from "@/components/ui/PageBackground";
 import MessageDialog from "@/components/ui/MessageDialog";
+import WaitingAnimation from "@/components/ui/WaitingAnimation";
 import {useState} from "react";
 
 export default function Home() {
@@ -39,10 +40,12 @@ export default function Home() {
         isLoading,
         hasFortuned,
         error,
+        showWaitingAnimation,
         setQuestion,
         handleDrawCards,
         handleFortune,
         restoreGuestData,
+        onAnimationComplete,
     } = useFortune();
 
     useEffect(() => {
@@ -96,7 +99,7 @@ export default function Home() {
                     onLogout={handleLogout}
                     onRequireLogin={() => setShowLogin(true)}
                     displayCoins={displayCoins}
-                    onCoinClick={() => setShowCoinModal(true)}
+                    onCoinClick={() => setShowCoinModal(prev => !prev)}
                 />
             </div>
 
@@ -113,7 +116,7 @@ export default function Home() {
                 onLogout={handleLogout}
                 onRequireLogin={() => setShowLogin(true)}
                 userId={user?.uid}
-                onCoinClick={() => setShowCoinModal(true)}
+                onCoinClick={() => setShowCoinModal(prev => !prev)}
             />
 
             {/* 簡単3ステップ - 不安解消 */}
@@ -161,9 +164,15 @@ export default function Home() {
                     </div>
                 )}
 
-                <FortuneResult result={result}/>
+                {showWaitingAnimation ? (
+                    <WaitingAnimation 
+                        onAnimationComplete={onAnimationComplete}
+                    />
+                ) : (
+                    (hasFortuned || result) && <FortuneResult result={result}/>
+                )}
 
-                {hasFortuned && (
+                {hasFortuned && !showWaitingAnimation && (
                     <div className="mt-6 text-center transition-all duration-300 ease-in-out">
                         <Button onClick={() => window.location.reload()} fullWidth>
                             もう一度占う

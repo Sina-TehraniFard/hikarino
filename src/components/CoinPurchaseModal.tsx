@@ -64,7 +64,12 @@ const CoinPurchaseModal: React.FC<CoinPurchaseModalProps> = ({ isOpen, onClose, 
     useEffect(() => {
         if (isOpen) {
             setVisible(true);
-            setTimeout(() => setAnimate(true), 10); // マウント直後にスライドアップ
+            // requestAnimationFrameで確実に次のフレームでアニメーション開始
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    setAnimate(true);
+                });
+            });
         } else if (visible) {
             setAnimate(false);
             const timer = setTimeout(() => setVisible(false), ANIMATION_DURATION);
