@@ -125,8 +125,11 @@ export default function HistoryPage() {
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
         setExpandedId(null); // ページ変更時に展開状態をリセット
-        // ページトップにスクロール
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // 検索ボックスまでスクロール
+        const searchElement = document.getElementById('search-section');
+        if (searchElement) {
+            searchElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
     };
 
     // 検索時の処理（10行未満なのでコンポーネント内でOK）
@@ -247,7 +250,7 @@ export default function HistoryPage() {
                     )}
 
                     {/* タイムラインヘッダーと検索・フィルター */}
-                    <div className="mb-6 space-y-4">
+                    <div id="search-section" className="mb-6 space-y-4">
                         <h2 className="text-lg font-light text-gray-700 dark:text-gray-300 tracking-wider">
                             {fortunes.length === 0 ? "利用履歴はありません" : "利用履歴"}
                         </h2>
