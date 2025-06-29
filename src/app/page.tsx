@@ -4,6 +4,7 @@ import {useEffect} from "react";
 import {useRouter} from "next/navigation";
 import {useAuth} from "@/hooks/useAuth";
 import {useFortune} from "@/hooks/useFortune";
+import {useCoinAnimation} from "@/hooks/useCoinAnimation";
 import {signOut} from "firebase/auth";
 import {auth} from "@/lib/firebase";
 import Header from "@/components/Header";
@@ -15,15 +16,22 @@ import TarotCards from "@/components/ui/TarotCards";
 import QuestionForm from "@/components/ui/QuestionForm";
 import FortuneResult from "@/components/ui/FortuneResult";
 import ErrorMessage from "@/components/ui/ErrorMessage";
-import HikarinoProfile from "@/components/ui/HikarinoProfile";
+import AppIntro from "@/components/ui/AppIntro";
+import Sidebar from "@/components/ui/Sidebar";
+import PageBackground from "@/components/ui/PageBackground";
+import MessageDialog from "@/components/ui/MessageDialog";
+import WaitingAnimation from "@/components/ui/WaitingAnimation";
 import {useState} from "react";
 
 export default function Home() {
     const {user, loading} = useAuth();
     const router = useRouter();
     const {coins, refreshCoins} = useCoinContext();
+    const {displayCoins} = useCoinAnimation(coins, user?.uid);
     const [showLogin, setShowLogin] = useState(false);
     const [showCoinModal, setShowCoinModal] = useState(false);
+    const [showMessageDialog, setShowMessageDialog] = useState(false);
+    const [allCardsFlipped, setAllCardsFlipped] = useState(false);
 
     const {
         question,
@@ -32,18 +40,28 @@ export default function Home() {
         isLoading,
         hasFortuned,
         error,
+        showWaitingAnimation,
         setQuestion,
         handleDrawCards,
         handleFortune,
         restoreGuestData,
+        onAnimationComplete,
     } = useFortune();
 
     useEffect(() => {
         restoreGuestData(user);
-        refreshCoins();
+        refreshCoins(true);
     }, [user, refreshCoins, restoreGuestData]);
 
-    if (loading) return null;
+    if (loading) {
+        return (
+            <main className="flex min-h-screen relative overflow-hidden">
+                <div className="flex-1 flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+                </div>
+            </main>
+        );
+    }
 
     const handleLogout = async () => {
         await signOut(auth);
@@ -59,12 +77,55 @@ export default function Home() {
     };
 
     const handleCoinModalClose = async () => {
-        await refreshCoins();
+        await refreshCoins(true); // アニメーションありでリフレッシュ
         setShowCoinModal(false);
     };
 
+    const handleDrawCardsClick = () => {
+        if (!question.trim()) {
+            setShowMessageDialog(true);
+            return;
+        }
+        setAllCardsFlipped(false); // フリップ状態をリセット
+        handleDrawCards();
+    };
+
+    const handleStepClick = (stepNumber: number) => {
+        if (stepNumber === 1) {
+            const questionSection = document.getElementById('question-section');
+            if (questionSection) {
+                questionSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+                // スクロール完了後にフォーカス
+                setTimeout(() => {
+                    const textarea = questionSection.querySelector('textarea');
+                    if (textarea) {
+                        textarea.focus();
+                    }
+                }, 600);
+            }
+        }
+    };
+
     return (
-        <main className="flex min-h-screen flex-col items-center justify-between p-4 md:p-24">
+        <main className="flex min-h-screen relative overflow-hidden">
+            {/* PC版サイドバー（768px以上で表示） */}
+            <div className="hidden md:block">
+                <Sidebar
+                    user={user || {displayName: "ゲスト", email: "", uid: undefined}}
+                    onLogout={handleLogout}
+                    onRequireLogin={() => setShowLogin(true)}
+                    displayCoins={displayCoins}
+                    onCoinClick={() => setShowCoinModal(prev => !prev)}
+                />
+            </div>
+
+            <PageBackground />
+            
+            <div className="flex-1 md:ml-72 overflow-hidden">
+                <div className="w-full max-w-lg mx-auto min-h-screen relative px-6 space-y-6 pb-12">
             {showLogin && <LoginModal onClose={() => setShowLogin(false)}/>}
 
             <Header
@@ -73,31 +134,43 @@ export default function Home() {
                 onLogout={handleLogout}
                 onRequireLogin={() => setShowLogin(true)}
                 userId={user?.uid}
+                onCoinClick={() => setShowCoinModal(prev => !prev)}
             />
 
-            <HikarinoProfile/>
-
-            <QuestionForm
-                question={question}
-                onChange={setQuestion}
-            />
+            {/* 簡単3ステップ - 不安解消 */}
+            <AppIntro onStepClick={handleStepClick} />
+            {/* 質問入力 - 実際のアクション */}
+            <div id="question-section">
+                <QuestionForm
+                    question={question}
+                    onChange={setQuestion}
+                    disabled={cards.length > 0}
+                />
+            </div>
 
             {cards.length === 0 && (
-                <Button onClick={handleDrawCards} fullWidth>
-                    カードを引く
+                <Button 
+                    onClick={handleDrawCardsClick} 
+                    variant="magical"
+                    fullWidth
+                >
+                    タロットを引く
                 </Button>
             )}
 
-            <TarotCards cards={cards}/>
+            <TarotCards 
+                cards={cards}
+                onAllFlipped={() => setAllCardsFlipped(true)}
+            />
 
-            {cards.length > 0 && !hasFortuned && !isLoading && (
+            {cards.length > 0 && allCardsFlipped && !hasFortuned && !isLoading && (
                 <>
                     <Button
                         onClick={handleFortuneClick}
                         disabled={isLoading}
                         fullWidth
                     >
-                        ヒカリノに解釈してもらう
+                        占い結果を見る
                     </Button>
                     <ErrorMessage error={error}/>
                 </>
@@ -112,9 +185,15 @@ export default function Home() {
                     </div>
                 )}
 
-                <FortuneResult result={result}/>
+                {showWaitingAnimation ? (
+                    <WaitingAnimation 
+                        onAnimationComplete={onAnimationComplete}
+                    />
+                ) : (
+                    (hasFortuned || result) && <FortuneResult result={result}/>
+                )}
 
-                {hasFortuned && (
+                {hasFortuned && !showWaitingAnimation && (
                     <div className="mt-6 text-center transition-all duration-300 ease-in-out">
                         <Button onClick={() => window.location.reload()} fullWidth>
                             もう一度占う
@@ -128,6 +207,15 @@ export default function Home() {
                 onClose={handleCoinModalClose}
                 uid={user?.uid}
             />
+
+            <MessageDialog
+                isOpen={showMessageDialog}
+                onClose={() => setShowMessageDialog(false)}
+                type="warning"
+                message="質問を入力してからタロットを引いてください。"
+            />
+                </div>
+            </div>
         </main>
     );
 }

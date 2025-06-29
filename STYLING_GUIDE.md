@@ -83,6 +83,37 @@ className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duratio
 className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all duration-300"
 ```
 
+### メッセージダイアログ
+```tsx
+// 情報（info）
+アイコン: 💭
+背景色: bg-blue-50 dark:bg-blue-950/20
+ボーダー: border-blue-200 dark:border-blue-700
+テキスト: text-blue-800 dark:text-blue-200
+ボタン: bg-blue-600 hover:bg-blue-700
+
+// 警告（warning）
+アイコン: ⚠️
+背景色: bg-amber-50 dark:bg-amber-950/20
+ボーダー: border-amber-200 dark:border-amber-700
+テキスト: text-amber-800 dark:text-amber-200
+ボタン: bg-amber-600 hover:bg-amber-700
+
+// エラー（error）
+アイコン: ❌
+背景色: bg-red-50 dark:bg-red-950/20
+ボーダー: border-red-200 dark:border-red-700
+テキスト: text-red-800 dark:text-red-200
+ボタン: bg-red-600 hover:bg-red-700
+
+// 成功（success）
+アイコン: ✅
+背景色: bg-emerald-50 dark:bg-emerald-950/20
+ボーダー: border-emerald-200 dark:border-emerald-700
+テキスト: text-emerald-800 dark:text-emerald-200
+ボタン: bg-emerald-600 hover:bg-emerald-700
+```
+
 ### フォーム要素
 ```tsx
 // インプット
@@ -148,11 +179,24 @@ className="focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offs
 className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
 ```
 
-## 禁止事項
+## CSS利用方針
 
+### 基本原則
+1. **Tailwind CSS優先** - 可能な限りTailwindを使用
+2. **カスタムCSS制限** - 以下の場合のみ許可：
+   - Tailwindで実現困難な高度なアニメーション
+   - ブランド固有のエフェクト（ガラス質感、グラデーション移動など）
+   - パフォーマンス最適化のため
+
+### 許可されるカスタムCSS
+- **アニメーション系**: @keyframes（但しglobals.cssで一元管理）
+- **ユーティリティクラス**: .animate-* 系のカスタムクラス
+- **特殊エフェクト**: backdrop-filter, transform等の組み合わせ
+
+### 禁止事項
 1. **インラインスタイル禁止** - style属性を使用しない
 2. **CSS-in-JS禁止** - styled-componentsやemotionを使用しない
-3. **カスタムCSS禁止** - .cssファイルを作成しない
+3. **コンポーネント固有CSS禁止** - .cssファイルをコンポーネント毎に作成しない
 4. **!important禁止** - Tailwindのユーティリティクラスで解決する
 5. **任意値の乱用禁止** - Tailwindのデフォルト値を優先
 
