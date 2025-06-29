@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.0.0...v1.1.0) (2025-06-29)
+
+
+### Features
+
+* semantic-release設定でpackage.json自動更新を追加 ([a534349](https://github.com/Sina-TehraniFard/hikarino/commit/a534349b5440a05678acbd5f7fe697ecdd665729))
+
 # 1.0.0 (2025-06-29)
 
 
