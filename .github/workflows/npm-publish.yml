@@ -2,31 +2,29 @@
 name: Release
 on:
   push:
-    branches: [main]  # mainブランチへのpushをトリガーに実行
+    branches: [main]
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
 
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      # リポジトリのコードをチェックアウト
-      - uses: actions/checkout@v3
-      
-      # Node.js環境をセットアップ（バージョン20.9.0を使用）
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
         with:
           node-version: 20.9.0
 
-      # 依存関係をクリーンインストール（package-lock.jsonを元に厳密にインストール）
       - run: npm ci
 
-      # テストの実行（package.jsonにtestスクリプトがない場合はこの行を削除）
-      # - run: npm test
-
-      # semantic-releaseを実行
-      # コミットメッセージを解析して自動的にバージョンを決定し、
-      # GitHubリリースとタグを作成します
       - run: npx semantic-release
 
-    # 環境変数の設定
     env:
-      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
