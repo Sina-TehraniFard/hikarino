@@ -1,22 +1,13 @@
-import type {NextApiRequest, NextApiResponse} from 'next';
+import { NextRequest } from 'next/server';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: '2025-04-30.basil',
 });
 
-type Data = { url: string } | { error: string };
-
-export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse<Data>
-) {
-    if (req.method !== 'POST') {
-        res.setHeader('Allow', 'POST');
-        return res.status(405).json({error: 'Method Not Allowed'});
-    }
-
-    const {priceId, uid, coinAmount} = req.body as {
+export async function POST(req: NextRequest) {
+    try {
+        const {priceId, uid, coinAmount} = await req.json() as {
         priceId: string;
         uid: string;
         coinAmount: number;
@@ -24,12 +15,11 @@ export default async function handler(
 
     console.log('Received request with:', {priceId, uid, coinAmount});
 
-    if (!priceId || !uid || !coinAmount) {
-        console.error('Missing parameters:', {priceId, uid, coinAmount});
-        return res.status(400).json({error: 'Missing required parameters'});
-    }
+        if (!priceId || !uid || !coinAmount) {
+            console.error('Missing parameters:', {priceId, uid, coinAmount});
+            return Response.json({error: 'Missing required parameters'}, {status: 400});
+        }
 
-    try {
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items: [
@@ -62,9 +52,9 @@ export default async function handler(
         if (!session.url) {
             throw new Error('No session URL returned');
         }
-        return res.status(200).json({url: session.url});
+        return Response.json({url: session.url});
     } catch (error: unknown) {
         const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-        return res.status(500).json({error: errorMessage});
+        return Response.json({error: errorMessage}, {status: 500});
     }
 } 

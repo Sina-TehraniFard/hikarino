@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
-import Image from "next/image";
+import React, { useEffect } from "react";
 import { useCoinAnimation } from "@/hooks/useCoinAnimation";
+import { useCoinContext } from "@/contexts/CoinContext";
 import HamburgerMenu from "@/components/ui/HamburgerMenu";
 import UserInfo from "@/components/ui/UserInfo";
 import { User } from "@/types";
@@ -13,34 +13,47 @@ interface HeaderProps {
     coins: number;
     onRequireLogin?: () => void;
     userId?: string | undefined;
+    onCoinClick?: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ user, onLogout, coins, onRequireLogin, userId }) => {
-    const displayCoins = useCoinAnimation(coins, userId);
+const Header: React.FC<HeaderProps> = ({ user, onLogout, coins, onRequireLogin, userId, onCoinClick }) => {
+    const { displayCoins, startAnimation } = useCoinAnimation(coins, userId);
+    const { onCoinPurchase } = useCoinContext();
+    
+    useEffect(() => {
+        onCoinPurchase(startAnimation);
+    }, [onCoinPurchase, startAnimation]);
 
 
     return (
         <>
-            <header className="w-full border-b border-gray-200 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                    <Image
-                        src="/hikarino-logo.png"
-                        alt="Hikarino"
-                        width={80}
-                        height={80}
-                        className="h-20 w-auto object-contain"
-                        priority
-                    />
+            <header className="w-full bg-transparent">
+                <div className="max-w-lg mx-auto px-6">
+                    <div className="flex items-center justify-between h-16 md:h-20">
+                        <div>
+                            <h1 className="text-xl md:text-xl font-bold bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent">
+                                ヒカリノ タロット占い
+                            </h1>
+                        </div>
+                        {/* モバイルメニュー（768px未満で表示） */}
+                        <div className="md:hidden">
+                            <HamburgerMenu 
+                                user={user} 
+                                onLogout={onLogout} 
+                                onRequireLogin={onRequireLogin}
+                                displayCoins={displayCoins}
+                                onCoinClick={onCoinClick}
+                            />
+                        </div>
+                        
+                        {/* デスクトップではサイドバーがあるのでメニューは非表示 */}
+                    </div>
                 </div>
-                <div className="flex items-center gap-4 ml-4">
-                    <HamburgerMenu 
-                        user={user} 
-                        onLogout={onLogout} 
-                        onRequireLogin={onRequireLogin} 
-                    />
-                </div>
+            {/* モバイル版のみユーザー情報を表示 */}
+            <div className="md:hidden">
+                <UserInfo user={user} displayCoins={displayCoins} onCoinClick={onCoinClick} />
+            </div>
             </header>
-            <UserInfo user={user} displayCoins={displayCoins} />
         </>
     );
 };
