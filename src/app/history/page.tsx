@@ -168,7 +168,7 @@ export default function HistoryPage() {
 
             <PageBackground />
             
-            <div className={`flex-1 ${user ? 'md:ml-64' : ''}`}>
+            <div className={`flex-1 ${user ? 'md:ml-72' : ''}`}>
                 <div className="w-full max-w-4xl mx-auto bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border border-purple-200/30 dark:border-purple-700/30 shadow-2xl min-h-screen relative">
                     <div className="px-6 space-y-6 pb-12">
             {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}

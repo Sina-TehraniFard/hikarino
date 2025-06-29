@@ -2,6 +2,10 @@
 
 import { User } from "@/types";
 import Image from "next/image";
+import dynamic from "next/dynamic";
+import { useState, useEffect } from "react";
+
+const LottieAnimation = dynamic(() => import('lottie-react'), { ssr: false });
 
 interface UserInfoProps {
   user: User;
@@ -10,6 +14,16 @@ interface UserInfoProps {
 }
 
 const UserInfo: React.FC<UserInfoProps> = ({ user, displayCoins, onCoinClick }) => {
+  const [coinAnimation, setCoinAnimation] = useState<any>(null);
+
+  // コインアニメーションを読み込み
+  useEffect(() => {
+    fetch('/animation/coin.json')
+      .then(res => res.json())
+      .then(data => setCoinAnimation(data))
+      .catch(error => console.error('コインアニメーション読み込みエラー:', error));
+  }, []);
+
   return (
     <div className="w-full bg-transparent border-b border-purple-200/30 dark:border-purple-900/20">
       <div className="max-w-lg mx-auto px-6">
@@ -34,14 +48,17 @@ const UserInfo: React.FC<UserInfoProps> = ({ user, displayCoins, onCoinClick }) 
             onClick={onCoinClick}
             className="flex items-center gap-2 bg-white dark:bg-gray-800 px-3 py-1.5 rounded-xl shadow-sm border border-purple-200 dark:border-purple-700 hover:shadow-md hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
           >
-            <div className="w-6 h-6 relative animate-pulse">
-              <Image
-                src="/coin-icon.svg"
-                alt="コイン"
-                width={24}
-                height={24}
-                className="w-full h-full"
-              />
+            <div className="w-6 h-6 relative">
+              {coinAnimation ? (
+                <LottieAnimation
+                  animationData={coinAnimation}
+                  loop={true}
+                  autoplay={true}
+                  style={{ width: 24, height: 24 }}
+                />
+              ) : (
+                <div className="w-6 h-6 bg-yellow-400 rounded-full animate-pulse" />
+              )}
             </div>
             <span className="font-bold text-purple-600 dark:text-purple-400 text-base md:text-lg">
               {typeof displayCoins === 'number' ? displayCoins.toLocaleString() : 0}

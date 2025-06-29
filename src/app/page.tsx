@@ -90,6 +90,25 @@ export default function Home() {
         handleDrawCards();
     };
 
+    const handleStepClick = (stepNumber: number) => {
+        if (stepNumber === 1) {
+            const questionSection = document.getElementById('question-section');
+            if (questionSection) {
+                questionSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+                // スクロール完了後にフォーカス
+                setTimeout(() => {
+                    const textarea = questionSection.querySelector('textarea');
+                    if (textarea) {
+                        textarea.focus();
+                    }
+                }, 600);
+            }
+        }
+    };
+
     return (
         <main className="flex min-h-screen relative overflow-hidden">
             {/* PC版サイドバー（768px以上で表示） */}
@@ -105,9 +124,8 @@ export default function Home() {
 
             <PageBackground />
             
-            <div className="flex-1 md:ml-64 overflow-hidden">
-                <div className="w-full max-w-lg mx-auto bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border border-purple-200/30 dark:border-purple-700/30 shadow-2xl min-h-screen relative">
-                    <div className="px-6 space-y-6 pb-12">
+            <div className="flex-1 md:ml-72 overflow-hidden">
+                <div className="w-full max-w-lg mx-auto min-h-screen relative px-6 space-y-6 pb-12">
             {showLogin && <LoginModal onClose={() => setShowLogin(false)}/>}
 
             <Header
@@ -120,17 +138,20 @@ export default function Home() {
             />
 
             {/* 簡単3ステップ - 不安解消 */}
-            <AppIntro />
+            <AppIntro onStepClick={handleStepClick} />
             {/* 質問入力 - 実際のアクション */}
-            <QuestionForm
-                question={question}
-                onChange={setQuestion}
-                disabled={cards.length > 0}
-            />
+            <div id="question-section">
+                <QuestionForm
+                    question={question}
+                    onChange={setQuestion}
+                    disabled={cards.length > 0}
+                />
+            </div>
 
             {cards.length === 0 && (
                 <Button 
                     onClick={handleDrawCardsClick} 
+                    variant="magical"
                     fullWidth
                 >
                     タロットを引く
@@ -193,7 +214,6 @@ export default function Home() {
                 type="warning"
                 message="質問を入力してからタロットを引いてください。"
             />
-                    </div>
                 </div>
             </div>
         </main>

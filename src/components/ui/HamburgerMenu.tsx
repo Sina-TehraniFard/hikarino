@@ -5,6 +5,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import HomeIcon from "../icons/HomeIcon";
 import { User } from "@/types";
+import dynamic from "next/dynamic";
+
+const LottieAnimation = dynamic(() => import('lottie-react'), { ssr: false });
 
 interface HamburgerMenuProps {
   user: User;
@@ -24,6 +27,15 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const [coinAnimation, setCoinAnimation] = useState<any>(null);
+
+  // コインアニメーションを読み込み
+  useEffect(() => {
+    fetch('/animation/coin.json')
+      .then(res => res.json())
+      .then(data => setCoinAnimation(data))
+      .catch(error => console.error('コインアニメーション読み込みエラー:', error));
+  }, []);
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -118,10 +130,16 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({
               className="flex items-center gap-2 bg-white dark:bg-gray-700 px-3 py-2 rounded-lg shadow-sm border border-purple-200 dark:border-purple-700 hover:shadow-md hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer w-full"
             >
               <div className="w-5 h-5 relative">
-                <svg className="w-full h-full text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
-                  <circle cx="12" cy="12" r="10"/>
-                  <text x="12" y="16" textAnchor="middle" className="text-xs font-bold fill-yellow-800">¥</text>
-                </svg>
+                {coinAnimation ? (
+                  <LottieAnimation
+                    animationData={coinAnimation}
+                    loop={true}
+                    autoplay={true}
+                    style={{ width: 20, height: 20 }}
+                  />
+                ) : (
+                  <div className="w-5 h-5 bg-yellow-400 rounded-full animate-pulse" />
+                )}
               </div>
               <span className="font-bold text-purple-600 dark:text-purple-400 text-sm">
                 {typeof displayCoins === 'number' ? displayCoins.toLocaleString() : 0}
