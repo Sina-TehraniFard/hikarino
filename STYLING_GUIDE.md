@@ -179,11 +179,24 @@ className="focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offs
 className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
 ```
 
-## 禁止事項
+## CSS利用方針
 
+### 基本原則
+1. **Tailwind CSS優先** - 可能な限りTailwindを使用
+2. **カスタムCSS制限** - 以下の場合のみ許可：
+   - Tailwindで実現困難な高度なアニメーション
+   - ブランド固有のエフェクト（ガラス質感、グラデーション移動など）
+   - パフォーマンス最適化のため
+
+### 許可されるカスタムCSS
+- **アニメーション系**: @keyframes（但しglobals.cssで一元管理）
+- **ユーティリティクラス**: .animate-* 系のカスタムクラス
+- **特殊エフェクト**: backdrop-filter, transform等の組み合わせ
+
+### 禁止事項
 1. **インラインスタイル禁止** - style属性を使用しない
 2. **CSS-in-JS禁止** - styled-componentsやemotionを使用しない
-3. **カスタムCSS禁止** - .cssファイルを作成しない
+3. **コンポーネント固有CSS禁止** - .cssファイルをコンポーネント毎に作成しない
 4. **!important禁止** - Tailwindのユーティリティクラスで解決する
 5. **任意値の乱用禁止** - Tailwindのデフォルト値を優先
 

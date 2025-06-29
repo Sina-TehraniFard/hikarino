@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { DrawnCard } from "@/types";
 import { useState, useEffect } from "react";
+import Button from "./Button";
 
 interface TarotCardsProps {
   cards: DrawnCard[];
@@ -108,13 +109,20 @@ const TarotCards = ({ cards, onAllFlipped }: TarotCardsProps) => {
       {/* フリップガイド */}
       {!flippedCards.every(flipped => flipped) && (
         <div className="mb-6 text-center transition-all duration-500 ease-in-out">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-700 rounded-lg cursor-pointer hover:bg-purple-100 dark:hover:bg-purple-950/30 transition-colors duration-200"
-               onClick={handleFlipAll}>
-            <span className="animate-pulse text-purple-600 dark:text-purple-400">✨</span>
-            <p className="text-sm text-purple-800 dark:text-purple-200 font-medium">
+          <Button
+            onClick={handleFlipAll}
+            variant="secondary"
+            size="medium"
+          >
+            <div className="flex items-center justify-center">
+              <div className="relative mr-2">
+                <div className="w-6 h-6 bg-gradient-to-br from-purple-400 via-pink-400 to-purple-500 rounded-full animate-pulse shadow-lg"></div>
+                {/* 躍動感のあるグロウエフェクト */}
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-400/60 to-pink-400/60 rounded-full blur-sm animate-ping opacity-75"></div>
+              </div>
               すべてのカードを一度に表示
-            </p>
-          </div>
+            </div>
+          </Button>
         </div>
       )}
       
