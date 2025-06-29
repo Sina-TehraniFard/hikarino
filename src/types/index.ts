@@ -206,7 +206,7 @@ export interface LoadingState {
 export interface CoinContext {
   coins: number;                                   // 現在のコイン残高
   consumeCoins: (amount: number) => Promise<void>; // コインを消費する関数
-  refreshCoins: () => Promise<void>;               // コイン残高を更新する関数
+  refreshCoins: (b: boolean) => Promise<void>;               // コイン残高を更新する関数
 }
 
 // ===== イベントハンドラーの型 =====

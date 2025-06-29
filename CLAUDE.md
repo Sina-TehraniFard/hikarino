@@ -2,9 +2,124 @@
 
 このファイルは、このリポジトリでコードを扱う際にClaude Code (claude.ai/code) に対するガイダンスを提供します。
 
+# 🚨 最重要事項 - コミットメッセージ禁止事項
+
+## 絶対に含めてはいけない内容
+以下をコミットメッセージに含めることは**重大な違反行為**です：
+
+```
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+### 理由
+- プロジェクトの専門性と信頼性を損なう
+- コミット履歴の品質を著しく低下させる
+- 開発者の貢献を不適切に表現する
+
+### 正しいコミットメッセージ
+- 機能説明と技術仕様のみを記述
+- 客観的で事実に基づく内容
+- Conventional Commits形式に従った簡潔な表現
+
+### 必須テンプレート
+コミットメッセージには以下のテンプレートを使用すること：
+
+```
+<type>: <description>
+
+<body>
+
+Developed-by: Sina TehraniFard <tf.sina.system@gmail.com>
+```
+
+**例：**
+```
+feat: ユーザー認証システムの実装
+
+- Firebase Authentication統合
+- ログイン/ログアウト機能
+- セッション管理とルート保護
+
+Developed-by: Sina TehraniFard <tf.sina.system@gmail.com>
+```
+
+# 🚨 Git操作の重要な制限事項
+
+## 絶対禁止事項
+**ユーザーの明示的な指示がない限り、いかなるGit操作も実行してはならない**
+
+### 禁止されるGit操作
+- `git add`
+- `git commit`
+- `git push`
+- `git pull`
+- `git merge`
+- `git rebase`
+- `git reset`
+- `git checkout`
+- その他すべてのGit関連コマンド
+
+### 理由
+- ユーザーの作業フローを尊重
+- 意図しない変更の防止
+- バージョン管理の主導権をユーザーに委譲
+
+### 許可される操作
+- `git status`（状況確認のため、ユーザーが明示的に要求した場合のみ）
+- `git log`（履歴確認のため、ユーザーが明示的に要求した場合のみ）
+- `git diff`（差分確認のため、ユーザーが明示的に要求した場合のみ）
+
 # 追加指示
 - gitワークフロー @docs/git-instructions.md
+- gitガイドライン @docs/git-guidelines.md
 - スタイリングガイド @STYLING_GUIDE.md
+
+## コード品質ガイドライン
+
+### 客観性とプロフェッショナリズムの原則
+
+#### 既定的評価の禁止
+- **肯定的形容詞の使用禁止**: 「素晴らしい」「完璧」「最高」「美しい」等の主観的評価表現を使用しない
+- **コミットメッセージの客観性**: 機能説明と技術仕様に限定し、品質評価を含めない
+- **コード品質の客観的記述**: 実装内容・機能・技術仕様のみを記述する
+
+#### 批判的思考の維持
+- **実装検証の重要性**: 常に潜在的な問題・改善点・制限事項を考慮する
+- **品質保証の態度**: 自己満足を排除し、継続的な改善機会を探求する
+- **外部評価への配慮**: 第三者が見た際の信頼性と専門性を重視する
+
+#### プロフェッショナルな表現方法
+- **事実ベースの記述**: 実装した機能・解決した問題・使用した技術のみを記述
+- **中立的表現の採用**: 感情的・評価的表現を避け、技術的事実に基づく記述
+- **継続改善の姿勢**: 完成度より改善可能性に焦点を当てた記述
+
+### コメントの書き方
+- **番号付きコメントは禁止**: コメントに「1. 」「2. 」「3. 」などの番号を振ってはいけません
+- **理由**: コードの追加・削除・移動の際に番号の付け直しが必要になり、保守コストが増大します
+- **代替案**: セクション名や機能名で明確に区別する
+- **例外**: 手順を説明する場合は「Step 1」「Step 2」のように明示的に手順であることを示す
+
+#### ❌ 悪い例
+```typescript
+// 1. ユーザー認証
+const user = getUser();
+// 2. データ取得  
+const data = fetchData();
+// 3. 表示更新
+updateUI(data);
+```
+
+#### ✅ 良い例
+```typescript
+// ユーザー認証
+const user = getUser();
+// データ取得  
+const data = fetchData();
+// 表示更新
+updateUI(data);
+```
 
 ## プロジェクト概要
 
@@ -82,3 +197,149 @@ Stripe統合には以下が必要：
 - サーバーサイドのコイン購入処理
 - 決済確認のためのWebbook検証
 - Cloud Functionsを通じた安全なコイン残高更新
+
+### モーダルダイアログの使用方法
+
+#### MessageDialogコンポーネント
+ユーザーへの通知、警告、エラー表示に統一されたモーダルダイアログを使用してください。
+
+**使用例：**
+```typescript
+import MessageDialog from "@/components/ui/MessageDialog";
+
+// 状態管理
+const [showMessage, setShowMessage] = useState(false);
+
+// ダイアログ表示
+<MessageDialog
+  isOpen={showMessage}
+  onClose={() => setShowMessage(false)}
+  type="warning"  // 'info' | 'warning' | 'error' | 'success'
+  title="カスタムタイトル"  // オプション（省略時は自動設定）
+  message="表示したいメッセージ"
+/>
+```
+
+**タイプ別の特徴：**
+- **info（情報）**: 💭アイコン、青色、「了解」ボタン
+- **warning（警告）**: ⚠️アイコン、黄色、「はい」ボタン
+- **error（エラー）**: ❌アイコン、赤色、「OK」ボタン
+- **success（成功）**: ✅アイコン、エメラルド色、「OK」ボタン
+
+**使用ガイドライン：**
+- ユーザーの操作を中断させる重要な通知に使用
+- 下部の小さなメッセージではなく、視認性の高いモーダルを使用
+- メッセージは簡潔に、必要な情報のみを伝える
+- 適切なタイプを選択してユーザーに状況を明確に伝える
+
+### UIレイアウト構造
+
+#### PC版（768px以上）
+- **左サイドバー常時表示**: `src/components/ui/Sidebar.tsx`を使用
+- **サイドバー幅**: 256px固定
+- **メインコンテンツ**: サイドバー分のマージンを設定
+- **ヘッダー**: サイドバーと重複しないよう調整
+
+#### モバイル版（768px未満）
+- **ハンバーガーメニュー**: `src/components/ui/HamburgerMenu.tsx`を使用
+- **スライドアウト方式**: 右から左にメニューが出現
+- **オーバーレイ**: メニュー表示時は背景をブラー処理
+
+#### 重要な実装規則
+- **機能完全一致**: SidebarとHamburgerMenuの機能は完全に一致させること
+- **レスポンシブ切り替え**: `md:`ブレークポイント（768px）で切り替え
+- **ユーザー情報表示**: 両方のメニューで同じユーザー情報を表示
+- **メニュー項目**: ホーム・履歴・ログイン/ログアウトを同じ順序で配置
+
+## ロジック分離の原則
+
+### 基本方針
+**品質と効率のバランスを重視した現実的なロジック分離**
+
+### 分離基準（優先度順）
+
+#### 1. **単一責任原則** 🎯
+- **UIロジック**: コンポーネント内に保持OK（イベントハンドラー、表示制御等）
+- **ビジネスロジック**: 必ず分離（データ変換、計算、バリデーション等）
+
+#### 2. **再利用性** 🔄
+- **2箇所以上で使用**: 共通ファイルに分離
+- **1箇所のみ**: コンポーネント内またはコンポーネント専用ファイル
+
+#### 3. **テスタビリティ** 🧪
+- **複雑な計算処理**: 必ず分離（テスト容易性のため）
+- **API処理・非同期処理**: 必ず分離
+- **純粋関数**: ユーティリティとして分離
+
+#### 4. **行数制限** 📏
+- **20行未満**: 分離不要（コンポーネント内OK）
+- **20行以上**: 分離を検討（他の基準と合わせて判断）
+
+### ファイル分離戦略
+
+#### 共通ロジック
+```
+src/
+├── hooks/           # 状態管理＋再利用可能ロジック
+├── utils/           # 純粋関数・計算処理
+├── lib/             # API処理・ビジネスロジック
+```
+
+#### コンポーネント専用ロジック
+```
+src/components/ui/
+├── Button.tsx
+├── Button.logic.ts    # Button専用の複雑ロジック
+├── TarotCards.tsx
+└── TarotCards.logic.ts # TarotCards専用ロジック
+```
+
+#### 判断フローチャート
+1. ビジネスロジック？ → Yes: 分離必須
+2. 2箇所以上で使用？ → Yes: 共通ファイル化
+3. 複雑な計算・API？ → Yes: 分離推奨
+4. 20行以上？ → Yes: 分離検討
+5. それ以外 → コンポーネント内OK
+│   ├── fortuneLogic.ts
+│   └── dataProcessing.ts
+```
+
+### 実装例
+
+#### ❌ 悪い例（10行以上のロジックをコンポーネント内に記述）
+```typescript
+// page.tsx
+const filterByText = (fortune: FortuneHistory, query: string) => {
+  if (!query) return true;
+  const lowerQuery = query.toLowerCase();
+  const questionMatch = fortune.question.toLowerCase().includes(lowerQuery);
+  const resultMatch = fortune.result.toLowerCase().includes(lowerQuery);
+  const cardMatch = fortune.cards.some(card => 
+    card.cardName.toLowerCase().includes(lowerQuery)
+  );
+  return questionMatch || resultMatch || cardMatch;
+  // 10行以上のため分離が必要
+};
+```
+
+#### ✅ 良い例（10行未満はコンポーネント内でOK）
+```typescript
+// page.tsx - 基本的なロジックはOK
+const handleToggle = () => setExpanded(!expanded);
+const isDisabled = !user || loading;
+const hasItems = items.length > 0;
+
+// hooks/useFortuneFilters.ts - 10行以上は分離
+export const useFortuneFilters = () => {
+  const filterByText = (fortune: FortuneHistory, query: string) => {
+    // 複雑なフィルタリングロジック（10行以上）
+  };
+  return { filterByText };
+};
+```
+
+### メリット
+- **テスタビリティ**: ロジックを独立してテスト可能
+- **再利用性**: 複数のコンポーネントで同じロジックを使用可能
+- **保守性**: ロジックの変更時に影響範囲を限定
+- **可読性**: UIとロジックの責任が明確に分離
