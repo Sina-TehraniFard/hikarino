@@ -52,6 +52,12 @@ export const useFortune = () => {
   // エラーが起きた場合のメッセージを保存
   const [error, setError] = useState<string | null>(null);
   
+  // アニメーション表示状態を管理
+  const [showWaitingAnimation, setShowWaitingAnimation] = useState(false);
+  
+  // バックグラウンドで蓄積されているテキストを管理
+  const [backgroundResult, setBackgroundResult] = useState("");
+  
   // ===== ゲストユーザー対応 =====
   // ログインしていないユーザーが入力した内容を一時的に覚えておく場所
   // useRef = コンポーネントが更新されても値が消えない特別な保存場所
@@ -120,6 +126,7 @@ export const useFortune = () => {
     
     // ローディング状態開始
     setIsLoading(true);
+    setShowWaitingAnimation(true);
     // 前回の結果とエラーをクリア
     setResult("");
     setError(null);
@@ -136,6 +143,7 @@ export const useFortune = () => {
       
       // 3. 処理を中断
       setIsLoading(false);
+      setShowWaitingAnimation(false);
       return;
     }
 
@@ -147,6 +155,7 @@ export const useFortune = () => {
       
       // 2. 処理を中断
       setIsLoading(false);
+      setShowWaitingAnimation(false);
       return;
     }
 
@@ -173,13 +182,19 @@ export const useFortune = () => {
         const errorMessage = await handleAPIError(response);
         setError(errorMessage);
         setIsLoading(false);
+        setShowWaitingAnimation(false);
         return;
       }
 
-      // ===== ストリーミング結果の受信 =====
-      // AIの返事をリアルタイムで受け取って画面に表示
-      // setResult = 新しい文字が来るたびに画面を更新する関数
-      const finalResult = await processStreamingResponse(response, setResult);
+      // ===== バックグラウンドでストリーミング開始 =====
+      // アニメーション表示中はバックグラウンドで結果を蓄積
+      const finalResult = await processStreamingResponse(response, (text) => {
+        setBackgroundResult(text);
+        // アニメーション非表示時は即座に結果を表示
+        if (!showWaitingAnimation) {
+          setResult(text);
+        }
+      });
 
       // ===== 結果の保存 =====
       // 占い結果をデータベースに保存（履歴として）
@@ -194,8 +209,9 @@ export const useFortune = () => {
       // （例：ネットワークエラー、サーバーダウンなど）
       setError("コイン消費時にエラーが発生しました。");
       setIsLoading(false);
+      setShowWaitingAnimation(false);
     }
-  }, [isLoading, question, cards, coins, consumeCoins]);
+  }, [isLoading, question, cards, coins, consumeCoins, showWaitingAnimation]);
   // ↑ これらの値が変わったときだけ、この関数を新しく作り直す
 
   /**
@@ -238,6 +254,8 @@ export const useFortune = () => {
     setResult("");                // 占い結果をクリア
     setError(null);               // エラーメッセージをクリア
     setHasFortuned(false);        // 占い完了フラグをリセット
+    setShowWaitingAnimation(false); // アニメーション状態をリセット
+    setBackgroundResult("");       // バックグラウンド結果をリセット
     
     // 一時保存データもクリア
     questionRef.current = "";
@@ -254,6 +272,7 @@ export const useFortune = () => {
     isLoading,       // 処理中かどうか
     hasFortuned,     // 占いが完了したかどうか
     error,           // エラーメッセージ
+    showWaitingAnimation, // アニメーション表示状態
     
     // 状態を変更する関数（アクション）
     setQuestion,     // 質問文を変更する関数
@@ -261,5 +280,14 @@ export const useFortune = () => {
     handleFortune,   // 占いを実行する関数
     restoreGuestData,// ゲストデータを復元する関数
     resetFortune,    // 全てをリセットする関数
+    setShowWaitingAnimation, // アニメーション状態を制御する関数
+    
+    // アニメーション完了時のコールバック
+    onAnimationComplete: useCallback(() => {
+      setShowWaitingAnimation(false);
+      if (backgroundResult) {
+        setResult(backgroundResult);
+      }
+    }, [backgroundResult]),
   };
 };
