@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
+import GlassBox from './GlassBox';
 
 const LottieAnimation = dynamic(() => import('lottie-react'), { ssr: false });
 
@@ -45,14 +46,13 @@ const AppIntro = ({ onStepClick }: AppIntroProps) => {
     <div className="mb-8 w-full max-w-md relative">
       {/* 洗練されたステップガイド */}
         <div className="mb-5">
-          <div className="relative group">
-            <button
-              onClick={() => {
-                setIsExpanded(!isExpanded);
-                if (!isExpanded) loadAnimations();
-              }}
-              className="relative w-full bg-white/20 dark:bg-gray-900/20 backdrop-blur-xl border border-white/30 dark:border-white/10 text-gray-800 dark:text-gray-100 pl-20 pr-4 py-4 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-between overflow-hidden group-hover:bg-white/30 dark:group-hover:bg-gray-800/30 ring-1 ring-white/20 cursor-pointer"
-            >
+          <GlassBox
+            onClick={() => {
+              setIsExpanded(!isExpanded);
+              if (!isExpanded) loadAnimations();
+            }}
+          >
+            <div className="relative text-gray-800 dark:text-gray-100 pl-20 pr-4 py-4 flex items-center justify-between">
               {/* ヒカリノのアイコン（ガラス効果で統合） */}
               <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-purple-500/20 to-transparent backdrop-blur-sm rounded-l-2xl">
                 <div className="absolute left-3 top-1/2 -translate-y-1/2">
@@ -93,14 +93,8 @@ const AppIntro = ({ onStepClick }: AppIntroProps) => {
                   <div className="w-6 h-6 bg-purple-400 rounded-full animate-pulse" />
                 )}
               </div>
-
-              {/* 洗練されたホバーエフェクト */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
-            </button>
-
-            {/* エレガントなグロウエフェクト */}
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-400/20 via-pink-400/20 to-purple-400/20 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
-          </div>
+            </div>
+          </GlassBox>
         </div>
 
         {/* ステップ（エレガントなドロップダウンアニメーション） */}
@@ -113,10 +107,10 @@ const AppIntro = ({ onStepClick }: AppIntroProps) => {
               <div className="absolute -left-full top-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-12 animate-glass-shine" />
             </div>
             {[
-              { number: 1, title: "質問を入力", desc: "100文字以内で占いたいことを書く" },
-              { number: 2, title: "タロットカードを引く", desc: "3枚のタロットカードが裏面で表示されます" },
-              { number: 3, title: "カードをめくる", desc: "カードをタップして表に返してください" },
-              { number: 4, title: "結果を見る", desc: "ヒカリノがタロットを読んでくれます" }
+              { number: 1, title: "心の声を聞かせて✨", desc: "100文字以内で今のあなたの想いを綴ってください" },
+              { number: 2, title: "神秘のカードを選ぼう🔮", desc: "3枚のタロットカードがあなたを待っています" },
+              { number: 3, title: "運命の扉を開いて💫", desc: "カードをそっとタップして未来を覗いてみましょう" },
+              { number: 4, title: "ヒカリノからのメッセージ🌟", desc: "あなただけの特別なメッセージをお届けします" }
             ].map((step, index) => (
               <div 
                 key={step.number} 

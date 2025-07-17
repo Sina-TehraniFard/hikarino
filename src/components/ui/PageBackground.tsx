@@ -1,6 +1,15 @@
+import { memo } from 'react';
+
 // 共通ページ背景コンポーネント
 
-const PageBackground = () => {
+// 星の位置を固定化（再レンダリング時に変わらないようにする）
+const STAR_POSITIONS = Array.from({ length: 15 }, (_, i) => ({
+  top: Math.random() * 100,
+  left: Math.random() * 100,
+  duration: 2 + Math.random() * 3
+}));
+
+const PageBackground = memo(() => {
   return (
     <div className="fixed inset-0 -z-20 overflow-hidden">
       {/* ベースグラデーション - より明るく優しい色合い */}
@@ -24,7 +33,7 @@ const PageBackground = () => {
 
       {/* 星の瞬き */}
       <div className="absolute inset-0">
-        {[...Array(15)].map((_, i) => (
+        {STAR_POSITIONS.map((star, i) => (
           <div
             key={i}
             className={`absolute w-1 h-1 bg-white rounded-full animate-sparkle ${
@@ -33,9 +42,9 @@ const PageBackground = () => {
               'animation-delay-3000'
             }`}
             style={{
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              animationDuration: `${2 + Math.random() * 3}s`
+              top: `${star.top}%`,
+              left: `${star.left}%`,
+              animationDuration: `${star.duration}s`
             }}
           />
         ))}
@@ -55,6 +64,6 @@ const PageBackground = () => {
       <div className="absolute inset-0 backdrop-blur-[1px]" />
     </div>
   );
-};
+});
 
 export default PageBackground;
