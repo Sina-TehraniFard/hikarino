@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.1.0...v1.2.0) (2025-07-17)
+
+
+### Features
+
+* GlassBoxコンポーネントとガラス質感UIスタイルの実装 ([8402a5e](https://github.com/Sina-TehraniFard/hikarino/commit/8402a5efe05f230d1588a3a1921a2970b8ce09bf))
+
 # [1.1.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.0.0...v1.1.0) (2025-06-29)
 
 
