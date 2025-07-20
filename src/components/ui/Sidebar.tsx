@@ -69,7 +69,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 </svg>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{user?.displayName || "ゲスト"}</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{(user as any)?.firestoreName || user?.displayName || "ゲスト"}</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user?.email || "ログインしていません"}</p>
               </div>
             </div>
