@@ -8,6 +8,7 @@ import HomeIcon from "../icons/HomeIcon";
 import { User } from "@/types";
 import dynamic from "next/dynamic";
 import GlassBox from "./GlassBox";
+import ModalHeader from "./ModalHeader";
 
 const LottieAnimation = dynamic(() => import('lottie-react'), { ssr: false });
 
@@ -27,7 +28,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   onCoinClick
 }) => {
   const router = useRouter();
-  const [coinAnimation, setCoinAnimation] = useState<any>(null);
+  const [coinAnimation, setCoinAnimation] = useState<object | null>(null);
 
   // コインアニメーションを読み込み
   useEffect(() => {
@@ -52,11 +53,14 @@ const Sidebar: React.FC<SidebarProps> = ({
   return (
     <div className="fixed left-4 top-4 h-[calc(100vh-32px)] w-64 z-30">
       <GlassBox className="h-full">
-        {/* Sidebar Header */}
+        {/* Header with ModalHeader */}
+        <ModalHeader 
+          title="メニュー"
+          showCloseButton={false}
+        />
+        
+        {/* User Info Section */}
         <div className="p-6 border-b border-white/20 dark:border-gray-700/50">
-          <h3 className="text-xl font-semibold text-purple-600 dark:text-purple-400 mb-4">メニュー</h3>
-          
-          {/* User Info */}
           <div className="space-y-3">
             <div className="flex items-center space-x-3">
               <div className="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-950/30 flex items-center justify-center">
