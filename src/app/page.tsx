@@ -11,6 +11,7 @@ import Header from "@/components/Header";
 import {useCoinContext} from "@/contexts/CoinContext";
 import LoginModal from "@/components/LoginModal";
 import CoinPurchaseModal from "@/components/CoinPurchaseModal";
+import NameSetupModal from "@/components/NameSetupModal";
 import Button from "@/components/ui/Button";
 import TarotCards from "@/components/ui/TarotCards";
 import QuestionForm from "@/components/ui/QuestionForm";
@@ -22,9 +23,10 @@ import MessageDialog from "@/components/ui/MessageDialog";
 import WaitingAnimation from "@/components/ui/WaitingAnimation";
 import GlassBox from "@/components/ui/GlassBox";
 import {useState} from "react";
+import {checkNeedsNameSetup} from "@/lib/firestore/user";
 
 export default function Home() {
-    const {user, loading} = useAuth();
+    const {user, loading, refreshUserName} = useAuth();
     const router = useRouter();
     const {coins, refreshCoins} = useCoinContext();
     const {displayCoins} = useCoinAnimation(coins, user?.uid);
@@ -34,6 +36,7 @@ export default function Home() {
     const [showErrorDialog, setShowErrorDialog] = useState(false);
     const [allCardsFlipped, setAllCardsFlipped] = useState(false);
     const [isResetting, setIsResetting] = useState(false);
+    const [showNameSetup, setShowNameSetup] = useState(false);
 
     const {
         question,
@@ -55,6 +58,22 @@ export default function Home() {
         restoreGuestData(user);
         refreshCoins(true);
     }, [user, refreshCoins, restoreGuestData]);
+    
+    // 名前設定が必要かチェック（別のuseEffectで管理）
+    useEffect(() => {
+        if (user?.uid && !loading) {
+            // ログイン完了後に少し遅延を入れて、Firestoreのデータが確実に作成されるのを待つ
+            const timer = setTimeout(() => {
+                checkNeedsNameSetup(user.uid).then(needsSetup => {
+                    setShowNameSetup(needsSetup);
+                });
+            }, 500);
+            
+            return () => clearTimeout(timer);
+        } else {
+            setShowNameSetup(false);
+        }
+    }, [user?.uid, loading]);
 
     // エラーが発生したらダイアログを表示
     useEffect(() => {
@@ -137,7 +156,6 @@ export default function Home() {
             <div className="flex-1 md:ml-72 overflow-hidden">
                 {/* モバイル版（768px未満）- 従来と同じ */}
                 <div className="md:hidden w-full max-w-lg mx-auto min-h-screen relative px-6 space-y-6 pb-12">
-                    {showLogin && <LoginModal onClose={() => setShowLogin(false)}/>}
 
                     <Header
                         user={user || {displayName: "ゲスト", email: "", uid: undefined}}
@@ -231,7 +249,6 @@ export default function Home() {
                 <div className="hidden md:block w-full max-w-lg mx-auto min-h-screen relative p-4">
                     <GlassBox className="transition-all duration-500 ease-in-out">
                         <div className="px-6 py-6 space-y-6">
-                            {showLogin && <LoginModal onClose={() => setShowLogin(false)}/>}
 
                             <Header
                                 user={user || {displayName: "ゲスト", email: "", uid: undefined}}
@@ -334,11 +351,26 @@ export default function Home() {
                     </GlassBox>
                 </div>
 
+                {/* LoginModalを一箇所にまとめて配置 */}
+                {showLogin && <LoginModal onClose={() => setShowLogin(false)}/>}
+
                 <CoinPurchaseModal
                     isOpen={showCoinModal}
                     onClose={handleCoinModalClose}
                     uid={user?.uid}
                 />
+                
+                {user?.uid && (
+                    <NameSetupModal
+                        isOpen={showNameSetup}
+                        uid={user.uid}
+                        onComplete={() => {
+                            setShowNameSetup(false);
+                            refreshCoins(true);
+                            refreshUserName(); // 名前を再取得
+                        }}
+                    />
+                )}
 
                 <MessageDialog
                     isOpen={showMessageDialog}

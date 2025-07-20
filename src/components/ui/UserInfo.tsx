@@ -30,11 +30,11 @@ const UserInfo: React.FC<UserInfoProps> = ({ user, displayCoins, onCoinClick }) 
           <div className="flex items-center gap-2 md:gap-3">
             <div className="h-8 w-8 md:h-10 md:w-10 bg-gradient-to-br from-purple-600 to-purple-400 rounded-full flex items-center justify-center shadow-md">
               <span className="text-white font-bold text-sm md:text-base">
-                {(user.displayName || user.email || '').charAt(0).toUpperCase()}
+                {((user as any).firestoreName || user.displayName || user.email || '').charAt(0).toUpperCase()}
               </span>
             </div>
             <span className="text-gray-900 dark:text-gray-100 font-medium text-sm md:text-base truncate max-w-[150px] md:max-w-[200px]">
-              {(user.displayName || user.email) + ' さん'}
+              {((user as any).firestoreName || user.displayName || user.email) + ' さん'}
             </span>
           </div>
           {/*
