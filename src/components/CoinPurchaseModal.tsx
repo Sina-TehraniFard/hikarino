@@ -182,7 +182,7 @@ const CoinPurchaseModal: React.FC<CoinPurchaseModalProps> = ({ isOpen, onClose, 
                 
                 <div className="w-full flex flex-col gap-4 mb-8">
                     {purchaseOptions.map(opt => (
-                        <div className={opt.recommended ? "relative" : ""}>
+                        <div key={opt.coins} className={opt.recommended ? "relative" : ""}>
                             {/* 人気プランの上に社会的証明テキストを配置 */}
                             {opt.recommended && (
                                 <div className="text-center mb-2">
@@ -193,7 +193,6 @@ const CoinPurchaseModal: React.FC<CoinPurchaseModalProps> = ({ isOpen, onClose, 
                                 </div>
                             )}
                         <button
-                            key={opt.coins}
                             onClick={async () => {
                                 if (!uid) {
                                     alert('ログインが必要です');
@@ -272,13 +271,13 @@ const CoinPurchaseModal: React.FC<CoinPurchaseModalProps> = ({ isOpen, onClose, 
                                     </div>
                                 </div>
                                 
-                                <button className={`w-full px-6 py-3 rounded-lg font-bold text-sm leading-4 transition-all duration-200 transform active:scale-95 ${
+                                <div className={`w-full px-6 py-3 rounded-lg font-bold text-sm leading-4 transition-all duration-200 transform text-center ${
                                     opt.recommended 
-                                        ? "bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl" 
-                                        : "bg-purple-600 hover:bg-purple-700 text-white shadow-md hover:shadow-lg"
+                                        ? "bg-gradient-to-r from-emerald-500 to-emerald-600 group-hover:from-emerald-600 group-hover:to-emerald-700 text-white shadow-lg group-hover:shadow-xl" 
+                                        : "bg-purple-600 group-hover:bg-purple-700 text-white shadow-md group-hover:shadow-lg"
                                 }`}>
                                     今すぐ購入
-                                </button>
+                                </div>
                             </div>
                         </button>
                         </div>
