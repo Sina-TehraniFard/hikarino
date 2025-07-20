@@ -1,3 +1,16 @@
+# [1.3.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.2.0...v1.3.0) (2025-07-20)
+
+
+### Bug Fixes
+
+* CoinPurchaseModalのReact警告とHTML仕様違反を修正 ([4c5ea47](https://github.com/Sina-TehraniFard/hikarino/commit/4c5ea47110369854e029992e52e7970fd90051d0))
+
+
+### Features
+
+* PC版レイアウト改善とコンポーネント機能強化 ([acaf2d9](https://github.com/Sina-TehraniFard/hikarino/commit/acaf2d9ba4bcbbeb22bd48597e5c818bbcfda02a))
+* 共通ModalHeaderコンポーネントとUI統合の実装 ([50aefc8](https://github.com/Sina-TehraniFard/hikarino/commit/50aefc880557aa69e7c28478594352bde9ef6c18))
+
 # [1.2.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.1.0...v1.2.0) (2025-07-17)
 
 
