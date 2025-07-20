@@ -38,13 +38,15 @@ export const CoinProvider = ({ children }: { children: ReactNode }) => {
     // 今後もコイン消費は必ずこの関数経由で行ってください。
     const consumeCoins = useCallback(async (amount: number) => {
         if (!user?.uid) return;
-        const functions = getFunctions();
-        const spendCoin = httpsCallable(functions, "spendCoin");
+        
         try {
+            const functions = getFunctions();
+            const spendCoin = httpsCallable(functions, "spendCoin");
             const result = await spendCoin({ amount });
             // @ts-expect-error: 型安全のため本番では型定義を厳密に
             setCoins(result.data.newCoins ?? 0);
-        } catch {
+        } catch (error) {
+            console.error('コイン消費エラー:', error);
             // エラー処理（例：コイン不足など）
             // 必要に応じてユーザー通知やリトライ処理を追加してください。
         }

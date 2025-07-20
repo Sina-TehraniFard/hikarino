@@ -1,57 +1,238 @@
 'use client';
-import { signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from 'firebase/auth';
+import { signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
-import { useEffect } from 'react';
-import { registerUserIfNew } from '@/lib/firestore/user';
-import Image from "next/image";
+import { useEffect, useState } from 'react';
+// registerUserIfNewとcheckNeedsNameSetupは削除
+import dynamic from 'next/dynamic';
+import Image from 'next/image';
+
+const LottieAnimation = dynamic(() => import('lottie-react'), { ssr: false });
 
 interface LoginModalProps {
     onClose: () => void;
 }
 
 const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
+    const [isSignUp, setIsSignUp] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [giftAnimation, setGiftAnimation] = useState<object | null>(null);
+    
+    // この useEffect は削除 - 重複呼び出しを防ぐため
+    // useAuthフックで既に認証状態を監視しているため不要
+
+    // ギフトアニメーションを読み込み
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            if (user) {
-                registerUserIfNew(user);
-                onClose();
-            }
-        });
-        return () => unsubscribe();
-    }, [onClose]);
-    const handleLogin = async () => {
+        fetch('/animation/gift.json')
+            .then(res => res.json())
+            .then(data => setGiftAnimation(data))
+            .catch(error => console.error('ギフトアニメーション読み込みエラー:', error));
+    }, []);
+    
+    const handleGoogleLogin = async () => {
         const provider = new GoogleAuthProvider();
+        setIsLoading(true);
+        setError('');
         try {
             const result = await signInWithPopup(auth, provider);
-            const user = result.user;
-            await registerUserIfNew(user);
-            onClose();
-        } catch (error) {
-            console.error('ログイン失敗:', error);
+            // registerUserIfNewはuseAuthフックで処理されるため削除
+            onClose(); // 成功時はモーダルを閉じる
+        } catch (error: any) {
+            console.error('Googleログイン失敗:', error);
+            setError('Googleログインに失敗しました。');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    
+    const handleEmailAuth = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!email || !password) {
+            setError('メールアドレスとパスワードを入力してください。');
+            return;
+        }
+        
+        setIsLoading(true);
+        setError('');
+        
+        try {
+            let result;
+            if (isSignUp) {
+                result = await createUserWithEmailAndPassword(auth, email, password);
+            } else {
+                result = await signInWithEmailAndPassword(auth, email, password);
+            }
+            
+            // registerUserIfNewはuseAuthフックで処理されるため削除
+            onClose(); // 成功時はモーダルを閉じる
+        } catch (error: any) {
+            console.error('メール認証失敗:', error);
+            if (error.code === 'auth/email-already-in-use') {
+                setError('このメールアドレスは既に登録済みです。ログインモードに切り替えました。');
+                setIsSignUp(false); // 自動的にログインモードに切り替え
+            } else if (error.code === 'auth/weak-password') {
+                setError('パスワードは6文字以上で入力してください。');
+            } else if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                setError('メールアドレスまたはパスワードが正しくありません。');
+            } else if (error.code === 'auth/invalid-email') {
+                setError('正しいメールアドレスを入力してください。');
+            } else {
+                setError(isSignUp ? 'アカウント作成に失敗しました。' : 'ログインに失敗しました。');
+            }
+        } finally {
+            setIsLoading(false);
         }
     };
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity duration-300">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-10 max-w-md w-full flex flex-col items-center transform transition-all duration-300 relative">
-                <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 text-2xl transition-colors duration-200">×</button>
-                <Image
-                    src="/hikarino-logo.png"
-                    alt="ヒカリノ"
-                    width={80}
-                    height={80}
-                    className="h-20 mb-4 object-cover object-top"
-                    style={{ objectPosition: 'center 10%' }}
-                    priority
-                />
-                <h1 className="text-3xl md:text-4xl font-semibold text-purple-600 dark:text-purple-400 mb-2">ようこそ</h1>
-                <p className="text-gray-600 dark:text-gray-400 mb-6 text-center text-base md:text-lg leading-relaxed">Googleアカウントでログインして、あなたの心にそっと寄り添うタロット占いを体験しましょう。</p>
-                <button
-                    onClick={handleLogin}
-                    className="flex items-center gap-2 border-2 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium px-6 py-3 rounded-lg transition-all duration-200 hover:shadow-md active:scale-95"
-                >
-                    <svg className="w-6 h-6" viewBox="0 0 48 48"><g><path fill="#4285F4" d="M44.5 20H24v8.5h11.7C34.7 33.1 30.1 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c2.6 0 5 .8 7 2.3l6.4-6.4C33.5 5.1 28.9 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21c10.5 0 20-7.5 20-21 0-1.3-.1-2.7-.5-4z"/><path fill="#34A853" d="M6.3 14.7l7 5.1C15.1 17.1 19.2 14 24 14c2.6 0 5 .8 7 2.3l6.4-6.4C33.5 5.1 28.9 3 24 3 15.1 3 7.6 8.7 6.3 14.7z"/><path fill="#FBBC05" d="M24 44c6.1 0 10.7-2 14-5.4l-6.5-5.3C29.7 35.1 27 36 24 36c-6.1 0-11.3-4.1-13.2-9.6l-7 5.4C7.6 39.3 15.1 44 24 44z"/><path fill="#EA4335" d="M44.5 20H24v8.5h11.7c-1.1 3.1-4.7 7.5-11.7 7.5-6.6 0-12-5.4-12-12s5.4-12 12-12c2.6 0 5 .8 7 2.3l6.4-6.4C33.5 5.1 28.9 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21c10.5 0 20-7.5 20-21 0-1.3-.1-2.7-.5-4z"/></g></svg>
-                    Googleでログイン
-                </button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300 p-4">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-md mx-4 max-h-[95vh] overflow-hidden transform transition-all duration-300 relative flex flex-col">
+                {/* ヘッダー */}
+                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-800">
+                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                        {isSignUp ? "アカウント作成" : "ログイン"}
+                    </h2>
+                    <button
+                        onClick={onClose}
+                        className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200"
+                    >
+                        <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                
+                {/* コンテンツ */}
+                <div className="px-6 py-8 overflow-y-auto flex-1">
+                        <div className="text-center mb-8">
+                            <div className="bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-xl p-4 mx-auto">
+                                <div className="flex items-center justify-center gap-3">
+                                    {giftAnimation && (
+                                        <div className="w-10 h-10 flex-shrink-0">
+                                            <LottieAnimation
+                                                animationData={giftAnimation}
+                                                loop={true}
+                                                autoplay={true}
+                                                style={{ width: '100%', height: '100%' }}
+                                            />
+                                        </div>
+                                    )}
+                                    <p className="text-purple-800 dark:text-purple-200 font-semibold text-lg text-center">
+                                        新規登録でタロット5回分（500コイン）を無料でプレゼント中！
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {/* メール・パスワードフォーム */}
+                        <form onSubmit={handleEmailAuth} className="space-y-5 mb-8">
+                            <div>
+                                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    メールアドレス
+                                </label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                                    placeholder="your@email.com"
+                                    required
+                                />
+                            </div>
+                            
+                            <div>
+                                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    パスワード
+                                </label>
+                                <input
+                                    type="password"
+                                    id="password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                                    placeholder={isSignUp ? "6文字以上で入力" : "パスワードを入力"}
+                                    required
+                                    minLength={6}
+                                />
+                            </div>
+                            
+                            {error && (
+                                <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
+                                    <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
+                                </div>
+                            )}
+                            
+                            <button
+                                type="submit"
+                                disabled={isLoading}
+                                className={`w-full px-6 py-4 mt-2 rounded-lg font-semibold transition-all duration-200 transform active:scale-95 ${
+                                    isLoading 
+                                        ? "bg-gray-400 cursor-not-allowed" 
+                                        : "bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-lg hover:shadow-xl"
+                                }`}
+                            >
+                                {isLoading ? (
+                                    <div className="flex items-center justify-center gap-2">
+                                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                        処理中...
+                                    </div>
+                                ) : (
+                                    isSignUp ? "アカウント作成" : "ログイン"
+                                )}
+                            </button>
+                        </form>
+                        
+                        {/* 切り替えボタン */}
+                        <div className="text-center mb-6">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setIsSignUp(!isSignUp);
+                                    setError('');
+                                    setEmail('');
+                                    setPassword('');
+                                }}
+                                className="text-purple-600 dark:text-purple-400 hover:underline text-sm font-medium transition-colors duration-200"
+                            >
+                                {isSignUp 
+                                    ? "既にアカウントをお持ちですか？ログインする" 
+                                    : "アカウントをお持ちでない場合は？新規作成する"
+                                }
+                            </button>
+                        </div>
+                        
+                    {/* 区切り線 */}
+                    <div className="relative my-8">
+                        <div className="absolute inset-0 flex items-center">
+                            <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+                        </div>
+                        <div className="relative flex justify-center text-sm">
+                            <span className="px-4 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 font-medium">または</span>
+                        </div>
+                    </div>
+                    
+                    {/* Googleログインボタン */}
+                    <button
+                        onClick={handleGoogleLogin}
+                        disabled={isLoading}
+                        className={`w-full flex items-center justify-center gap-3 px-6 py-4 rounded-lg font-medium transition-all duration-200 hover:shadow-md active:scale-95 ${
+                            isLoading 
+                                ? "bg-gray-100 dark:bg-gray-700 cursor-not-allowed" 
+                                : "border-2 border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900"
+                        }`}
+                    >
+                        <Image 
+                            src="/google.svg" 
+                            alt="Google" 
+                            width={20} 
+                            height={20}
+                            className="w-5 h-5"
+                        />
+                        Googleで{isSignUp ? "登録" : "ログイン"}
+                    </button>
+                </div>
             </div>
         </div>
     );
