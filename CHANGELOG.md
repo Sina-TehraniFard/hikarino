@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/Sina-TehraniFard/hikarino/compare/v1.3.0...v1.3.1) (2025-07-20)
+
+
+### Bug Fixes
+
+* ログインUI/UX修正とFirebase統合の改善 ([c74ea42](https://github.com/Sina-TehraniFard/hikarino/commit/c74ea4293c1c3c94b51a13205e06fec011257396))
+
 # [1.3.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.2.0...v1.3.0) (2025-07-20)
 
 
