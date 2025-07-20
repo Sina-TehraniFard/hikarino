@@ -15,12 +15,12 @@ import Button from "@/components/ui/Button";
 import TarotCards from "@/components/ui/TarotCards";
 import QuestionForm from "@/components/ui/QuestionForm";
 import FortuneResult from "@/components/ui/FortuneResult";
-import ErrorMessage from "@/components/ui/ErrorMessage";
 import AppIntro from "@/components/ui/AppIntro";
 import Sidebar from "@/components/ui/Sidebar";
 import PageBackground from "@/components/ui/PageBackground";
 import MessageDialog from "@/components/ui/MessageDialog";
 import WaitingAnimation from "@/components/ui/WaitingAnimation";
+import GlassBox from "@/components/ui/GlassBox";
 import {useState} from "react";
 
 export default function Home() {
@@ -31,7 +31,9 @@ export default function Home() {
     const [showLogin, setShowLogin] = useState(false);
     const [showCoinModal, setShowCoinModal] = useState(false);
     const [showMessageDialog, setShowMessageDialog] = useState(false);
+    const [showErrorDialog, setShowErrorDialog] = useState(false);
     const [allCardsFlipped, setAllCardsFlipped] = useState(false);
+    const [isResetting, setIsResetting] = useState(false);
 
     const {
         question,
@@ -45,6 +47,7 @@ export default function Home() {
         handleDrawCards,
         handleFortune,
         restoreGuestData,
+        resetFortune,
         onAnimationComplete,
     } = useFortune();
 
@@ -52,6 +55,13 @@ export default function Home() {
         restoreGuestData(user);
         refreshCoins(true);
     }, [user, refreshCoins, restoreGuestData]);
+
+    // エラーが発生したらダイアログを表示
+    useEffect(() => {
+        if (error) {
+            setShowErrorDialog(true);
+        }
+    }, [error]);
 
     if (loading) {
         return (
@@ -125,96 +135,224 @@ export default function Home() {
             <PageBackground />
             
             <div className="flex-1 md:ml-72 overflow-hidden">
-                <div className="w-full max-w-lg mx-auto min-h-screen relative px-6 space-y-6 pb-12">
-            {showLogin && <LoginModal onClose={() => setShowLogin(false)}/>}
+                {/* モバイル版（768px未満）- 従来と同じ */}
+                <div className="md:hidden w-full max-w-lg mx-auto min-h-screen relative px-6 space-y-6 pb-12">
+                    {showLogin && <LoginModal onClose={() => setShowLogin(false)}/>}
 
-            <Header
-                user={user || {displayName: "ゲスト", email: "", uid: undefined}}
-                coins={user ? coins : 0}
-                onLogout={handleLogout}
-                onRequireLogin={() => setShowLogin(true)}
-                userId={user?.uid}
-                onCoinClick={() => setShowCoinModal(prev => !prev)}
-            />
-
-            {/* 簡単3ステップ - 不安解消 */}
-            <AppIntro onStepClick={handleStepClick} />
-            {/* 質問入力 - 実際のアクション */}
-            <div id="question-section">
-                <QuestionForm
-                    question={question}
-                    onChange={setQuestion}
-                    disabled={cards.length > 0}
-                />
-            </div>
-
-            {cards.length === 0 && (
-                <Button 
-                    onClick={handleDrawCardsClick} 
-                    variant="magical"
-                    fullWidth
-                >
-                    タロットを引く
-                </Button>
-            )}
-
-            <TarotCards 
-                cards={cards}
-                onAllFlipped={() => setAllCardsFlipped(true)}
-            />
-
-            {cards.length > 0 && allCardsFlipped && !hasFortuned && !isLoading && (
-                <>
-                    <Button
-                        onClick={handleFortuneClick}
-                        disabled={isLoading}
-                        fullWidth
-                    >
-                        占い結果を見る
-                    </Button>
-                    <ErrorMessage error={error}/>
-                </>
-            )}
-
-            <div className="mt-10 w-full max-w-md">
-                {hasFortuned && (
-                    <div className="mb-6 text-center transition-all duration-300 ease-in-out">
-                        <Button onClick={() => window.location.reload()} fullWidth>
-                            もう一度占う
-                        </Button>
-                    </div>
-                )}
-
-                {showWaitingAnimation ? (
-                    <WaitingAnimation 
-                        onAnimationComplete={onAnimationComplete}
+                    <Header
+                        user={user || {displayName: "ゲスト", email: "", uid: undefined}}
+                        coins={user ? coins : 0}
+                        onLogout={handleLogout}
+                        onRequireLogin={() => setShowLogin(true)}
+                        userId={user?.uid}
+                        onCoinClick={() => setShowCoinModal(prev => !prev)}
                     />
-                ) : (
-                    (hasFortuned || result) && <FortuneResult result={result}/>
-                )}
 
-                {hasFortuned && !showWaitingAnimation && (
-                    <div className="mt-6 text-center transition-all duration-300 ease-in-out">
-                        <Button onClick={() => window.location.reload()} fullWidth>
-                            もう一度占う
-                        </Button>
+                    {/* 簡単3ステップ - 不安解消 */}
+                    <AppIntro onStepClick={handleStepClick} />
+                    {/* 質問入力 - 実際のアクション */}
+                    <div id="question-section">
+                        <QuestionForm
+                            question={question}
+                            onChange={setQuestion}
+                            disabled={cards.length > 0}
+                        />
                     </div>
-                )}
-            </div>
 
-            <CoinPurchaseModal
-                isOpen={showCoinModal}
-                onClose={handleCoinModalClose}
-                uid={user?.uid}
-            />
+                    {cards.length === 0 && (
+                        <Button 
+                            onClick={handleDrawCardsClick} 
+                            variant="magical"
+                            fullWidth
+                        >
+                            タロットを引く
+                        </Button>
+                    )}
 
-            <MessageDialog
-                isOpen={showMessageDialog}
-                onClose={() => setShowMessageDialog(false)}
-                type="warning"
-                message="質問を入力してからタロットを引いてください。"
-            />
+                    <TarotCards 
+                        cards={cards}
+                        onAllFlipped={() => setAllCardsFlipped(true)}
+                    />
+
+                    {cards.length > 0 && allCardsFlipped && !hasFortuned && !isLoading && (
+                        <Button
+                            onClick={handleFortuneClick}
+                            disabled={isLoading}
+                            fullWidth
+                        >
+                            占い結果を見る
+                        </Button>
+                    )}
+
+                    <div className="mt-10 w-full max-w-md">
+                        {hasFortuned && (
+                            <div className="mb-6 text-center transition-all duration-300 ease-in-out">
+                                <Button onClick={() => {
+                                    setIsResetting(true);
+                                    setTimeout(() => {
+                                        resetFortune();
+                                        setAllCardsFlipped(false);
+                                        setIsResetting(false);
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }, 500);
+                                }} fullWidth>
+                                    もう一度占う
+                                </Button>
+                            </div>
+                        )}
+
+                        {showWaitingAnimation ? (
+                            <WaitingAnimation 
+                                onAnimationComplete={onAnimationComplete}
+                            />
+                        ) : (
+                            (hasFortuned || result) && <FortuneResult result={result}/>
+                        )}
+
+                        {hasFortuned && !showWaitingAnimation && (
+                            <div className="mt-6 text-center transition-all duration-300 ease-in-out">
+                                <Button onClick={() => {
+                                    setIsResetting(true);
+                                    setTimeout(() => {
+                                        resetFortune();
+                                        setAllCardsFlipped(false);
+                                        setIsResetting(false);
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }, 500);
+                                }} fullWidth>
+                                    もう一度占う
+                                </Button>
+                            </div>
+                        )}
+                    </div>
                 </div>
+
+                {/* PC版（768px以上）- ガラス背景付き */}
+                <div className="hidden md:block w-full max-w-lg mx-auto min-h-screen relative p-4">
+                    <GlassBox className="transition-all duration-500 ease-in-out">
+                        <div className="px-6 py-6 space-y-6">
+                            {showLogin && <LoginModal onClose={() => setShowLogin(false)}/>}
+
+                            <Header
+                                user={user || {displayName: "ゲスト", email: "", uid: undefined}}
+                                coins={user ? coins : 0}
+                                onLogout={handleLogout}
+                                onRequireLogin={() => setShowLogin(true)}
+                                userId={user?.uid}
+                                onCoinClick={() => setShowCoinModal(prev => !prev)}
+                            />
+
+                            {/* 簡単3ステップ - 不安解消 */}
+                            <div className={`transition-all duration-500 ease-in-out ${isResetting ? 'opacity-0 transform -translate-y-4' : 'opacity-100 transform translate-y-0'}`}>
+                                <AppIntro onStepClick={handleStepClick} />
+                            </div>
+                            
+                            {/* 質問入力 - 実際のアクション */}
+                            <div id="question-section" className={`transition-all duration-500 ease-in-out ${isResetting ? 'opacity-0 transform -translate-y-4' : 'opacity-100 transform translate-y-0'}`}>
+                                <QuestionForm
+                                    question={question}
+                                    onChange={setQuestion}
+                                    disabled={cards.length > 0}
+                                />
+                            </div>
+
+                            <div className={`transition-all duration-500 ease-in-out ${cards.length === 0 && !isResetting ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform -translate-y-4'}`}>
+                                {cards.length === 0 && (
+                                    <Button 
+                                        onClick={handleDrawCardsClick} 
+                                        variant="magical"
+                                        fullWidth
+                                    >
+                                        タロットを引く
+                                    </Button>
+                                )}
+                            </div>
+
+                            <div className={`transition-all duration-700 ease-in-out ${cards.length > 0 && !isResetting ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-4'}`}>
+                                <TarotCards 
+                                    cards={cards}
+                                    onAllFlipped={() => setAllCardsFlipped(true)}
+                                />
+                            </div>
+
+                            <div className={`transition-all duration-500 ease-in-out ${cards.length > 0 && allCardsFlipped && !hasFortuned && !isLoading && !isResetting ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform -translate-y-4'}`}>
+                                {cards.length > 0 && allCardsFlipped && !hasFortuned && !isLoading && (
+                                    <Button
+                                        onClick={handleFortuneClick}
+                                        disabled={isLoading}
+                                        fullWidth
+                                    >
+                                        占い結果を見る
+                                    </Button>
+                                )}
+                            </div>
+
+                            <div className="mt-10 w-full max-w-md">
+                                {hasFortuned && (
+                                    <div className="mb-6 text-center transition-all duration-500 ease-in-out">
+                                        <Button onClick={() => {
+                                            setIsResetting(true);
+                                            setTimeout(() => {
+                                                resetFortune();
+                                                setAllCardsFlipped(false);
+                                                setIsResetting(false);
+                                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                                            }, 500);
+                                        }} fullWidth>
+                                            もう一度占う
+                                        </Button>
+                                    </div>
+                                )}
+
+                                <div className={`transition-all duration-700 ease-in-out ${showWaitingAnimation || hasFortuned || result ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-4'}`}>
+                                    {showWaitingAnimation ? (
+                                        <WaitingAnimation 
+                                            onAnimationComplete={onAnimationComplete}
+                                        />
+                                    ) : (
+                                        (hasFortuned || result) && <FortuneResult result={result}/>
+                                    )}
+                                </div>
+
+                                {hasFortuned && !showWaitingAnimation && (
+                                    <div className="mt-6 text-center transition-all duration-500 ease-in-out">
+                                        <Button onClick={() => {
+                                            setIsResetting(true);
+                                            setTimeout(() => {
+                                                resetFortune();
+                                                setAllCardsFlipped(false);
+                                                setIsResetting(false);
+                                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                                            }, 500);
+                                        }} fullWidth>
+                                            もう一度占う
+                                        </Button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </GlassBox>
+                </div>
+
+                <CoinPurchaseModal
+                    isOpen={showCoinModal}
+                    onClose={handleCoinModalClose}
+                    uid={user?.uid}
+                />
+
+                <MessageDialog
+                    isOpen={showMessageDialog}
+                    onClose={() => setShowMessageDialog(false)}
+                    type="warning"
+                    message="質問を入力してからタロットを引いてください。"
+                />
+
+                <MessageDialog
+                    isOpen={showErrorDialog}
+                    onClose={() => setShowErrorDialog(false)}
+                    type="error"
+                    message={error || "占い中にエラーが発生しました。もう一度お試しください。"}
+                />
             </div>
         </main>
     );
