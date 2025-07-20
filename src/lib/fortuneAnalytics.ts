@@ -1,5 +1,5 @@
 import { FortuneHistory } from "@/types";
-import { differenceInDays, format } from "date-fns";
+import { differenceInDays } from "date-fns";
 
 export interface FortuneStats {
   totalReadings: number;

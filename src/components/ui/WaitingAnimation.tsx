@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Lottie, { LottieRefCurrentProps } from 'lottie-react';
 import animationData from '../../../public/animation/waiting-time.json';
+import GlassBox from './GlassBox';
 
 interface WaitingAnimationProps {
   onAnimationComplete: () => void;
@@ -96,11 +97,11 @@ const WaitingAnimation = ({ onAnimationComplete }: WaitingAnimationProps) => {
 
   return (
     <div 
-      className="flex items-center justify-center min-h-[250px] transition-opacity duration-1000 ease-out"
+      className="flex items-center justify-center min-h-[200px] transition-opacity duration-1000 ease-out w-full"
       style={{ opacity }}
     >
-      <div className="bg-white/50 dark:bg-gray-50 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-gray-200/30 dark:border-gray-700/30">
-        <div className="w-56 h-56 md:w-72 md:h-72">
+      <GlassBox className="p-6 flex items-center justify-center">
+        <div className="w-32 h-32 md:w-40 md:h-40 flex items-center justify-center">
           <Lottie
             lottieRef={lottieRef}
             animationData={getModifiedAnimationData()}
@@ -110,7 +111,7 @@ const WaitingAnimation = ({ onAnimationComplete }: WaitingAnimationProps) => {
             style={{ width: '100%', height: '100%' }}
           />
         </div>
-      </div>
+      </GlassBox>
     </div>
   );
 };

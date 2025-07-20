@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import HomeIcon from "../icons/HomeIcon";
 import { User } from "@/types";
 import dynamic from "next/dynamic";
+import ModalHeader from "./ModalHeader";
 
 const LottieAnimation = dynamic(() => import('lottie-react'), { ssr: false });
 
@@ -27,7 +28,7 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const [coinAnimation, setCoinAnimation] = useState<any>(null);
+  const [coinAnimation, setCoinAnimation] = useState<object | null>(null);
 
   // コインアニメーションを読み込み
   useEffect(() => {
@@ -93,22 +94,15 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({
           menuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
-        {/* Menu Header */}
+        {/* Header with ModalHeader */}
+        <ModalHeader 
+          title="メニュー"
+          onClose={() => setMenuOpen(false)}
+          showCloseButton={true}
+        />
+        
+        {/* User Info Section */}
         <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-semibold text-purple-600 dark:text-purple-400">メニュー</h3>
-            <button
-              onClick={() => setMenuOpen(false)}
-              className="w-10 h-10 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 flex items-center justify-center"
-              aria-label="メニューを閉じる"
-            >
-              <svg className="w-6 h-6 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-          
-          {/* User Info */}
           <div className="space-y-3">
             <div className="flex items-center space-x-3">
               <div className="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-950/30 flex items-center justify-center">
