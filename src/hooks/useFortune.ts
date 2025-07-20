@@ -207,7 +207,7 @@ export const useFortune = () => {
     } catch {
       // 予期しないエラーが発生した場合
       // （例：ネットワークエラー、サーバーダウンなど）
-      setError("コイン消費時にエラーが発生しました。");
+      setError("決済処理中に問題が発生しました。コインが消費されていないか確認の上、もう一度お試しください。");
       setIsLoading(false);
       setShowWaitingAnimation(false);
     }

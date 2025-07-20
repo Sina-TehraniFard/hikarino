@@ -13,8 +13,8 @@ interface AppIntroProps {
 
 const AppIntro = ({ onStepClick }: AppIntroProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [animations, setAnimations] = useState<any[]>([]);
-  const [tryMeAnimation, setTryMeAnimation] = useState<any>(null);
+  const [animations, setAnimations] = useState<object[]>([]);
+  const [tryMeAnimation, setTryMeAnimation] = useState<object | null>(null);
 
   // try-meアニメーションを即座にロード
   useEffect(() => {
