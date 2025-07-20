@@ -1,7 +1,6 @@
 // ユーザー情報表示コンポーネント
 
 import { User } from "@/types";
-import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useState, useEffect } from "react";
 
@@ -14,7 +13,7 @@ interface UserInfoProps {
 }
 
 const UserInfo: React.FC<UserInfoProps> = ({ user, displayCoins, onCoinClick }) => {
-  const [coinAnimation, setCoinAnimation] = useState<any>(null);
+  const [coinAnimation, setCoinAnimation] = useState<object | null>(null);
 
   // コインアニメーションを読み込み
   useEffect(() => {

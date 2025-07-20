@@ -113,7 +113,7 @@ export default function HistoryPage() {
             filterByCard(fortune, selectedCard) &&
             filterByDateRange(fortune, dateRange)
         );
-    }, [fortunes, searchQuery, selectedCard, dateRange]);
+    }, [fortunes, searchQuery, selectedCard, dateRange, filterByText, filterByCard, filterByDateRange]);
 
     // ページネーション計算（10行未満なのでコンポーネント内でOK）
     const totalPages = Math.ceil(filteredFortunes.length / itemsPerPage);

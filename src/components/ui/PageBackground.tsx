@@ -3,7 +3,7 @@ import { memo } from 'react';
 // 共通ページ背景コンポーネント
 
 // 星の位置を固定化（再レンダリング時に変わらないようにする）
-const STAR_POSITIONS = Array.from({ length: 15 }, (_, i) => ({
+const STAR_POSITIONS = Array.from({ length: 15 }, () => ({
   top: Math.random() * 100,
   left: Math.random() * 100,
   duration: 2 + Math.random() * 3
@@ -65,5 +65,7 @@ const PageBackground = memo(() => {
     </div>
   );
 });
+
+PageBackground.displayName = 'PageBackground';
 
 export default PageBackground;
