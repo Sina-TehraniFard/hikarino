@@ -19,7 +19,10 @@
       "Bash(git branch:*)",
       "Bash(git merge:*)",
       "Bash(git rebase:*)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(git fetch:*)",
+      "Bash(cp:*)",
+      "Bash(sed:*)"
     ],
     "deny": [
       "Bash(sudo:*)",
