@@ -1,3 +1,16 @@
+# [1.4.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.3.1...v1.4.0) (2025-07-25)
+
+
+### Bug Fixes
+
+* UX問題修正とナビゲーション要素の整理 ([7e4a787](https://github.com/Sina-TehraniFard/hikarino/commit/7e4a787d699354e06eb6235782afad75cdf3c78b))
+
+
+### Features
+
+* 温かいカラーパレットとUIコンポーネント基盤を追加 ([c8994d1](https://github.com/Sina-TehraniFard/hikarino/commit/c8994d11905236deffeabadfb310a83c3d3adca4))
+* 課金モーダルの女性向け色彩最適化とUX改善 ([f000c3e](https://github.com/Sina-TehraniFard/hikarino/commit/f000c3e06e3d36db65961c0210cacc7e502069de))
+
 ## [1.3.1](https://github.com/Sina-TehraniFard/hikarino/compare/v1.3.0...v1.3.1) (2025-07-20)
 
 
