@@ -1,345 +1,247 @@
-# CLAUDE.md
+# Hikarino - AI Tarot Fortune Telling Service
 
-このファイルは、このリポジトリでコードを扱う際にClaude Code (claude.ai/code) に対するガイダンスを提供します。
+## Project Overview
 
-# 🚨 最重要事項 - コミットメッセージ禁止事項
+**Hikarino** is a sophisticated AI-powered tarot fortune telling web application built with modern web technologies. The application provides users with personalized tarot readings using OpenAI's API, featuring a character named "Hikarino" who delivers warm, sister-like guidance through tarot card interpretations.
 
-## 絶対に含めてはいけない内容
-以下をコミットメッセージに含めることは**重大な違反行為**です：
+## Technology Stack
+
+### Core Technologies
+- **Next.js 15**: Modern React framework with App Router architecture
+- **React 19**: Latest React with advanced features
+- **TypeScript 5**: Full type safety with strict mode enabled
+- **Tailwind CSS 4**: Modern utility-first CSS with inline theme syntax and warm color palette
+- **Firebase**: Complete backend solution including Authentication, Firestore, and Cloud Functions
+- **OpenAI API**: GPT-4 integration for generating personalized fortune readings
+- **Stripe**: Payment processing for coin-based monetization system
+
+### Development Tools
+- **ESLint**: Code quality and consistency with Next.js recommended configuration
+- **Semantic Release**: Automated versioning and CHANGELOG generation
+- **PostCSS**: CSS processing with Tailwind integration
+- **Firebase Tools**: Local development and deployment management
+
+## Architecture & Structure
+
+### Application Architecture
+The application follows a modern, scalable architecture with clear separation of concerns:
 
 ```
-🤖 Generated with [Claude Code](https://claude.ai/code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
+Frontend (Next.js App Router) ↔ API Routes ↔ Firebase Cloud Functions ↔ External Services
+                                     ↓
+                              Firestore Database
 ```
 
-### 理由
-- プロジェクトの専門性と信頼性を損なう
-- コミット履歴の品質を著しく低下させる
-- 開発者の貢献を不適切に表現する
+### Project Structure
 
-### 正しいコミットメッセージ
-- 機能説明と技術仕様のみを記述
-- 客観的で事実に基づく内容
-- Conventional Commits形式に従った簡潔な表現
-
-### 必須テンプレート
-コミットメッセージには以下のテンプレートを使用すること：
-
-```
-<type>: <description>
-
-<body>
-
-Developed-by: Sina TehraniFard <tf.sina.system@gmail.com>
-```
-
-**例：**
-```
-feat: ユーザー認証システムの実装
-
-- Firebase Authentication統合
-- ログイン/ログアウト機能
-- セッション管理とルート保護
-
-Developed-by: Sina TehraniFard <tf.sina.system@gmail.com>
-```
-
-# 🚨 Git操作の重要な制限事項
-
-## 絶対禁止事項
-**ユーザーの明示的な指示がない限り、いかなるGit操作も実行してはならない**
-
-### 禁止されるGit操作
-- `git add`
-- `git commit`
-- `git push`
-- `git pull`
-- `git merge`
-- `git rebase`
-- `git reset`
-- `git checkout`
-- その他すべてのGit関連コマンド
-
-### 理由
-- ユーザーの作業フローを尊重
-- 意図しない変更の防止
-- バージョン管理の主導権をユーザーに委譲
-
-### 許可される操作
-- `git status`（状況確認のため、ユーザーが明示的に要求した場合のみ）
-- `git log`（履歴確認のため、ユーザーが明示的に要求した場合のみ）
-- `git diff`（差分確認のため、ユーザーが明示的に要求した場合のみ）
-
-# 追加指示
-- gitワークフロー @docs/git-instructions.md
-- gitガイドライン @docs/git-guidelines.md
-- スタイリングガイド @STYLING_GUIDE.md
-
-## コード品質ガイドライン
-
-### 客観性とプロフェッショナリズムの原則
-
-#### 既定的評価の禁止
-- **肯定的形容詞の使用禁止**: 「素晴らしい」「完璧」「最高」「美しい」等の主観的評価表現を使用しない
-- **コミットメッセージの客観性**: 機能説明と技術仕様に限定し、品質評価を含めない
-- **コード品質の客観的記述**: 実装内容・機能・技術仕様のみを記述する
-
-#### 批判的思考の維持
-- **実装検証の重要性**: 常に潜在的な問題・改善点・制限事項を考慮する
-- **品質保証の態度**: 自己満足を排除し、継続的な改善機会を探求する
-- **外部評価への配慮**: 第三者が見た際の信頼性と専門性を重視する
-
-#### プロフェッショナルな表現方法
-- **事実ベースの記述**: 実装した機能・解決した問題・使用した技術のみを記述
-- **中立的表現の採用**: 感情的・評価的表現を避け、技術的事実に基づく記述
-- **継続改善の姿勢**: 完成度より改善可能性に焦点を当てた記述
-
-### コメントの書き方
-- **番号付きコメントは禁止**: コメントに「1. 」「2. 」「3. 」などの番号を振ってはいけません
-- **理由**: コードの追加・削除・移動の際に番号の付け直しが必要になり、保守コストが増大します
-- **代替案**: セクション名や機能名で明確に区別する
-- **例外**: 手順を説明する場合は「Step 1」「Step 2」のように明示的に手順であることを示す
-
-#### ❌ 悪い例
-```typescript
-// 1. ユーザー認証
-const user = getUser();
-// 2. データ取得  
-const data = fetchData();
-// 3. 表示更新
-updateUI(data);
-```
-
-#### ✅ 良い例
-```typescript
-// ユーザー認証
-const user = getUser();
-// データ取得  
-const data = fetchData();
-// 表示更新
-updateUI(data);
-```
-
-## プロジェクト概要
-
-ヒカリノは、Next.js 15で構築されたAI搭載の日本語タロット占いサービスです。コイン制の課金システムと、キャラクター主導のAI解釈が特徴です。バックエンドサービスにFirebase、決済にStripe、「ヒカリノ」キャラクターペルソナを通じたパーソナライズされたタロット読みの生成にOpenAI APIを使用しています。
-
-## 開発コマンド
-
-### 基本コマンド
-- `npm run dev` - Turbopackを使用した開発サーバーの起動
-- `npm run build` - 本番環境用ビルド
-- `npm run lint` - ESLintバリデーションの実行
-- `npm run start` - 本番サーバーの起動
-
-### テスト
-現在テストフレームワークは設定されていません。テストを追加する際は、ユーザーに希望するテストアプローチを確認してください。
-
-## アーキテクチャと重要な概念
-
-### 技術スタック
-- **Next.js 15** (App Routerアーキテクチャ)
-- **React 19** with TypeScript 5
-- **Tailwind CSS 4** (新しいインラインテーマ構文を使用)
-- **Firebase** (Auth, Firestore, Cloud Functions)
-- **Stripe** (決済処理)
-- **OpenAI API** (AI搭載の解釈生成)
-
-### コアビジネスロジック
-- **タロットシステム**: 大アルカナ22枚のカード（正位置・逆位置）
-- **コインシステム**: 1回の占いに100コイン必要
-- **キャラクター設計**: 「ヒカリノ」が温かい姉のような導きを提供
-- **セキュリティ**: Cloud Functionsによるサーバーサイドのカード引きとコイン検証
-
-### 主要ディレクトリ
-- `src/app/` - Next.js App RouterのページとAPIルート
-- `src/components/` - 再利用可能なUIコンポーネント
-- `src/lib/firebase.ts` - Firebase設定と初期化
-- `src/lib/firestore/` - データベース操作とスキーマ
-- `src/lib/tarot.ts` - タロットカードの定義とロジック
-- `src/prompts/` - AIキャラクタープロンプトテンプレート
-- `src/contexts/` - React Contextプロバイダー（CoinContext）
-
-### キャラクターガイドライン
-AIプロンプトやキャラクターインタラクションを扱う際は、ヒカリノの人格を維持してください：
-- 温かく、姉のような、サポート的な口調
-- 困難について正直でありながら希望を提供
-- ユーザーが聞いてもらえている感覚と優しい励ましを提供
-- 指導に対する判断的でないアプローチ
-
-### セキュリティパターン
-- 機密のFirebaseやStripeキーをクライアントコードで公開しない
-- コイン消費の検証はCloud Functionsを通じてサーバーサイドで行う
-- カード引きのランダム化は操作を防ぐためサーバーで実行
-- すべての決済処理はセキュリティのためStripe webhookを使用
-
-### 状態管理
-- コイン関連の状態管理には`CoinContext`を使用
-- 認証状態には`useAuth`フックを使用
-- すべてのコイン取引はサーバーサイド検証
-- 占い履歴の永続化にはFirestoreを使用
-
-### 設定メモ
-- TypeScript strict modeが有効で、`@/*`パスマッピング設定済み
-- ESLintはNext.jsコアウェブバイタル設定を使用
-- Tailwind CSS 4はシステム設定に基づく自動ダークモード
-- `main`ブランチでの自動バージョニング用semantic releaseが設定済み
-
-### Firebase構造
-Firestore操作を行う際は、`src/lib/firestore/`の既存パターンを使用してください：
-- ユーザーのコイン残高は安全に保存
-- カード詳細と解釈を含む占い履歴
-- Cloud Functionsがサーバーサイドのコイン減算を処理
-
-### 決済統合
-Stripe統合には以下が必要：
-- サーバーサイドのコイン購入処理
-- 決済確認のためのWebbook検証
-- Cloud Functionsを通じた安全なコイン残高更新
-
-### モーダルダイアログの使用方法
-
-#### MessageDialogコンポーネント
-ユーザーへの通知、警告、エラー表示に統一されたモーダルダイアログを使用してください。
-
-**使用例：**
-```typescript
-import MessageDialog from "@/components/ui/MessageDialog";
-
-// 状態管理
-const [showMessage, setShowMessage] = useState(false);
-
-// ダイアログ表示
-<MessageDialog
-  isOpen={showMessage}
-  onClose={() => setShowMessage(false)}
-  type="warning"  // 'info' | 'warning' | 'error' | 'success'
-  title="カスタムタイトル"  // オプション（省略時は自動設定）
-  message="表示したいメッセージ"
-/>
-```
-
-**タイプ別の特徴：**
-- **info（情報）**: 💭アイコン、青色、「了解」ボタン
-- **warning（警告）**: ⚠️アイコン、黄色、「はい」ボタン
-- **error（エラー）**: ❌アイコン、赤色、「OK」ボタン
-- **success（成功）**: ✅アイコン、エメラルド色、「OK」ボタン
-
-**使用ガイドライン：**
-- ユーザーの操作を中断させる重要な通知に使用
-- 下部の小さなメッセージではなく、視認性の高いモーダルを使用
-- メッセージは簡潔に、必要な情報のみを伝える
-- 適切なタイプを選択してユーザーに状況を明確に伝える
-
-### UIレイアウト構造
-
-#### PC版（768px以上）
-- **左サイドバー常時表示**: `src/components/ui/Sidebar.tsx`を使用
-- **サイドバー幅**: 256px固定
-- **メインコンテンツ**: サイドバー分のマージンを設定
-- **ヘッダー**: サイドバーと重複しないよう調整
-
-#### モバイル版（768px未満）
-- **ハンバーガーメニュー**: `src/components/ui/HamburgerMenu.tsx`を使用
-- **スライドアウト方式**: 右から左にメニューが出現
-- **オーバーレイ**: メニュー表示時は背景をブラー処理
-
-#### 重要な実装規則
-- **機能完全一致**: SidebarとHamburgerMenuの機能は完全に一致させること
-- **レスポンシブ切り替え**: `md:`ブレークポイント（768px）で切り替え
-- **ユーザー情報表示**: 両方のメニューで同じユーザー情報を表示
-- **メニュー項目**: ホーム・履歴・ログイン/ログアウトを同じ順序で配置
-
-## ロジック分離の原則
-
-### 基本方針
-**品質と効率のバランスを重視した現実的なロジック分離**
-
-### 分離基準（優先度順）
-
-#### 1. **単一責任原則** 🎯
-- **UIロジック**: コンポーネント内に保持OK（イベントハンドラー、表示制御等）
-- **ビジネスロジック**: 必ず分離（データ変換、計算、バリデーション等）
-
-#### 2. **再利用性** 🔄
-- **2箇所以上で使用**: 共通ファイルに分離
-- **1箇所のみ**: コンポーネント内またはコンポーネント専用ファイル
-
-#### 3. **テスタビリティ** 🧪
-- **複雑な計算処理**: 必ず分離（テスト容易性のため）
-- **API処理・非同期処理**: 必ず分離
-- **純粋関数**: ユーティリティとして分離
-
-#### 4. **行数制限** 📏
-- **20行未満**: 分離不要（コンポーネント内OK）
-- **20行以上**: 分離を検討（他の基準と合わせて判断）
-
-### ファイル分離戦略
-
-#### 共通ロジック
 ```
 src/
-├── hooks/           # 状態管理＋再利用可能ロジック
-├── utils/           # 純粋関数・計算処理
-├── lib/             # API処理・ビジネスロジック
+├── app/                          # Next.js App Router
+│   ├── page.tsx                 # Main application page (refactored from 232 lines)
+│   ├── layout.tsx               # Root layout with CoinProvider
+│   ├── history/                 # Fortune reading history
+│   └── api/                     # API Routes
+│       ├── fortune/route.ts     # OpenAI integration with streaming
+│       └── create-checkout-session/route.ts # Stripe checkout
+├── components/                   # React Components
+│   ├── Header.tsx               # Application header (completely refactored)
+│   ├── LoginModal.tsx           # Firebase Auth integration
+│   ├── CoinPurchaseModal.tsx    # Stripe payment integration
+│   ├── NameSetupModal.tsx       # User onboarding
+│   └── ui/                      # Reusable UI Components
+│       ├── Button.tsx           # Unified button component
+│       ├── TarotCards.tsx       # Card display with animations
+│       ├── QuestionForm.tsx     # User input handling
+│       ├── FortuneResult.tsx    # Streaming result display
+│       ├── WaitingAnimation.tsx # Lottie-based animations
+│       └── [other UI components]
+├── hooks/                       # Custom React Hooks
+│   ├── useAuth.ts              # Firebase Authentication
+│   ├── useFortune.ts           # Fortune telling logic (completely externalized)
+│   └── useCoinAnimation.ts     # Coin purchase animations
+├── lib/                        # Business Logic & Utilities
+│   ├── firebase.ts             # Firebase configuration
+│   ├── tarot.ts                # 22 Major Arcana definitions
+│   ├── fortune.ts              # API calling and streaming logic
+│   └── firestore/              # Database operations
+├── contexts/                   # React Context Providers
+│   └── CoinContext.tsx         # Global coin state management
+├── types/                      # TypeScript Definitions
+│   └── index.ts               # Comprehensive type definitions
+├── prompts/                    # AI Prompt Engineering
+│   ├── character.ts           # Hikarino character definition
+│   ├── style.ts               # Response style guidelines
+│   ├── technique.ts           # Tarot reading techniques
+│   └── policy.ts              # Content moderation policies
+└── utils/                     # Helper utilities
+
+functions-core/                 # Firebase Cloud Functions
+├── src/
+│   ├── index.ts               # Main functions export
+│   └── webhook/               # Stripe webhook handlers
+└── package.json               # Node.js 22 runtime
 ```
 
-#### コンポーネント専用ロジック
-```
-src/components/ui/
-├── Button.tsx
-├── Button.logic.ts    # Button専用の複雑ロジック
-├── TarotCards.tsx
-└── TarotCards.logic.ts # TarotCards専用ロジック
-```
+## Key Features & Architecture Decisions
 
-#### 判断フローチャート
-1. ビジネスロジック？ → Yes: 分離必須
-2. 2箇所以上で使用？ → Yes: 共通ファイル化
-3. 複雑な計算・API？ → Yes: 分離推奨
-4. 20行以上？ → Yes: 分離検討
-5. それ以外 → コンポーネント内OK
-│   ├── fortuneLogic.ts
-│   └── dataProcessing.ts
-```
+### 1. **Component Architecture**
+- **Before**: Monolithic 232-line page component
+- **After**: Modular, single-responsibility components
+- **Benefits**: Improved maintainability, reusability, and testing capabilities
 
-### 実装例
+### 2. **State Management**
+- **React Context**: Global coin state management
+- **Custom Hooks**: Encapsulated business logic (fortune telling, authentication, animations)
+- **Local State**: Component-specific UI state
 
-#### ❌ 悪い例（10行以上のロジックをコンポーネント内に記述）
-```typescript
-// page.tsx
-const filterByText = (fortune: FortuneHistory, query: string) => {
-  if (!query) return true;
-  const lowerQuery = query.toLowerCase();
-  const questionMatch = fortune.question.toLowerCase().includes(lowerQuery);
-  const resultMatch = fortune.result.toLowerCase().includes(lowerQuery);
-  const cardMatch = fortune.cards.some(card => 
-    card.cardName.toLowerCase().includes(lowerQuery)
-  );
-  return questionMatch || resultMatch || cardMatch;
-  // 10行以上のため分離が必要
-};
-```
+### 3. **Security-First Design**
+- **Server-side card drawing**: Prevents client-side manipulation
+- **Cloud Functions**: Secure coin transactions with atomic operations
+- **Firebase Auth**: Robust user authentication
+- **Stripe Webhooks**: Secure payment processing
 
-#### ✅ 良い例（10行未満はコンポーネント内でOK）
-```typescript
-// page.tsx - 基本的なロジックはOK
-const handleToggle = () => setExpanded(!expanded);
-const isDisabled = !user || loading;
-const hasItems = items.length > 0;
+### 4. **Type Safety**
+- **Comprehensive TypeScript**: 100% typed codebase with detailed documentation
+- **Strict Mode**: Enhanced error catching and code quality
+- **Type Definitions**: Centralized in `/src/types/index.ts` with extensive comments
 
-// hooks/useFortuneFilters.ts - 10行以上は分離
-export const useFortuneFilters = () => {
-  const filterByText = (fortune: FortuneHistory, query: string) => {
-    // 複雑なフィルタリングロジック（10行以上）
-  };
-  return { filterByText };
-};
+### 5. **Performance Optimizations**
+- **Streaming API**: Real-time fortune results using Server-Sent Events
+- **Lazy Loading**: Components and animations loaded on demand
+- **Optimized Images**: Proper image handling for tarot cards
+- **Firebase Caching**: Efficient data fetching strategies
+
+## Available Scripts
+
+### Frontend Development
+```bash
+npm run dev          # Development server with Turbopack
+npm run build        # Production build
+npm run start        # Production server
+npm run lint         # ESLint code quality check
 ```
 
-### メリット
-- **テスタビリティ**: ロジックを独立してテスト可能
-- **再利用性**: 複数のコンポーネントで同じロジックを使用可能
-- **保守性**: ロジックの変更時に影響範囲を限定
-- **可読性**: UIとロジックの責任が明確に分離
+### Firebase Functions
+```bash
+cd functions-core
+npm run build        # TypeScript compilation
+npm run serve        # Local emulator
+npm run deploy       # Deploy to Firebase
+npm run webhook:dev  # Local webhook development
+```
+
+### Deployment & Release
+```bash
+firebase deploy      # Full deployment
+semantic-release     # Automated versioning (CI/CD)
+```
+
+## Development Patterns
+
+### Component Development
+1. **UI Components**: Place in `src/components/ui/` for reusability
+2. **Business Logic**: Extract to `src/lib/` or custom hooks
+3. **Type Definitions**: Add to `src/types/index.ts` with documentation
+4. **Styling**: Use Tailwind classes with warm color palette defined in globals.css
+
+### Best Practices
+- **Single Responsibility**: Each component has one clear purpose
+- **File Size Limit**: Keep components under 200 lines (split if larger)
+- **Type Documentation**: Include JSDoc comments for complex types
+- **Error Handling**: Comprehensive error boundaries and user feedback
+- **Loading States**: Consistent loading indicators and skeleton screens
+
+## API Integration
+
+### OpenAI Integration
+- **Model**: GPT-4 with temperature 0.8 for creative responses
+- **Streaming**: Real-time response delivery for better UX
+- **Prompt Engineering**: Sophisticated prompt system with character consistency
+- **Error Handling**: Graceful fallbacks for API failures
+
+### Firebase Services
+- **Authentication**: Email/password and social login
+- **Firestore**: User data, coin balances, and fortune history
+- **Cloud Functions**: Secure business logic execution
+- **Security Rules**: Comprehensive data access control
+
+### Stripe Integration
+- **Checkout Sessions**: Secure payment processing
+- **Webhooks**: Automated coin fulfillment
+- **Metadata**: User identification and coin amounts
+- **Error Recovery**: Failed payment handling
+
+## UI/UX Design
+
+### Design System
+- **Warm Color Palette**: Gold (#ECC356), Sky Blue (#ABD2DD), Cream (#FFFDF5)
+- **Glass Morphism**: Translucent backgrounds with backdrop blur
+- **Responsive Design**: Mobile-first approach with tablet/desktop optimization
+- **Animation System**: Lottie animations for engagement
+
+### User Experience
+- **Progressive Enhancement**: Works without JavaScript for basic functionality
+- **Loading States**: Comprehensive feedback during async operations
+- **Error Handling**: User-friendly error messages and recovery options
+- **Accessibility**: ARIA labels and keyboard navigation support
+
+## Security Considerations
+
+### Data Protection
+- **Environment Variables**: All sensitive keys in environment configuration
+- **Server-side Validation**: All critical operations validated on backend
+- **Rate Limiting**: API endpoint protection (handled by Firebase)
+- **Content Moderation**: AI response filtering for inappropriate content
+
+### Payment Security
+- **PCI Compliance**: All payments handled by Stripe (PCI DSS Level 1)
+- **Webhook Signatures**: Verified Stripe webhook authenticity
+- **Atomic Transactions**: Coin operations are atomic and reversible
+- **Audit Trail**: All transactions logged for monitoring
+
+## Recent Architecture Improvements (2025)
+
+### Major Refactoring
+- **Component Decomposition**: Broke down monolithic components into focused, reusable pieces
+- **Business Logic Extraction**: Moved API calls and state management to dedicated hooks and utilities
+- **Type System Enhancement**: Added comprehensive TypeScript definitions with educational comments
+- **Performance Optimization**: Implemented streaming APIs and optimized rendering
+
+### Quality Improvements
+- **Error Boundary**: Comprehensive error handling at component and application levels
+- **Loading States**: Consistent loading indicators and skeleton screens
+- **Code Documentation**: Extensive inline documentation for maintainability
+- **Testing Foundation**: Prepared structure for comprehensive testing implementation
+
+## Deployment
+
+### Environment Configuration
+- **Development**: Local development with Firebase emulators
+- **Staging**: Firebase Hosting with preview channels
+- **Production**: Firebase Hosting with CDN and custom domain
+
+### CI/CD Pipeline
+- **Semantic Release**: Automated versioning based on conventional commits
+- **GitHub Actions**: Automated testing and deployment
+- **Firebase CLI**: Deployment automation and rollback capabilities
+
+## Future Development
+
+### Planned Enhancements
+- **Testing Suite**: Comprehensive unit and integration tests
+- **Performance Monitoring**: Real-time performance metrics
+- **Advanced Analytics**: User behavior tracking and insights
+- **Mobile App**: React Native companion application
+
+### Scalability Considerations
+- **Database Sharding**: Prepared for horizontal scaling
+- **CDN Integration**: Optimized asset delivery
+- **Caching Strategy**: Multi-layer caching implementation
+- **Monitoring**: Application performance and error tracking
+
+---
+
+**Version**: 1.3.1  
+**Last Updated**: July 2025  
+**Architecture Status**: Recently refactored and modernized  
+**Maintenance**: Active development with regular updates
