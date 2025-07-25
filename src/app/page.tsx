@@ -203,8 +203,9 @@ export default function Home() {
                     )}
 
                     <div className="mt-10 w-full max-w-md">
-                        {hasFortuned && (
-                            <div className="mb-6 text-center transition-all duration-300 ease-in-out">
+                        {/* 固定領域でレイアウトシフトを防ぐ */}
+                        <div className="mb-6 text-center transition-all duration-300 ease-in-out min-h-[44px] flex items-center justify-center">
+                            {hasFortuned && (
                                 <Button onClick={() => {
                                     setIsResetting(true);
                                     setTimeout(() => {
@@ -216,8 +217,8 @@ export default function Home() {
                                 }} fullWidth>
                                     もう一度占う
                                 </Button>
-                            </div>
-                        )}
+                            )}
+                        </div>
 
                         {showWaitingAnimation ? (
                             <WaitingAnimation 
@@ -227,21 +228,7 @@ export default function Home() {
                             (hasFortuned || result) && <FortuneResult result={result}/>
                         )}
 
-                        {hasFortuned && !showWaitingAnimation && (
-                            <div className="mt-6 text-center transition-all duration-300 ease-in-out">
-                                <Button onClick={() => {
-                                    setIsResetting(true);
-                                    setTimeout(() => {
-                                        resetFortune();
-                                        setAllCardsFlipped(false);
-                                        setIsResetting(false);
-                                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                                    }, 500);
-                                }} fullWidth>
-                                    もう一度占う
-                                </Button>
-                            </div>
-                        )}
+                        {/* 下部の「もう一度占う」ボタンは削除（上部に統合済み） */}
                     </div>
                 </div>
 
@@ -305,8 +292,9 @@ export default function Home() {
                             </div>
 
                             <div className="mt-10 w-full max-w-md">
-                                {hasFortuned && (
-                                    <div className="mb-6 text-center transition-all duration-500 ease-in-out">
+                                {/* 固定領域でレイアウトシフトを防ぐ */}
+                                <div className="mb-6 text-center transition-all duration-500 ease-in-out min-h-[44px] flex items-center justify-center">
+                                    {hasFortuned && (
                                         <Button onClick={() => {
                                             setIsResetting(true);
                                             setTimeout(() => {
@@ -318,8 +306,8 @@ export default function Home() {
                                         }} fullWidth>
                                             もう一度占う
                                         </Button>
-                                    </div>
-                                )}
+                                    )}
+                                </div>
 
                                 <div className={`transition-all duration-700 ease-in-out ${showWaitingAnimation || hasFortuned || result ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-4'}`}>
                                     {showWaitingAnimation ? (
@@ -331,21 +319,7 @@ export default function Home() {
                                     )}
                                 </div>
 
-                                {hasFortuned && !showWaitingAnimation && (
-                                    <div className="mt-6 text-center transition-all duration-500 ease-in-out">
-                                        <Button onClick={() => {
-                                            setIsResetting(true);
-                                            setTimeout(() => {
-                                                resetFortune();
-                                                setAllCardsFlipped(false);
-                                                setIsResetting(false);
-                                                window.scrollTo({ top: 0, behavior: 'smooth' });
-                                            }, 500);
-                                        }} fullWidth>
-                                            もう一度占う
-                                        </Button>
-                                    </div>
-                                )}
+                                {/* 下部の「もう一度占う」ボタンは削除（上部に統合済み） */}
                             </div>
                         </div>
                     </GlassBox>

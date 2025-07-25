@@ -11,6 +11,35 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  
+  /* Warm Color Palette for CoinPurchaseModal */
+  --color-warm-gold: #ECC356;
+  --color-warm-sky: #ABD2DD;
+  --color-warm-cream: #FFFDF5;
+  --color-warm-orange: #F7971E;
+  --color-warm-yellow: #FFD200;
+  --color-warm-hover: #EFB00C;
+  
+  /* Background gradients */
+  --color-warm-gradient: linear-gradient(to right, #F7971E, #FFD200);
+  --color-soft-cream: linear-gradient(135deg, #FFF8E7 0%, #FFF0C4 100%);
+  
+  /* Button specific colors */
+  --color-warm-orange-solid: #F7971E;
+  --color-warm-yellow-solid: #FFD200;
+  
+  /* Text colors */
+  --color-text-primary: #1F2937;
+  --color-text-secondary: #6B7280;
+  --color-text-accent: #F7971E;
+  
+  /* Semantic colors */
+  --color-success: #10B981;
+  --color-warning: #EF4444;
+  --color-info: #3B82F6;
+  
+  /* Overlay */
+  --color-warm-overlay: rgba(255, 253, 245, 0.7);
 }
 
 /* ダークモード時の上書き：背景色と前景色を切り替える */
@@ -252,4 +281,49 @@ body {
 .animate-glass-shine {
   animation: glass-shine 8s ease-in-out infinite;
   animation-delay: 2s;
+}
+
+/* Warm UI specific animations */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-enter {
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.recommended-shimmer {
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.7) 50%,
+    transparent 60%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+/* Accessibility: Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

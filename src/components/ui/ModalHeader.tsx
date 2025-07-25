@@ -9,13 +9,15 @@ interface ModalHeaderProps {
   animationPath?: string;
   onClose?: () => void;
   showCloseButton?: boolean;
+  variant?: 'default' | 'purchase';
 }
 
 const ModalHeader: React.FC<ModalHeaderProps> = ({ 
   title, 
   animationPath, 
   onClose, 
-  showCloseButton = true 
+  showCloseButton = true,
+  variant = 'default'
 }) => {
   const [animation, setAnimation] = useState<object | null>(null);
 
@@ -28,8 +30,12 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({
     }
   }, [animationPath]);
 
+  const headerClassName = variant === 'purchase' 
+    ? "sticky top-0 z-50 bg-sky-200 dark:bg-sky-300 rounded-t-2xl px-6 md:px-8 py-4 border-b border-sky-300/50 backdrop-blur-sm"
+    : "sticky top-0 z-50 bg-gradient-to-r from-purple-600/80 to-purple-700/80 dark:from-purple-700/80 dark:to-purple-800/80 rounded-t-2xl px-6 md:px-8 py-4 border-b border-purple-500/30 backdrop-blur-sm";
+
   return (
-    <header className="bg-gradient-to-r from-purple-600/20 to-purple-700/20 dark:from-purple-700/20 dark:to-purple-800/20 rounded-t-2xl px-6 md:px-8 py-4 border-b border-purple-500/10">
+    <header className={headerClassName}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           {animationPath && (
