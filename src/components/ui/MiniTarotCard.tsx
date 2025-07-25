@@ -109,10 +109,6 @@ const MiniTarotCard: React.FC<MiniTarotCardProps> = ({ card, isReversed, delay =
           <span className="ml-2 text-xs text-red-300">逆位置</span>
         )}
         
-        {/* 三角形の矢印 */}
-        <div className="absolute top-full left-1/2 transform -translate-x-1/2">
-          <div className="w-0 h-0 border-l-2 border-r-2 border-t-4 border-transparent border-t-gray-900 dark:border-t-gray-800" />
-        </div>
       </div>
 
       {/* モバイル版カード名表示 - カードに重ねて表示 */}
