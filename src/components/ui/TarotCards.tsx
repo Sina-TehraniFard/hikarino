@@ -227,38 +227,6 @@ const TarotCards = ({ cards, onAllFlipped }: TarotCardsProps) => {
           <div className="flex-shrink-0 w-8"></div>
         </div>
         
-        {/* 左右ナビゲーションボタン（PC・モバイル共通） */}
-        <div className="flex justify-center items-center mt-4 gap-4">
-          <button 
-            onClick={() => {
-              const container = document.querySelector('.tarot-scroll-container') as HTMLElement;
-              if (container) {
-                const newIndex = Math.max(0, currentIndex - 1);
-                setCurrentIndex(newIndex);
-                const scrollAmount = window.innerWidth < 768 ? -172 : -220;
-                container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-              }
-            }}
-            className="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900 hover:bg-purple-200 dark:hover:bg-purple-800 flex items-center justify-center transition-colors duration-200 text-purple-600 dark:text-purple-400"
-          >
-            ←
-          </button>
-          
-          <button 
-            onClick={() => {
-              const container = document.querySelector('.tarot-scroll-container') as HTMLElement;
-              if (container) {
-                const newIndex = Math.min(cards.length - 1, currentIndex + 1);
-                setCurrentIndex(newIndex);
-                const scrollAmount = window.innerWidth < 768 ? 172 : 220;
-                container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-              }
-            }}
-            className="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900 hover:bg-purple-200 dark:hover:bg-purple-800 flex items-center justify-center transition-colors duration-200 text-purple-600 dark:text-purple-400"
-          >
-            →
-          </button>
-        </div>
       </div>
     </div>
   );
