@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.4.0...v1.5.0) (2025-07-27)
+
+
+### Features
+
+* プロンプトの大幅改善とリピート誘導の強化 ([3984437](https://github.com/Sina-TehraniFard/hikarino/commit/3984437d1a9afd8d2f4ac21bc2652e7823289154))
+
 # [1.4.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.3.1...v1.4.0) (2025-07-25)
 
 
