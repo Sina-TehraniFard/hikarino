@@ -3,10 +3,11 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { registerUserIfNew } from '@/lib/firestore/user';
+import { registerUserIfNew, hasAcceptedTerms } from '@/lib/firestore/user';
 
 interface ExtendedUser extends User {
     firestoreName?: string;
+    hasAcceptedTerms?: boolean;
 }
 
 export function useAuth() {
@@ -42,14 +43,20 @@ export function useAuth() {
                 // 初期設定（Auth情報のみ）
                 setUser({
                     ...authUser,
-                    firestoreName: authUser.displayName || ''
+                    firestoreName: authUser.displayName || '',
+                    hasAcceptedTerms: false // 初期値は未同意
                 });
                 
-                // Firestoreから名前を取得（非同期）
-                const firestoreName = await fetchUserName(authUser.uid);
+                // Firestoreから名前と同意状態を取得（非同期）
+                const [firestoreName, termsAccepted] = await Promise.all([
+                    fetchUserName(authUser.uid),
+                    hasAcceptedTerms(authUser.uid)
+                ]);
+                
                 setUser({
                     ...authUser,
-                    firestoreName: firestoreName || authUser.displayName || ''
+                    firestoreName: firestoreName || authUser.displayName || '',
+                    hasAcceptedTerms: termsAccepted
                 });
                 
                 setLoading(false);
@@ -73,5 +80,16 @@ export function useAuth() {
         }
     };
 
-    return { user, loading, refreshUserName };
+    // 利用規約同意状態を更新する関数を追加
+    const refreshTermsAcceptance = async () => {
+        if (user?.uid) {
+            const termsAccepted = await hasAcceptedTerms(user.uid);
+            setUser(prev => prev ? {
+                ...prev,
+                hasAcceptedTerms: termsAccepted
+            } : null);
+        }
+    };
+
+    return { user, loading, refreshUserName, refreshTermsAcceptance };
 }

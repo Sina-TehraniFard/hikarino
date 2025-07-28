@@ -37,6 +37,7 @@ export interface User {
   uid?: string;                    // ユーザーの識別番号（ログインしていない場合はundefined）
   displayName?: string | null;     // 表示名（設定していない場合はnull）
   email?: string | null;           // メールアドレス（設定していない場合はnull）
+  firestoreName?: string;          // Firestoreに保存されたユーザー名
 }
 
 /**
