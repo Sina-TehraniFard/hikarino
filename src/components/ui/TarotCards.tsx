@@ -29,7 +29,7 @@ const CardContainer = ({ children }: { children: React.ReactNode }) => (
 );
 
 const TarotCards = ({ cards, onAllFlipped }: TarotCardsProps) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  // const [currentIndex, setCurrentIndex] = useState(0);
   const [flippedCards, setFlippedCards] = useState<boolean[]>([]);
   const [showFlipGuide, setShowFlipGuide] = useState(true);
 
@@ -47,14 +47,7 @@ const TarotCards = ({ cards, onAllFlipped }: TarotCardsProps) => {
     if (!container) return;
 
     const handleScroll = () => {
-      const scrollLeft = container.scrollLeft;
-      const cardWidth = window.innerWidth < 768 ? 172 : 216; // カード幅 + gap
-      const rawIndex = scrollLeft / cardWidth;
-      const newIndex = Math.round(rawIndex);
-      // 最後のカードまで確実に検出
-      const maxIndex = cards.length - 1;
-      const finalIndex = Math.max(0, Math.min(newIndex, maxIndex));
-      setCurrentIndex(finalIndex);
+      // カードスクロール処理（現在は表示のみなので処理なし）
     };
 
     container.addEventListener('scroll', handleScroll);

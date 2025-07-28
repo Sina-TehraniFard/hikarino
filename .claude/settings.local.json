@@ -7,7 +7,10 @@
       "Bash(git add:*)",
       "Bash(git reset:*)",
       "Bash(git rm:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(firebase deploy:*)",
+      "Bash(git checkout:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": []
   }
