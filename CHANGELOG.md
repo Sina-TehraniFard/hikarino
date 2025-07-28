@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.5.0...v1.6.0) (2025-07-28)
+
+
+### Features
+
+* 利用規約同意モーダルの実装と型定義の改善 ([c08d780](https://github.com/Sina-TehraniFard/hikarino/commit/c08d780fd05f70083f9c155fed615e5df9a9a8b6))
+
 # [1.5.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.4.0...v1.5.0) (2025-07-27)
 
 
