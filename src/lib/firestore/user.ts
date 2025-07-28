@@ -25,6 +25,9 @@ export async function registerUserIfNew(user: User) {
             createdAt: new Date().toISOString(),
             coins: 500,
             needsNameSetup: !user.displayName || user.displayName === '',
+            // 利用規約同意情報（新規フィールド）
+            termsAcceptedAt: null,
+            privacyAcceptedAt: null,
         };
         
         await setDoc(ref, userData);
@@ -65,5 +68,49 @@ export async function checkNeedsNameSetup(uid: string): Promise<boolean> {
         console.warn('名前設定チェックでエラー:', error);
         // エラー時は名前設定不要として扱う
         return false;
+    }
+}
+
+/**
+ * ユーザーが利用規約に同意済みかチェック
+ * @param uid ユーザーID
+ * @returns 同意済みの場合true
+ */
+export async function hasAcceptedTerms(uid: string): Promise<boolean> {
+    try {
+        const userRef = doc(db, 'users', uid);
+        const userDoc = await getDoc(userRef);
+        
+        if (!userDoc.exists()) {
+            return false;
+        }
+        
+        const data = userDoc.data();
+        // 両方の同意が記録されている場合のみtrue
+        return !!(data.termsAcceptedAt && data.privacyAcceptedAt);
+    } catch (error) {
+        console.error('利用規約同意チェックでエラー:', error);
+        return false;
+    }
+}
+
+/**
+ * 利用規約への同意を記録
+ * @param uid ユーザーID
+ */
+export async function recordTermsAcceptance(uid: string): Promise<void> {
+    try {
+        const now = new Date().toISOString();
+        const userRef = doc(db, 'users', uid);
+        
+        await updateDoc(userRef, {
+            termsAcceptedAt: now,
+            privacyAcceptedAt: now
+        });
+        
+        console.log('利用規約同意を記録しました:', uid);
+    } catch (error) {
+        console.error('利用規約同意の記録でエラー:', error);
+        throw error;
     }
 }

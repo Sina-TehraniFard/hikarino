@@ -12,6 +12,7 @@ import {useCoinContext} from "@/contexts/CoinContext";
 import LoginModal from "@/components/LoginModal";
 import CoinPurchaseModal from "@/components/CoinPurchaseModal";
 import NameSetupModal from "@/components/NameSetupModal";
+import TermsAgreementModal from "@/components/TermsAgreementModal";
 import Button from "@/components/ui/Button";
 import TarotCards from "@/components/ui/TarotCards";
 import QuestionForm from "@/components/ui/QuestionForm";
@@ -26,7 +27,7 @@ import {useState} from "react";
 import {checkNeedsNameSetup} from "@/lib/firestore/user";
 
 export default function Home() {
-    const {user, loading, refreshUserName} = useAuth();
+    const {user, loading, refreshUserName, refreshTermsAcceptance} = useAuth();
     const router = useRouter();
     const {coins, refreshCoins} = useCoinContext();
     const {displayCoins} = useCoinAnimation(coins, user?.uid);
@@ -88,6 +89,21 @@ export default function Home() {
                 <div className="flex-1 flex items-center justify-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
                 </div>
+            </main>
+        );
+    }
+
+    // 認証済みだが利用規約に未同意の場合は同意モーダルを表示
+    if (user && user.hasAcceptedTerms === false) {
+        return (
+            <main className="flex min-h-screen relative overflow-hidden">
+                <PageBackground />
+                <TermsAgreementModal
+                    userUid={user.uid}
+                    onComplete={async () => {
+                        await refreshTermsAcceptance();
+                    }}
+                />
             </main>
         );
     }

@@ -1,10 +1,13 @@
 'use client';
-import { signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+    import { signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useEffect, useState } from 'react';
 // registerUserIfNewとcheckNeedsNameSetupは削除
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
+import Link from 'next/link';
+import { hasAcceptedTerms } from '@/lib/firestore/user';
+import TermsAgreementModal from './TermsAgreementModal';
 
 const LottieAnimation = dynamic(() => import('lottie-react'), { ssr: false });
 
@@ -19,6 +22,10 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const [giftAnimation, setGiftAnimation] = useState<object | null>(null);
+    const [termsAccepted, setTermsAccepted] = useState(false);
+    const [privacyAccepted, setPrivacyAccepted] = useState(false);
+    const [showTermsModal, setShowTermsModal] = useState(false);
+    const [pendingGoogleUser, setPendingGoogleUser] = useState<{ uid: string } | null>(null);
     
     // この useEffect は削除 - 重複呼び出しを防ぐため
     // useAuthフックで既に認証状態を監視しているため不要
@@ -37,12 +44,24 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
         setError('');
         try {
             const result = await signInWithPopup(auth, provider);
-            // registerUserIfNewはuseAuthフックで処理されるため削除
-            onClose(); // 成功時はモーダルを閉じる
-        } catch (error: any) {
+            
+            // 同意状態をチェック
+            const hasAccepted = await hasAcceptedTerms(result.user.uid);
+            
+            if (!hasAccepted) {
+                // 同意モーダルを表示
+                setPendingGoogleUser(result.user);
+                setShowTermsModal(true);
+                setIsLoading(false);
+                // ログイン処理は一時保留
+            } else {
+                // 同意済みなら通常通りログイン完了
+                onClose();
+                setIsLoading(false);
+            }
+        } catch (error) {
             console.error('Googleログイン失敗:', error);
             setError('Googleログインに失敗しました。');
-        } finally {
             setIsLoading(false);
         }
     };
@@ -54,29 +73,35 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
             return;
         }
         
+        // 新規登録時のみ利用規約の同意をチェック
+        if (isSignUp && (!termsAccepted || !privacyAccepted)) {
+            setError('利用規約とプライバシーポリシーに同意してください。');
+            return;
+        }
+        
         setIsLoading(true);
         setError('');
         
         try {
-            let result;
             if (isSignUp) {
-                result = await createUserWithEmailAndPassword(auth, email, password);
+                await createUserWithEmailAndPassword(auth, email, password);
             } else {
-                result = await signInWithEmailAndPassword(auth, email, password);
+                await signInWithEmailAndPassword(auth, email, password);
             }
             
             // registerUserIfNewはuseAuthフックで処理されるため削除
             onClose(); // 成功時はモーダルを閉じる
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('メール認証失敗:', error);
-            if (error.code === 'auth/email-already-in-use') {
+            const firebaseError = error as { code?: string };
+            if (firebaseError.code === 'auth/email-already-in-use') {
                 setError('このメールアドレスは既に登録済みです。ログインモードに切り替えました。');
                 setIsSignUp(false); // 自動的にログインモードに切り替え
-            } else if (error.code === 'auth/weak-password') {
+            } else if (firebaseError.code === 'auth/weak-password') {
                 setError('パスワードは6文字以上で入力してください。');
-            } else if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+            } else if (firebaseError.code === 'auth/user-not-found' || firebaseError.code === 'auth/wrong-password') {
                 setError('メールアドレスまたはパスワードが正しくありません。');
-            } else if (error.code === 'auth/invalid-email') {
+            } else if (firebaseError.code === 'auth/invalid-email') {
                 setError('正しいメールアドレスを入力してください。');
             } else {
                 setError(isSignUp ? 'アカウント作成に失敗しました。' : 'ログインに失敗しました。');
@@ -164,6 +189,47 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
                                 </div>
                             )}
                             
+                            {/* 新規登録時のみ表示される同意セクション */}
+                            {isSignUp && (
+                                <div className="space-y-3 border-t pt-4">
+                                    {/* 利用規約 */}
+                                    <label className="flex items-start gap-2">
+                                        <input
+                                            type="checkbox"
+                                            checked={termsAccepted}
+                                            onChange={(e) => setTermsAccepted(e.target.checked)}
+                                            className="mt-1 w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                        />
+                                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                                            <Link href="/terms" target="_blank" className="text-purple-600 dark:text-purple-400 hover:underline">
+                                                利用規約
+                                            </Link>
+                                            および
+                                            <Link href="/legal" target="_blank" className="text-purple-600 dark:text-purple-400 hover:underline ml-1">
+                                                特定商取引法に基づく表記
+                                            </Link>
+                                            に同意します
+                                        </span>
+                                    </label>
+
+                                    {/* プライバシーポリシー */}
+                                    <label className="flex items-start gap-2">
+                                        <input
+                                            type="checkbox"
+                                            checked={privacyAccepted}
+                                            onChange={(e) => setPrivacyAccepted(e.target.checked)}
+                                            className="mt-1 w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                        />
+                                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                                            <Link href="/privacy" target="_blank" className="text-purple-600 dark:text-purple-400 hover:underline">
+                                                プライバシーポリシー
+                                            </Link>
+                                            に同意します
+                                        </span>
+                                    </label>
+                                </div>
+                            )}
+                            
                             <button
                                 type="submit"
                                 disabled={isLoading}
@@ -193,6 +259,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
                                     setError('');
                                     setEmail('');
                                     setPassword('');
+                                    setTermsAccepted(false);
+                                    setPrivacyAccepted(false);
                                 }}
                                 className="text-purple-600 dark:text-purple-400 hover:underline text-sm font-medium transition-colors duration-200"
                             >
@@ -234,6 +302,18 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
                     </button>
                 </div>
             </div>
+            
+            {/* Google連携ログイン後の利用規約同意モーダル */}
+            {showTermsModal && pendingGoogleUser && (
+                <TermsAgreementModal
+                    userUid={pendingGoogleUser.uid}
+                    onComplete={() => {
+                        setShowTermsModal(false);
+                        setPendingGoogleUser(null);
+                        onClose(); // 同意完了後にログインモーダルを閉じる
+                    }}
+                />
+            )}
         </div>
     );
 };
