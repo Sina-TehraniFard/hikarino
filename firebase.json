@@ -4,5 +4,8 @@
       "source": "functions-core",
       "codebase": "default"
     }
-  ]
+  ],
+  "firestore": {
+    "rules": "firestore.rules"
+  }
 }

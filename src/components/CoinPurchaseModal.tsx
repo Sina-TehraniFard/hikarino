@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import dynamic from "next/dynamic";
+// import dynamic from "next/dynamic";
 import WarmBox from "@/components/ui/WarmBox";
 import ModalHeader from "@/components/ui/ModalHeader";
 
-const LottieAnimation = dynamic(() => import('lottie-react'), { ssr: false });
+// const LottieAnimation = dynamic(() => import('lottie-react'), { ssr: false });
 
 declare global {
     interface Window {
