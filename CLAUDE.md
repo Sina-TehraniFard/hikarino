@@ -1,247 +1,236 @@
-# Hikarino - AI Tarot Fortune Telling Service
+# Global Claude Code Guidelines
 
-## Project Overview
+このドキュメントは、すべてのプロジェクトに共通するガイドラインを記載しています。
 
-**Hikarino** is a sophisticated AI-powered tarot fortune telling web application built with modern web technologies. The application provides users with personalized tarot readings using OpenAI's API, featuring a character named "Hikarino" who delivers warm, sister-like guidance through tarot card interpretations.
+## ガイドライン構成
 
-## Technology Stack
+### 共通ガイドライン
+- [テストガイドライン](docs/guidelines/testing.md) - TDD、テスト構造、命名規則
 
-### Core Technologies
-- **Next.js 15**: Modern React framework with App Router architecture
-- **React 19**: Latest React with advanced features
-- **TypeScript 5**: Full type safety with strict mode enabled
-- **Tailwind CSS 4**: Modern utility-first CSS with inline theme syntax and warm color palette
-- **Firebase**: Complete backend solution including Authentication, Firestore, and Cloud Functions
-- **OpenAI API**: GPT-4 integration for generating personalized fortune readings
-- **Stripe**: Payment processing for coin-based monetization system
+### プロジェクト固有ガイドライン
+各プロジェクトの要件に応じて、以下のような固有ガイドラインを設定できます：
 
-### Development Tools
-- **ESLint**: Code quality and consistency with Next.js recommended configuration
-- **Semantic Release**: Automated versioning and CHANGELOG generation
-- **PostCSS**: CSS processing with Tailwind integration
-- **Firebase Tools**: Local development and deployment management
+- API設計ガイドライン
+- データベース設計ガイドライン
+- セキュリティガイドライン
+- パフォーマンスガイドライン
 
-## Architecture & Structure
+## クイックリファレンス
 
-### Application Architecture
-The application follows a modern, scalable architecture with clear separation of concerns:
+### 重要な原則
+- **TDD**: テストファーストで実装
+- **Clean Code**: 自己説明的なコードを書く
+- **DRY**: 重複を避ける
+- **SOLID**: 設計原則に従う
 
-```
-Frontend (Next.js App Router) ↔ API Routes ↔ Firebase Cloud Functions ↔ External Services
-                                     ↓
-                              Firestore Database
-```
+### ファイル出力設定（セッション指向・必須遵守）
 
-### Project Structure
+#### パス記述ルール（統一規則）
+- **ワークスペース記法の強制使用**: 全パスは`~/workspace`記法で統一
+  - ✅ 正しい: `~/workspace/cc-knowledge/docs/guidelines/testing.md`
+  - ❌ 禁止: `/Users/[username]/workspace/docs/guidelines/testing.md`
+  - **適用対象**: ドキュメント、コマンド、スクリプト内の全パス参照
+  - **理由**: ポータビリティ向上・環境依存問題回避
 
-```
-src/
-├── app/                          # Next.js App Router
-│   ├── page.tsx                 # Main application page (refactored from 232 lines)
-│   ├── layout.tsx               # Root layout with CoinProvider
-│   ├── history/                 # Fortune reading history
-│   └── api/                     # API Routes
-│       ├── fortune/route.ts     # OpenAI integration with streaming
-│       └── create-checkout-session/route.ts # Stripe checkout
-├── components/                   # React Components
-│   ├── Header.tsx               # Application header (completely refactored)
-│   ├── LoginModal.tsx           # Firebase Auth integration
-│   ├── CoinPurchaseModal.tsx    # Stripe payment integration
-│   ├── NameSetupModal.tsx       # User onboarding
-│   └── ui/                      # Reusable UI Components
-│       ├── Button.tsx           # Unified button component
-│       ├── TarotCards.tsx       # Card display with animations
-│       ├── QuestionForm.tsx     # User input handling
-│       ├── FortuneResult.tsx    # Streaming result display
-│       ├── WaitingAnimation.tsx # Lottie-based animations
-│       └── [other UI components]
-├── hooks/                       # Custom React Hooks
-│   ├── useAuth.ts              # Firebase Authentication
-│   ├── useFortune.ts           # Fortune telling logic (completely externalized)
-│   └── useCoinAnimation.ts     # Coin purchase animations
-├── lib/                        # Business Logic & Utilities
-│   ├── firebase.ts             # Firebase configuration
-│   ├── tarot.ts                # 22 Major Arcana definitions
-│   ├── fortune.ts              # API calling and streaming logic
-│   └── firestore/              # Database operations
-├── contexts/                   # React Context Providers
-│   └── CoinContext.tsx         # Global coin state management
-├── types/                      # TypeScript Definitions
-│   └── index.ts               # Comprehensive type definitions
-├── prompts/                    # AI Prompt Engineering
-│   ├── character.ts           # Hikarino character definition
-│   ├── style.ts               # Response style guidelines
-│   ├── technique.ts           # Tarot reading techniques
-│   └── policy.ts              # Content moderation policies
-└── utils/                     # Helper utilities
+- **パス混在問題の防止**:
+  - ❌ **絶対禁止**: `/Users/username/workspace/~/workspace/...` のような混在パス
+  - ✅ **正解**: `/Users/$(whoami)/Documents/claude-outputs/$(date +%Y-%m-%d)/`
+  - **検証方法**: ファイル作成時に異常パスを検出
+  - **修正手順**: 不正ファイル移動→空ディレクトリ削除→パス参照更新
 
-functions-core/                 # Firebase Cloud Functions
-├── src/
-│   ├── index.ts               # Main functions export
-│   └── webhook/               # Stripe webhook handlers
-└── package.json               # Node.js 22 runtime
-```
+- **セッション指向ディレクトリ構造を強制使用**：
+  - **基本パス**: `/Users/$(whoami)/Documents/claude-outputs/{YYYY-MM-DD}/{{ファイル説明日本語}}.md`
+  - **自動セッション生成**: 新しいファイル出力時に現在時刻でセッションディレクトリ作成
+  - **日付ベース**: ファイル名で内容を表現、同日内での管理
+  - **対象**: Write/Taskツールでのドキュメント・レポート・設計書・分析結果の作成時
+  - **除外**: ソースコードファイル、設定ファイル、明示的な絶対パス指定時
+  - チケット番号が取得できない場合: `/Users/$(whoami)/Documents/claude-outputs/$(date +%Y-%m-%d)/`
 
-## Key Features & Architecture Decisions
+- **パス構造簡略化**：
+  - 日付ベースのシンプル構造
+  - ファイル名で内容を特定しやすく
 
-### 1. **Component Architecture**
-- **Before**: Monolithic 232-line page component
-- **After**: Modular, single-responsibility components
-- **Benefits**: Improved maintainability, reusability, and testing capabilities
+- **命名規則統一**：
+  - **レポート**: `{{目的・対象}}-レポート.md`
+  - **Next Steps**: `{{ステップ内容}}-ガイド.md`
+  - **実装**: `{{機能名}}-実装レポート.md`
 
-### 2. **State Management**
-- **React Context**: Global coin state management
-- **Custom Hooks**: Encapsulated business logic (fortune telling, authentication, animations)
-- **Local State**: Component-specific UI state
+- **ファイル管理機能**：
+  - **基本パス**: `/Users/$(whoami)/Documents/claude-outputs/`
+  - **日付自動適用**: `$(date +%Y-%m-%d)`
+  - **同日ファイルは既存ディレクトリに追加**
 
-### 3. **Security-First Design**
-- **Server-side card drawing**: Prevents client-side manipulation
-- **Cloud Functions**: Secure coin transactions with atomic operations
-- **Firebase Auth**: Robust user authentication
-- **Stripe Webhooks**: Secure payment processing
+- **パス決定の強制優先順位**：
+  1. **明示的な絶対パス指定**: そのまま使用
+  2. **カスタムコマンドルール**: カスタムコマンドが指定した場合
+  3. **ガイドラインルール（必須）**: ドキュメント・レポート・分析結果作成時は `/Users/$(whoami)/Documents/claude-outputs/$(date +%Y-%m-%d)/` を使用
+  4. **プロジェクト構造**: ソースコード・設定ファイル作成時
 
-### 4. **Type Safety**
-- **Comprehensive TypeScript**: 100% typed codebase with detailed documentation
-- **Strict Mode**: Enhanced error catching and code quality
-- **Type Definitions**: Centralized in `/src/types/index.ts` with extensive comments
+- **自動適用の実装**：
+  - ファイル名のみ・相対パス指定時は必ずガイドラインに従う
+  - 拡張子が `.md`, `.txt`, `.json` (レポート用)の場合は自動適用
+  - チケット番号は `git branch --show-current | grep -oE '[A-Z]+-[0-9]+' | head -1` で取得
 
-### 5. **Performance Optimizations**
-- **Streaming API**: Real-time fortune results using Server-Sent Events
-- **Lazy Loading**: Components and animations loaded on demand
-- **Optimized Images**: Proper image handling for tarot cards
-- **Firebase Caching**: Efficient data fetching strategies
+- **ナレッジ蓄積の維持**：
+  - **学習効果の高い技法・パターン**は `~/workspace/cc-knowledge/docs/knowledge/` に永続保存（変更なし）
+  - **トリガー**: 「学習効果」「技法」「パターン」「ベストプラクティス」の言及時
+  - **対象**: リファクタリング技法、アーキテクチャパターン、問題解決手法
+  - **目的**: プロジェクト間での知見共有と再利用促進
 
-## Available Scripts
+### 作業効率化ルール
 
-### Frontend Development
-```bash
-npm run dev          # Development server with Turbopack
-npm run build        # Production build
-npm run start        # Production server
-npm run lint         # ESLint code quality check
-```
+#### 新規作成時の自動検証
+- **新規テストクラス作成時は自動的に検証を実施**：
+  - コンパイルチェック（必須）
+  - テスト実行（必須）
+  - ユーザーの指示を待たずに自動的に実行する
+  
+#### テスト実装時の鉄則
+- **関数単位でのテスト実装では必ず1関数ごとにコンパイル・実行**：
+  - 1つの関数のテスト（@Nestedクラス）を実装
+  - 即座にコンパイル・テスト実行（自動）
+  - PASSしたら次の関数へ進む
+  - 複数関数のテストをまとめて実装することは厳禁
 
-### Firebase Functions
-```bash
-cd functions-core
-npm run build        # TypeScript compilation
-npm run serve        # Local emulator
-npm run deploy       # Deploy to Firebase
-npm run webhook:dev  # Local webhook development
-```
+#### 既存ファイル修正時の効率化
+- **修正のみの作業では、テスト実行やコンパイルチェックは不要**：
+  - 既存ファイルの軽微な修正（タイポ修正、コメント追加など）
+  - テストの説明文修正
+  - インポート文の整理
+- **ユーザーが明示的に要求した場合のみ実行**
+- **修正内容の説明と完了報告で十分**
 
-### Deployment & Release
-```bash
-firebase deploy      # Full deployment
-semantic-release     # Automated versioning (CI/CD)
-```
+#### 作業種別の判断基準
+- **新規作成として扱うケース**：
+  - 新しいテストクラスファイルの作成
+  - 新しいプロダクションコードクラスの作成
+  - 大規模なリファクタリング（メソッドの追加・削除を伴う）
+- **修正として扱うケース**：
+  - 既存メソッドのロジック修正
+  - テストケースの追加・修正（既存テストクラス内）
+  - ドキュメントやコメントの更新
 
-## Development Patterns
+#### Next Steps実行時のカスタムコマンド優先原則
+- **カスタムコマンド推奨の検出と自動実行**：
+  - Next Stepsやレポートでカスタムコマンド実行推奨が記載されている場合は最優先で実行
+  - 例：「`/fix-test`を実行することを推奨」「カスタムコマンドがあれば優先して実行」
+  - ユーザーが明示的に手動実行を要求しない限り、カスタムコマンドを自動実行
+  - 実行順序：高優先度カスタムコマンド → 中優先度カスタムコマンド → 手動作業
+- **対象コマンド**：`/fix-test`, `/lint-test`, `/implement`, `/test-review`等
 
-### Component Development
-1. **UI Components**: Place in `src/components/ui/` for reusability
-2. **Business Logic**: Extract to `src/lib/` or custom hooks
-3. **Type Definitions**: Add to `src/types/index.ts` with documentation
-4. **Styling**: Use Tailwind classes with warm color palette defined in globals.css
+#### Next Steps実行時のナレッジベース活用原則
+- **蓄積されたナレッジの自動参照**：
+  - 類似の問題・技術領域が検出された場合、`~/workspace/cc-knowledge/docs/knowledge/`から関連パターンを参照
+  - 具体的な実装提案時に、過去の成功パターンを適用
+  - 例：条件ロジックリファクタリング → `complex-conditional-logic-refactoring-patterns.md`を参照
+- **ナレッジベース連携の実装提案優先順位**：
+  1. **既存パターン活用**: 蓄積されたナレッジから実証済みパターンを提案
+  2. **パターン適用提案**: 類似コードへの横展開を積極提案
+  3. **新規パターン開発**: ナレッジにないパターンは新規開発として提案
+- **ナレッジファイルの動的参照方式**：
+  - **自動検索**: `~/workspace/cc-knowledge/docs/knowledge/`内の全`.md`ファイルを対象
+  - **キーワードベースマッチング**: ファイル名とタグから関連度を判定
+  - **優先度付け**: ファイル内の成功事例実績と最終更新日で重み付け
+  - **参照例**: 
+    - 条件ロジック関連 → `*conditional*`, `*refactor*` パターン
+    - テスト関連 → `*test*`, `*nested*` パターン  
+    - API関連 → `*api*`, `*design*` パターン
+- **実行パターン**：
+  ```
+  1. Next Stepsでカスタムコマンド推奨を検出
+  2. 「カスタムコマンド `/fix-test` を実行します」と宣言
+  3. 該当コマンドを自動実行
+  4. 実行結果を報告し、追加のNext Stepsを提示
+  ```
 
-### Best Practices
-- **Single Responsibility**: Each component has one clear purpose
-- **File Size Limit**: Keep components under 200 lines (split if larger)
-- **Type Documentation**: Include JSDoc comments for complex types
-- **Error Handling**: Comprehensive error boundaries and user feedback
-- **Loading States**: Consistent loading indicators and skeleton screens
+## カスタムコマンド
 
-## API Integration
+作業効率化のためのカスタムコマンドが利用可能です：
 
-### OpenAI Integration
-- **Model**: GPT-4 with temperature 0.8 for creative responses
-- **Streaming**: Real-time response delivery for better UX
-- **Prompt Engineering**: Sophisticated prompt system with character consistency
-- **Error Handling**: Graceful fallbacks for API failures
+### 統合ワークフロー（包括的開発プロセス）
+- `/integrated-requirements [要件概要]` - EARS記法で要件定義書を生成
+- `/integrated-design [要件ファイル]` - 技術設計書・アーキテクチャ図を生成
+- `/integrated-tasks [設計ファイル]` - 実装タスクの分解・優先度付け
+- `/integrated-implement [タスクファイル]` - タスクベース実装実行
 
-### Firebase Services
-- **Authentication**: Email/password and social login
-- **Firestore**: User data, coin balances, and fortune history
-- **Cloud Functions**: Secure business logic execution
-- **Security Rules**: Comprehensive data access control
+### TDDフェーズ別コマンド（段階的テスト駆動開発）
+- `/tdd-red [テスト対象]` - Redフェーズ（意図的失敗テスト作成）
+- `/tdd-green [失敗テスト]` - Greenフェーズ（最小実装）
+- `/tdd-refactor [実装コード]` - Refactorフェーズ（品質向上）
+- `/tdd-verify-complete [コード]` - TDDサイクル完了検証
 
-### Stripe Integration
-- **Checkout Sessions**: Secure payment processing
-- **Webhooks**: Automated coin fulfillment
-- **Metadata**: User identification and coin amounts
-- **Error Recovery**: Failed payment handling
+### 逆エンジニアリングコマンド（既存コード分析）
+- `/rev-requirements [コードパス]` - 既存コードから要件抽出
+- `/rev-design [コードパス]` - 既存コードから設計書生成
+- `/rev-specs [コードパス]` - 既存コードから仕様書生成
+- `/rev-tasks [コードパス]` - 既存コードからタスク抽出
 
-## UI/UX Design
+### 既存主要コマンド
+- `/design [設計ファイル]` - 設計依頼書から設計書を生成
+- `/implement [タグ] <設計ファイル>` - TDDサイクルで設計から実装を自動実行
+- `/fix-test [タグ] <ファイル>` - テストコードを自動修正
+- `/lint-test [タグ] <ファイル>` - テストコードのガイドライン準拠をチェック
+- `/next-steps [内容]` - 次のステップ提案・選択
+- `/pr` - プルリクエスト用ドキュメントを生成
+- `/test-review <ファイル>` - テストレビューと改善提案
+- `/update-docs [オプション]` - コメント・ドキュメント更新
 
-### Design System
-- **Warm Color Palette**: Gold (#ECC356), Sky Blue (#ABD2DD), Cream (#FFFDF5)
-- **Glass Morphism**: Translucent backgrounds with backdrop blur
-- **Responsive Design**: Mobile-first approach with tablet/desktop optimization
-- **Animation System**: Lottie animations for engagement
+### 汎用コマンド
+- `/commit-changes` - 品質チェック付きコミット作成
+- `/orchestrator <タスク>` - 複雑タスクの分解・委譲
+- `/review-pr-local-branch` - PRレビュー
 
-### User Experience
-- **Progressive Enhancement**: Works without JavaScript for basic functionality
-- **Loading States**: Comprehensive feedback during async operations
-- **Error Handling**: User-friendly error messages and recovery options
-- **Accessibility**: ARIA labels and keyboard navigation support
+### タグシステム
+作業内容を分類し、適切なワークフローを自動選択するシステム：
 
-## Security Considerations
+#### 基本タグ
+- `@tdd` - TDDサイクル強制実行（Red-Green-Refactor）
+- `@tdd-red` - Redフェーズ（意図的失敗テスト）専用実行
+- `@tdd-green` - Greenフェーズ（最小実装）専用実行
+- `@tdd-refactor` - Refactorフェーズ（品質向上）専用実行
+- `@test-fix` - 段階的テスト改善（高成功率実績パターン）
+- `@refactor` - 安全なリファクタリング（既存テスト保持）
+- `@api` - API設計・変更（影響範囲分析+後方互換性）
+- `@security` - セキュリティ要件考慮ワークフロー
+- `@integrated` - 統合ワークフロー実行（要件→設計→タスク→実装）
+- `@reverse` - 逆エンジニアリング実行（既存コード分析）
 
-### Data Protection
-- **Environment Variables**: All sensitive keys in environment configuration
-- **Server-side Validation**: All critical operations validated on backend
-- **Rate Limiting**: API endpoint protection (handled by Firebase)
-- **Content Moderation**: AI response filtering for inappropriate content
+詳細は [コマンド一覧](commands/) を参照してください。
 
-### Payment Security
-- **PCI Compliance**: All payments handled by Stripe (PCI DSS Level 1)
-- **Webhook Signatures**: Verified Stripe webhook authenticity
-- **Atomic Transactions**: Coin operations are atomic and reversible
-- **Audit Trail**: All transactions logged for monitoring
+## ドキュメント構成
 
-## Recent Architecture Improvements (2025)
+### ディレクトリ構造
+- `docs/` - プロジェクトドキュメント
+  - `guidelines/` - 開発ガイドライン
+  - `knowledge/` - ナレッジベース（技術パターン集）
+  - `spec/` - 要件仕様書（EARS記法）
+  - `design/` - 技術設計書・アーキテクチャ図
+  - `tasks/` - 実装タスク定義
+- `commands/` - カスタムコマンド定義
+- `templates/` - 各種テンプレート
+  - `requirements/` - EARS記法要件テンプレート
+  - `design/` - 設計書テンプレート
+  - `tdd/` - TDDフェーズ別テンプレート
+- `reverse/` - 逆エンジニアリング結果
+- `scripts/` - 共通スクリプト
 
-### Major Refactoring
-- **Component Decomposition**: Broke down monolithic components into focused, reusable pieces
-- **Business Logic Extraction**: Moved API calls and state management to dedicated hooks and utilities
-- **Type System Enhancement**: Added comprehensive TypeScript definitions with educational comments
-- **Performance Optimization**: Implemented streaming APIs and optimized rendering
+詳細は [ナレッジベース INDEX](docsnowledge/INDEX.md) を参照してください。
 
-### Quality Improvements
-- **Error Boundary**: Comprehensive error handling at component and application levels
-- **Loading States**: Consistent loading indicators and skeleton screens
-- **Code Documentation**: Extensive inline documentation for maintainability
-- **Testing Foundation**: Prepared structure for comprehensive testing implementation
+## プロジェクト別設定
 
-## Deployment
+各プロジェクトで独自のガイドラインが必要な場合は、以下の命名規則でファイルを作成：
+- `{project-name}-overview.md`
+- `{project-name}-architecture.md`
+- `{project-name}-development.md`
 
-### Environment Configuration
-- **Development**: Local development with Firebase emulators
-- **Staging**: Firebase Hosting with preview channels
-- **Production**: Firebase Hosting with CDN and custom domain
+## 更新履歴
 
-### CI/CD Pipeline
-- **Semantic Release**: Automated versioning based on conventional commits
-- **GitHub Actions**: Automated testing and deployment
-- **Firebase CLI**: Deployment automation and rollback capabilities
+### 2025年7月
+- 汎用版ナレッジベースの構築
+- 11個のカスタムコマンドの統合
+- セッション管理システムの導入
+- 複雑な条件ロジックリファクタリングパターンの追加
 
-## Future Development
-
-### Planned Enhancements
-- **Testing Suite**: Comprehensive unit and integration tests
-- **Performance Monitoring**: Real-time performance metrics
-- **Advanced Analytics**: User behavior tracking and insights
-- **Mobile App**: React Native companion application
-
-### Scalability Considerations
-- **Database Sharding**: Prepared for horizontal scaling
-- **CDN Integration**: Optimized asset delivery
-- **Caching Strategy**: Multi-layer caching implementation
-- **Monitoring**: Application performance and error tracking
-
----
-
-**Version**: 1.3.1  
-**Last Updated**: July 2025  
-**Architecture Status**: Recently refactored and modernized  
-**Maintenance**: Active development with regular updates
+### 2025年1月
+- 初版作成
+- テストガイドラインの整備
