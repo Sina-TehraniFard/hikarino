@@ -43,4 +43,5 @@ next-env.d.ts
 
 # Claude
 .claude/*
-
+commands/*
+templates/*
