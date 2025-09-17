@@ -5,10 +5,7 @@ import dotenv from 'dotenv';
 // 環境変数の読み込み
 dotenv.config();
 
-// Stripe初期化
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-07-30.basil'
-});
+// Stripe初期化は関数内で行う
 
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET!;
 const INTERNAL_WEBHOOK_KEY = process.env.INTERNAL_WEBHOOK_KEY!;
@@ -43,6 +40,9 @@ export async function handleStripeWebhook(req: Request, res: Response): Promise<
   let event: Stripe.Event;
 
   try {
+    // Stripe初期化
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+
     // Stripe署名検証（rawBodyをそのまま使用）
     event = stripe.webhooks.constructEvent(rawBody, sig, STRIPE_WEBHOOK_SECRET);
     console.log('✅ Stripe signature verified successfully', {
