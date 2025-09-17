@@ -2,15 +2,15 @@ import { NextRequest } from 'next/server';
 import { OpenAI } from 'openai';
 import { PROMPTS, IMPORTANT_POLICY } from '@/prompts';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 export async function POST(req: NextRequest) {
+  const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+
   try {
     const { question, cards } = await req.json();
 
-  const prompt = `
+    const prompt = `
 ${IMPORTANT_POLICY}
 
 ${PROMPTS.character}
