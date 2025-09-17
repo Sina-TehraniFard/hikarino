@@ -3,7 +3,7 @@ import { collection, addDoc, serverTimestamp, getDocs, query, orderBy } from "fi
 import { Fortune, FortuneHistory } from "@/types";
 
 export async function saveFortune(fortune: Fortune) {
-    const userFortuneRef = collection(db, "users", fortune.uid, "fortunes");
+    const userFortuneRef = collection(db(),"users", fortune.uid, "fortunes");
     await addDoc(userFortuneRef, {
         question: fortune.question,
         cards: fortune.cards,
@@ -13,7 +13,7 @@ export async function saveFortune(fortune: Fortune) {
 }
 
 export async function getUserFortunes(uid: string): Promise<FortuneHistory[]> {
-    const userFortuneRef = collection(db, "users", uid, "fortunes");
+    const userFortuneRef = collection(db(),"users", uid, "fortunes");
     const q = query(userFortuneRef, orderBy("timestamp", "desc"));
     const snapshot = await getDocs(q);
     return snapshot.docs.map((doc) => {

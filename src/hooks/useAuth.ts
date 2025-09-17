@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { auth, db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 import { registerUserIfNew, hasAcceptedTerms } from '@/lib/firestore/user';
 
 interface ExtendedUser extends User {
@@ -17,7 +16,7 @@ export function useAuth() {
     // ユーザー名を取得する関数
     const fetchUserName = async (uid: string): Promise<string> => {
         try {
-            const userRef = doc(db, 'users', uid);
+            const userRef = doc(db(), 'users', uid);
             const userDoc = await getDoc(userRef);
             
             if (userDoc.exists()) {
@@ -31,7 +30,7 @@ export function useAuth() {
     };
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
+        const unsubscribe = onAuthStateChanged(auth(), async (authUser) => {
             if (authUser) {
                 // ユーザーが存在しない場合は登録
                 try {
