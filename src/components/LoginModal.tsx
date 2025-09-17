@@ -43,7 +43,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
         setIsLoading(true);
         setError('');
         try {
-            const result = await signInWithPopup(auth, provider);
+            const result = await signInWithPopup(auth(), provider);
             
             // 同意状態をチェック
             const hasAccepted = await hasAcceptedTerms(result.user.uid);
@@ -84,9 +84,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
         
         try {
             if (isSignUp) {
-                await createUserWithEmailAndPassword(auth, email, password);
+                await createUserWithEmailAndPassword(auth(), email, password);
             } else {
-                await signInWithEmailAndPassword(auth, email, password);
+                await signInWithEmailAndPassword(auth(), email, password);
             }
             
             // registerUserIfNewはuseAuthフックで処理されるため削除
