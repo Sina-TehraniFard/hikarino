@@ -3,7 +3,7 @@ import { db } from '../firebase';
 import { User } from 'firebase/auth';
 
 export async function registerUserIfNew(user: User) {
-    const ref = doc(db, 'users', user.uid);
+    const ref = doc(db(), 'users', user.uid);
     
     try {
         // 既存ユーザーチェック
@@ -46,7 +46,7 @@ export async function registerUserIfNew(user: User) {
 }
 
 export async function updateUserName(uid: string, name: string) {
-    const userRef = doc(db, 'users', uid);
+    const userRef = doc(db(), 'users', uid);
     await updateDoc(userRef, { 
         name,
         needsNameSetup: false 
@@ -55,7 +55,7 @@ export async function updateUserName(uid: string, name: string) {
 
 export async function checkNeedsNameSetup(uid: string): Promise<boolean> {
     try {
-        const userRef = doc(db, 'users', uid);
+        const userRef = doc(db(), 'users', uid);
         const userDoc = await getDoc(userRef);
         
         if (!userDoc.exists()) {
@@ -78,7 +78,7 @@ export async function checkNeedsNameSetup(uid: string): Promise<boolean> {
  */
 export async function hasAcceptedTerms(uid: string): Promise<boolean> {
     try {
-        const userRef = doc(db, 'users', uid);
+        const userRef = doc(db(), 'users', uid);
         const userDoc = await getDoc(userRef);
         
         if (!userDoc.exists()) {
@@ -101,7 +101,7 @@ export async function hasAcceptedTerms(uid: string): Promise<boolean> {
 export async function recordTermsAcceptance(uid: string): Promise<void> {
     try {
         const now = new Date().toISOString();
-        const userRef = doc(db, 'users', uid);
+        const userRef = doc(db(), 'users', uid);
         
         await updateDoc(userRef, {
             termsAcceptedAt: now,

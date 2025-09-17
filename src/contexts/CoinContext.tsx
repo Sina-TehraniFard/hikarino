@@ -21,7 +21,7 @@ export const CoinProvider = ({ children }: { children: ReactNode }) => {
             setCoins(0);
             return;
         }
-        const userRef = doc(db, "users", user.uid);
+        const userRef = doc(db(), "users", user.uid);
         const docSnap = await getDoc(userRef);
         const newCoins = docSnap.exists() ? (docSnap.data().coins ?? 0) : 0;
         
