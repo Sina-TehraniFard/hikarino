@@ -6,14 +6,17 @@ RUN apk add --no-cache libc6-compat
 
 # Copy package files for dependency installation
 COPY package*.json ./
+COPY .env.production .env.production
 
 # Install all dependencies (including devDependencies for build)
+# Don't set NODE_ENV=production here to ensure devDependencies are installed
 RUN npm ci && npm cache clean --force
 
 # Copy source code
 COPY . .
 
 # Build the application
+ENV NODE_ENV=production
 RUN npm run build
 
 # Production stage
