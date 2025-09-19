@@ -1,3 +1,19 @@
+# [1.7.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.6.0...v1.7.0) (2025-09-17)
+
+
+### Bug Fixes
+
+* Firebase関数呼び出しを遅延ロード対応に修正 ([82d7efe](https://github.com/Sina-TehraniFard/hikarino/commit/82d7efe67c01d8d2a07ba968719fcf60b2d975d2))
+* OpenAI初期化とgitignore改善 ([1751a75](https://github.com/Sina-TehraniFard/hikarino/commit/1751a75f842e085e0adb5fc00667845d39c95e4d))
+* Stripe webhook初期化をリクエスト時に移動 ([72cb07a](https://github.com/Sina-TehraniFard/hikarino/commit/72cb07ad818f65e0404a29279dfc477140d5a1eb))
+* Stripe初期化をリクエスト時に移動 ([9c8bf20](https://github.com/Sina-TehraniFard/hikarino/commit/9c8bf20b11a77f57e607ba8ae2c7491f7d13efa2))
+* コンポーネントでのFirebase Auth呼び出しを修正 ([5c2782b](https://github.com/Sina-TehraniFard/hikarino/commit/5c2782b7e5e438d8e23a4bf12bda14418890ee21))
+
+
+### Features
+
+* Docker環境構築設定を追加 ([ddeaed5](https://github.com/Sina-TehraniFard/hikarino/commit/ddeaed5de1ff790c94a3d992bdad483ecf17fbee))
+
 # [1.6.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.5.0...v1.6.0) (2025-07-28)
 
 
