@@ -1,5 +1,6 @@
 services:
   web:
+    build: .
     image: asia-northeast1-docker.pkg.dev/hikarino-d17a6/hikarino/hikarino-web:latest
     platform: linux/amd64
     container_name: hikarino-web
