@@ -1,3 +1,10 @@
+## [1.9.2](https://github.com/Sina-TehraniFard/hikarino/compare/v1.9.1...v1.9.2) (2025-09-20)
+
+
+### Bug Fixes
+
+* add privacy policy page for legal compliance ([212cf78](https://github.com/Sina-TehraniFard/hikarino/commit/212cf78a7f2661e244f781e0e7b47857e8300022))
+
 ## [1.9.1](https://github.com/Sina-TehraniFard/hikarino/compare/v1.9.0...v1.9.1) (2025-09-20)
 
 
