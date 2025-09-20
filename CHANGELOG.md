@@ -1,3 +1,10 @@
+## [1.8.1](https://github.com/Sina-TehraniFard/hikarino/compare/v1.8.0...v1.8.1) (2025-09-20)
+
+
+### Bug Fixes
+
+* **docker:** update docker-compose for production deploy ([549b970](https://github.com/Sina-TehraniFard/hikarino/commit/549b970a7adc4c47de06dc135dbf68e45377078c))
+
 # [1.8.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.7.0...v1.8.0) (2025-09-19)
 
 
