@@ -1,3 +1,10 @@
+## [1.9.3](https://github.com/Sina-TehraniFard/hikarino/compare/v1.9.2...v1.9.3) (2025-09-20)
+
+
+### Bug Fixes
+
+* add privacy policy link to sidebar footer ([c724852](https://github.com/Sina-TehraniFard/hikarino/commit/c72485204ca6a8055ffab8783e5789b8a64e7acb))
+
 ## [1.9.2](https://github.com/Sina-TehraniFard/hikarino/compare/v1.9.1...v1.9.2) (2025-09-20)
 
 
