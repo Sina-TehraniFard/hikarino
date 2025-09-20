@@ -50,7 +50,4 @@ jobs:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.VM_KEY }}
-          script: |
-            cd /home/tehrani/hikarino
-            docker compose pull
-            docker compose up -d --force-recreate --remove-orphans
+          script: cd /home/tehrani/hikarino && docker compose pull && docker compose up -d --force-recreate --remove-orphans
