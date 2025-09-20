@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'プライバシーポリシー | ヒカリノ',
@@ -8,6 +9,17 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="mb-6">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300 transition-colors duration-200"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          ホームに戻る
+        </Link>
+      </div>
       <h1 className="text-3xl font-bold mb-8">プライバシーポリシー</h1>
 
       <div className="prose prose-lg max-w-none">
