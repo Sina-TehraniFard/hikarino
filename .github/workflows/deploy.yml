@@ -3,18 +3,19 @@
 # mainブランチにコードがpushされると以下を実行します：
 # 1. リポジトリのソースをチェックアウト
 # 2. GCPサービスアカウントを用いて認証
-# 3. Dockerイメージをビルドし、Artifact Registryにpush
-#    - コミットハッシュをタグとして付与
+# 3. semantic-releaseでバージョンを決定
+# 4. Dockerイメージをビルドし、Artifact Registryにpush
+#    - semantic-releaseで決定されたバージョンをタグとして付与
 #    - latestタグとしてもpush
-# 4. VMにSSH接続し、docker composeを用いて新しいイメージに更新
-# 
+# 5. VMにSSH接続し、docker composeを用いて新しいイメージに更新
+#
 # 利点：
 # - mainブランチにpushするだけで本番更新が可能
-# - 過去のコミットハッシュタグを指定すれば手動でrollback可能
-# 
+# - 過去のバージョンタグを指定すれば手動でrollback可能
+#
 # 注意：
 # - VM_HOST, VM_USER, VM_KEY, GCP_SA_KEY などはGitHub Secretsに登録が必要
-# - rollbackは `docker pull` で特定ハッシュのイメージを取得して再起動することで可能
+# - rollbackは `docker pull` で特定バージョンのイメージを取得して再起動することで可能
 
 name: Deploy to Production
 
@@ -31,6 +32,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run semantic-release
+        id: semantic
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
+
       - name: Authenticate to GCP
         uses: google-github-actions/auth@v2
         with:
@@ -42,15 +57,12 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           IMAGE="asia-northeast1-docker.pkg.dev/hikarino-d17a6/hikarino/hikarino-web"
-          TAG="${GITHUB_SHA::7}"   # コミットハッシュ短縮をタグに
-          echo "Building and pushing $IMAGE:$TAG"
+          VERSION="${{ steps.semantic.outputs.new_release_version }}"
+          echo "Building and pushing $IMAGE:$VERSION"
 
-          # Build and push with commit hash
-          docker build -t $IMAGE:$TAG .
-          docker push $IMAGE:$TAG
-
-          # Tag and push as latest
-          docker tag $IMAGE:$TAG $IMAGE:latest
+          docker build -t $IMAGE:$VERSION .
+          docker push $IMAGE:$VERSION
+          docker tag $IMAGE:$VERSION $IMAGE:latest
           docker push $IMAGE:latest
 
       - name: SSH to VM and Deploy
@@ -61,5 +73,6 @@ jobs:
           key: ${{ secrets.VM_KEY }}
           script: |
             cd /home/tehrani/hikarino
+            IMAGE_TAG="${{ steps.semantic.outputs.new_release_version }}"
             docker compose pull
-            docker compose up -d
+            docker compose up -d --force-recreate --remove-orphans
