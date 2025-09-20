@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.8.1...v1.9.0) (2025-09-20)
+
+
+### Features
+
+* add health check endpoint ([32f81dd](https://github.com/Sina-TehraniFard/hikarino/commit/32f81dd4637639c2a3de874470f70bc40a71012d))
+
 ## [1.8.1](https://github.com/Sina-TehraniFard/hikarino/compare/v1.8.0...v1.8.1) (2025-09-20)
 
 
