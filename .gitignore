@@ -50,8 +50,5 @@ templates/*
 
 .idea/*
 
-# Docker
-docker-compose.yml
-
 # GCloud
 .gcloudignore
