@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/Sina-TehraniFard/hikarino/compare/v1.0.1...v1.0.2) (2025-09-20)
+
+
+### Bug Fixes
+
+* add build context to docker-compose.yml to enable proper rebuilding ([03093fd](https://github.com/Sina-TehraniFard/hikarino/commit/03093fd1917a17aa20e3b179a94de15052bcd801))
+
 ## [1.0.1](https://github.com/Sina-TehraniFard/hikarino/compare/v1.0.0...v1.0.1) (2025-09-20)
 
 
