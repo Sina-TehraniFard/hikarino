@@ -1,3 +1,10 @@
+## [1.9.1](https://github.com/Sina-TehraniFard/hikarino/compare/v1.9.0...v1.9.1) (2025-09-20)
+
+
+### Bug Fixes
+
+* reset to version 0.9.7 for proper semantic versioning ([23b4bc3](https://github.com/Sina-TehraniFard/hikarino/commit/23b4bc38e9c8cbbe3e0f781cc07f37ad209ea265))
+
 # [1.9.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.8.1...v1.9.0) (2025-09-20)
 
 
