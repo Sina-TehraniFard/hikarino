@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/Sina-TehraniFard/hikarino/compare/v1.0.0...v1.0.1) (2025-09-20)
+
+
+### Bug Fixes
+
+* force Docker rebuild with --no-cache to include latest code changes ([c0e0ff4](https://github.com/Sina-TehraniFard/hikarino/commit/c0e0ff44a6e5363a018330b8b7c5b8ea201d1a9c))
+
 # 1.0.0 (2025-09-20)
 
 
