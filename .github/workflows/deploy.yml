@@ -38,7 +38,7 @@ jobs:
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.VM_KEY }}
           source: docker-compose.yml
-          target: /home/tehrani/hikarino/docker-compose.yml
+          target: /home/tehrani/hikarino/
       - name: SSH to VM and Deploy
         uses: appleboy/ssh-action@v1.2.0
         with:
