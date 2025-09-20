@@ -6,8 +6,6 @@ services:
     restart: always
     ports:
       - "3000:3000"
-    env_file:
-      - .env
     environment:
       - NODE_ENV=production
       - NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyChXVyJTcuGNwpz5dGi7duH8JBroNjGZhk
