@@ -1,0 +1,65 @@
+# 説明：
+# このGitHub Actionsワークフローは、本番環境への自動デプロイを行います。
+# mainブランチにコードがpushされると以下を実行します：
+# 1. リポジトリのソースをチェックアウト
+# 2. GCPサービスアカウントを用いて認証
+# 3. Dockerイメージをビルドし、Artifact Registryにpush
+#    - コミットハッシュをタグとして付与
+#    - latestタグとしてもpush
+# 4. VMにSSH接続し、docker composeを用いて新しいイメージに更新
+# 
+# 利点：
+# - mainブランチにpushするだけで本番更新が可能
+# - 過去のコミットハッシュタグを指定すれば手動でrollback可能
+# 
+# 注意：
+# - VM_HOST, VM_USER, VM_KEY, GCP_SA_KEY などはGitHub Secretsに登録が必要
+# - rollbackは `docker pull` で特定ハッシュのイメージを取得して再起動することで可能
+
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main   # mainブランチにpushされたら実行
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker asia-northeast1-docker.pkg.dev
+
+      - name: Build and Push Docker Image
+        run: |
+          IMAGE="asia-northeast1-docker.pkg.dev/hikarino-d17a6/hikarino/hikarino-web"
+          TAG="${GITHUB_SHA::7}"   # コミットハッシュ短縮をタグに
+          echo "Building and pushing $IMAGE:$TAG"
+
+          # Build and push with commit hash
+          docker build -t $IMAGE:$TAG .
+          docker push $IMAGE:$TAG
+
+          # Tag and push as latest
+          docker tag $IMAGE:$TAG $IMAGE:latest
+          docker push $IMAGE:latest
+
+      - name: SSH to VM and Deploy
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_KEY }}
+          script: |
+            cd /home/tehrani/hikarino
+            docker compose pull
+            docker compose up -d
