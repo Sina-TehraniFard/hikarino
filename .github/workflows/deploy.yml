@@ -23,14 +23,23 @@ jobs:
         run: |
           IMAGE="asia-northeast1-docker.pkg.dev/hikarino-d17a6/hikarino/hikarino-web"
           echo "Building and pushing $IMAGE:latest"
+          echo "Current directory: $(pwd)"
+          echo "Files in current directory:"
+          ls -la
+          echo "Checking if docker-compose.yml exists:"
+          cat docker-compose.yml | head -20
 
+          echo "Starting docker compose build..."
           docker compose build --build-arg NEXT_PUBLIC_FIREBASE_API_KEY="${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}" \
             --build-arg NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}" \
             --build-arg NEXT_PUBLIC_FIREBASE_PROJECT_ID="${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}" \
             --build-arg NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="${{ secrets.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }}" \
             --build-arg NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}" \
             --build-arg NEXT_PUBLIC_FIREBASE_APP_ID="${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}"
+
+          echo "Build completed, now pushing..."
           docker compose push
+          echo "Push completed!"
       - name: Upload docker-compose.yml to VM
         uses: appleboy/scp-action@v0.1.7
         with:
