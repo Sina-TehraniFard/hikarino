@@ -162,9 +162,17 @@ const Sidebar: React.FC<SidebarProps> = ({
       
         {/* Footer */}
         <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-white/20 dark:border-gray-700/50">
-          <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-            ヒカリノ タロット占い
-          </p>
+          <div className="space-y-2">
+            <Link
+              href="/privacy"
+              className="block text-xs text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 text-center transition-colors duration-200"
+            >
+              プライバシーポリシー
+            </Link>
+            <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+              ヒカリノ タロット占い
+            </p>
+          </div>
         </div>
       </GlassBox>
     </div>
