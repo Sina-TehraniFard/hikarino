@@ -29,5 +29,6 @@ services:
       - ./certbot:/var/www/certbot
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - /var/log/nginx:/var/log/nginx
+      - ./htpasswd:/etc/nginx/.htpasswd:ro
     depends_on:
       - web
