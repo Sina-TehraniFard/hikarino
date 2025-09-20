@@ -1,8 +1,8 @@
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'プライバシーポリシー | ひかりの',
-  description: 'ひかりのサービスのプライバシーポリシーについて',
+  title: 'プライバシーポリシー | ヒカリノ',
+  description: 'ヒカリノサービスのプライバシーポリシーについて',
 }
 
 export default function PrivacyPage() {
@@ -14,13 +14,11 @@ export default function PrivacyPage() {
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">1. 個人情報の収集について</h2>
           <p className="mb-4">
-            当サービス「ひかりの」では、サービスの提供にあたり、以下の個人情報を収集いたします。
+            当サービス「ヒカリノ」では、サービスの提供にあたり、以下の個人情報を収集いたします。
           </p>
           <ul className="list-disc pl-6 mb-4">
             <li>メールアドレス</li>
             <li>ユーザー名</li>
-            <li>サービス利用履歴</li>
-            <li>アクセスログ</li>
           </ul>
         </section>
 
@@ -57,7 +55,7 @@ export default function PrivacyPage() {
             本プライバシーポリシーに関するお問い合わせは、以下までご連絡ください。
           </p>
           <p className="mb-4">
-            サービス運営者: ひかりの運営チーム
+            サービス運営者: sina@scriptlab.jp
           </p>
         </section>
 
@@ -70,8 +68,7 @@ export default function PrivacyPage() {
         </section>
 
         <div className="mt-12 text-sm text-gray-600">
-          <p>制定日: 2024年12月21日</p>
-          <p>最終更新日: 2024年12月21日</p>
+          <p>制定日: 2025/09/21</p>
         </div>
       </div>
     </div>
