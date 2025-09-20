@@ -1,3 +1,29 @@
+# [1.9.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.8.1...v1.9.0) (2025-09-20)
+
+
+### Features
+
+* add health check endpoint ([32f81dd](https://github.com/Sina-TehraniFard/hikarino/commit/32f81dd4637639c2a3de874470f70bc40a71012d))
+
+## [1.8.1](https://github.com/Sina-TehraniFard/hikarino/compare/v1.8.0...v1.8.1) (2025-09-20)
+
+
+### Bug Fixes
+
+* **docker:** update docker-compose for production deploy ([549b970](https://github.com/Sina-TehraniFard/hikarino/commit/549b970a7adc4c47de06dc135dbf68e45377078c))
+
+# [1.8.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.7.0...v1.8.0) (2025-09-19)
+
+
+### Bug Fixes
+
+* Cloud Functions依存関係を本番環境用に最適化 ([07355ff](https://github.com/Sina-TehraniFard/hikarino/commit/07355ff86f60e0a8edc38232123719eb5421ec3a))
+
+
+### Features
+
+* Docker設定ファイルを本番環境用に最適化 ([b6c1d21](https://github.com/Sina-TehraniFard/hikarino/commit/b6c1d2154f2ab3911956a1c2878efc12e4a197fa))
+
 # [1.7.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.6.0...v1.7.0) (2025-09-17)
 
 
