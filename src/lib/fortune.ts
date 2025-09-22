@@ -9,8 +9,7 @@ import { saveFortune } from "@/lib/firestore/fortune";
 
 /**
  * 占いAPIを呼び出す関数
- * 
- * 【何をする関数？】
+ *
  * ユーザーが入力した質問とカード情報を、AI（ChatGPT）に送って占い結果をもらう関数です。
  * 
  * @param request - 占いに必要な情報（質問文とカード情報）が入っている
@@ -21,7 +20,7 @@ export async function callFortuneAPI(request: FortuneRequest): Promise<Response>
   // "/api/fortune" = AIが占いをしてくれるサーバーの住所のようなもの
   return fetch("/api/fortune", {
     method: "POST",                                   // POST = 「データを送ります」という意味
-    headers: { "Content-Type": "application/json" }, // 「JSONという形式でデータを送ります」という宣言
+    headers: { "Content-Type": "application/json" },  // 「JSONという形式でデータを送ります」という宣言
     body: JSON.stringify(request),                    // request（質問とカード情報）を文字列に変換して送信
   });
 }

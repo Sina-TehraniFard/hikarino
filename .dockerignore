@@ -71,13 +71,11 @@ docker-compose*.yml
 
 # Other development files
 .claude/
-.tool-versions
 .firebaserc
 firebase.json
 firestore.rules*
 release.config.js
 test.json
-update.sh
 commands/
 templates/
 functions-core/
