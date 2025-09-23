@@ -20,7 +20,7 @@ interface CoinPurchaseModalProps {
     uid?: string;
 }
 
-const ANIMATION_DURATION = 350; // ms
+const ANIMATION_DURATION = 350;
 
 const purchaseOptions = [
     {
@@ -30,7 +30,7 @@ const purchaseOptions = [
         perFortune: "90円",
         discount: "40%OFF",
         originalPrice: 4500,
-        priceId: "price_1RTEv1RmjFj4VlHm2Vuq5Rtm", // TODO: update to actual Stripe Price ID for 3000 coins
+        priceId: "price_1S9ezhBMJKM1qgzX0IveAKjT", // TODO: update to actual Stripe Price ID for 3000 coins
         badge: "人気No.1",
         recommended: true
     },
@@ -41,7 +41,7 @@ const purchaseOptions = [
         perFortune: "約107円",
         discount: "29%OFF",
         originalPrice: 1680,
-        priceId: "price_1RTEv1RmjFj4VlHm2Vuq5Rtm", // TODO: update to actual Stripe Price ID for 1120 coins
+        priceId: "price_1S9ezhBMJKM1qgzX0IveAKjT", // TODO: update to actual Stripe Price ID for 1120 coins
     },
     {
         coins: 380,
@@ -50,7 +50,7 @@ const purchaseOptions = [
         perFortune: "118円",
         discount: "21%OFF",
         originalPrice: 570,
-        priceId: "price_1RTEv1RmjFj4VlHm2Vuq5Rtm", // TODO: update to actual Stripe Price ID for 380 coins
+        priceId: "price_1S9ezhBMJKM1qgzX0IveAKjT", // TODO: update to actual Stripe Price ID for 380 coins
     },
     {
         coins: 100,
@@ -59,7 +59,7 @@ const purchaseOptions = [
         perFortune: "150円",
         discount: null,
         originalPrice: null,
-        priceId: "price_1RTEv1RmjFj4VlHm2Vuq5Rtm"
+        priceId: "price_1S9ezhBMJKM1qgzX0IveAKjT"
     },
 ];
 
