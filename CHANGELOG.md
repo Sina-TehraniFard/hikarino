@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/Sina-TehraniFard/hikarino/compare/v1.0.2...v1.0.3) (2025-09-26)
+
+
+### Bug Fixes
+
+* Add missing environment variables for OpenAI and Stripe integration ([2016c0e](https://github.com/Sina-TehraniFard/hikarino/commit/2016c0e9dc0102a66be3feb4a55a96bdc7cdb00e))
+
 ## [1.0.2](https://github.com/Sina-TehraniFard/hikarino/compare/v1.0.1...v1.0.2) (2025-09-20)
 
 
