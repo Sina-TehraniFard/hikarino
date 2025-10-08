@@ -17,6 +17,7 @@
 ### 開発サーバー起動
 
 ```bash
+npm install next react react-dom
 npm run dev
 # or
 yarn dev
