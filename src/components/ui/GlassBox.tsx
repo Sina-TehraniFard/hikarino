@@ -13,9 +13,9 @@ interface GlassBoxProps {
 const GlassBox = ({ children, className = '', onClick, disabled = false, focusable = false }: GlassBoxProps) => {
   const baseStyles = `
     relative w-full
-    ${disabled 
-      ? 'bg-white/40 dark:bg-gray-800/40 cursor-not-allowed border border-white/20 dark:border-gray-700/50' 
-      : 'bg-white/20 dark:bg-gray-900/20 border border-white/30 dark:border-white/10 hover:bg-white/30 dark:hover:bg-gray-800/30 ring-1 ring-white/20'
+    ${disabled
+      ? 'bg-white/40 cursor-not-allowed border border-white/20'
+      : 'bg-white/20 border border-white/30 hover:bg-white/30 ring-1 ring-white/20'
     }
     backdrop-blur-xl
     rounded-2xl
