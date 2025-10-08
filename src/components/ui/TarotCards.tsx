@@ -23,7 +23,7 @@ const CardHeader = ({ cardNumber }: { cardNumber: number }) => (
 
 // カードコンテナコンポーネント
 const CardContainer = ({ children }: { children: React.ReactNode }) => (
-  <div className="bg-gradient-to-b from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-xl border border-purple-200/50 dark:border-purple-700/50 overflow-hidden">
+  <div className="bg-gradient-to-b from-white to-gray-50 rounded-xl shadow-xl border border-purple-200/50 overflow-hidden">
     {children}
   </div>
 );
@@ -159,15 +159,15 @@ const TarotCards = ({ cards, onAllFlipped }: TarotCardsProps) => {
                       
                       {/* タップアイコン */}
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="bg-white/90 dark:bg-gray-800/90 rounded-full p-3 shadow-lg animate-pulse">
+                        <div className="bg-white/90 rounded-full p-3 shadow-lg animate-pulse">
                           <span className="text-2xl">👆</span>
                         </div>
                       </div>
                     </div>
                     
                     {/* フッター */}
-                    <div className="bg-gray-50 dark:bg-gray-800 px-4 py-3 border-t border-gray-200 dark:border-gray-700">
-                      <p className="text-center text-sm font-medium text-gray-600 dark:text-gray-400">
+                    <div className="bg-gray-50 px-4 py-3 border-t border-gray-200">
+                      <p className="text-center text-sm font-medium text-gray-600">
                         タップして表示
                       </p>
                     </div>
@@ -205,8 +205,8 @@ const TarotCards = ({ cards, onAllFlipped }: TarotCardsProps) => {
                     </div>
                     
                     {/* カード名フッター */}
-                    <div className="bg-gray-50 dark:bg-gray-800 px-4 py-3 border-t border-gray-200 dark:border-gray-700">
-                      <p className="text-center text-sm font-medium text-gray-800 dark:text-gray-200">
+                    <div className="bg-gray-50 px-4 py-3 border-t border-gray-200">
+                      <p className="text-center text-sm font-medium text-gray-800">
                         {item.card.name}
                       </p>
                     </div>

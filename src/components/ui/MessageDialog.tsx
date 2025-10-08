@@ -20,30 +20,30 @@ const MessageDialog = ({
   const typeStyles = {
     info: {
       icon: '💭',
-      bgColor: 'bg-blue-50 dark:bg-blue-950/20',
-      borderColor: 'border-blue-200 dark:border-blue-700',
-      textColor: 'text-blue-800 dark:text-blue-200',
+      bgColor: 'bg-blue-50',
+      borderColor: 'border-blue-200',
+      textColor: 'text-blue-800',
       buttonColor: 'bg-blue-600 hover:bg-blue-700'
     },
     warning: {
       icon: '⚠️',
-      bgColor: 'bg-amber-50 dark:bg-amber-950/20',
-      borderColor: 'border-amber-200 dark:border-amber-700',
-      textColor: 'text-amber-800 dark:text-amber-200',
+      bgColor: 'bg-amber-50',
+      borderColor: 'border-amber-200',
+      textColor: 'text-amber-800',
       buttonColor: 'bg-amber-600 hover:bg-amber-700'
     },
     error: {
       icon: '❌',
-      bgColor: 'bg-red-50 dark:bg-red-950/20',
-      borderColor: 'border-red-200 dark:border-red-700',
-      textColor: 'text-red-800 dark:text-red-200',
+      bgColor: 'bg-red-50',
+      borderColor: 'border-red-200',
+      textColor: 'text-red-800',
       buttonColor: 'bg-red-600 hover:bg-red-700'
     },
     success: {
       icon: '✅',
-      bgColor: 'bg-emerald-50 dark:bg-emerald-950/20',
-      borderColor: 'border-emerald-200 dark:border-emerald-700',
-      textColor: 'text-emerald-800 dark:text-emerald-200',
+      bgColor: 'bg-emerald-50',
+      borderColor: 'border-emerald-200',
+      textColor: 'text-emerald-800',
       buttonColor: 'bg-emerald-600 hover:bg-emerald-700'
     }
   };
@@ -52,7 +52,7 @@ const MessageDialog = ({
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-sm w-full mx-4 transform transition-all duration-300 ${style.borderColor} border`}>
+      <div className={`bg-white rounded-xl shadow-2xl max-w-sm w-full mx-4 transform transition-all duration-300 ${style.borderColor} border`}>
         {/* ヘッダー */}
         <div className={`${style.bgColor} px-6 py-4 rounded-t-xl`}>
           <div className="flex items-center gap-3">
@@ -62,10 +62,10 @@ const MessageDialog = ({
             </h3>
           </div>
         </div>
-        
+
         {/* メッセージ */}
         <div className="px-6 py-4">
-          <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+          <p className="text-gray-700 leading-relaxed">
             {message}
           </p>
         </div>

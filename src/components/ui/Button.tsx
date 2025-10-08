@@ -61,12 +61,12 @@ const Button = ({
       ${isClicked ? 'scale-95 shadow-inner' : 'hover:scale-105'}
     `,
     secondary: `
-      bg-white/40 dark:bg-gray-900/40 backdrop-blur-md
-      border-2 border-purple-300/50 dark:border-purple-600/50
-      text-purple-700 dark:text-purple-300
-      hover:bg-white/60 dark:hover:bg-gray-800/60
+      bg-white/40 backdrop-blur-md
+      border-2 border-purple-300/50
+      text-purple-700
+      hover:bg-white/60
       shadow-lg hover:shadow-xl
-      hover:border-purple-400 dark:hover:border-purple-500
+      hover:border-purple-400
       ${isClicked ? 'scale-95' : 'hover:scale-105'}
     `,
     magical: `
@@ -158,7 +158,7 @@ const Button = ({
       </span>
 
       {/* フォーカスリング */}
-      <div className="absolute inset-0 rounded-xl ring-2 ring-purple-500 ring-offset-2 ring-offset-white dark:ring-offset-gray-900 opacity-0 focus:opacity-100 transition-opacity duration-200" />
+      <div className="absolute inset-0 rounded-xl ring-2 ring-purple-500 ring-offset-2 ring-offset-white opacity-0 focus:opacity-100 transition-opacity duration-200" />
     </button>
   );
 };
