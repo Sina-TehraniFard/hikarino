@@ -1,6 +1,20 @@
 # [1.1.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.0.3...v1.1.0) (2025-10-08)
 
 
+### Bug Fixes
+
+* restore semantic-release configuration ([476a5e2](https://github.com/Sina-TehraniFard/hikarino/commit/476a5e24ba56d8fe36ea0b4f4cfe0f82b6899cfb))
+
+
+### Features
+
+* optimize background rendering and remove excessive CSS animations ([5727714](https://github.com/Sina-TehraniFard/hikarino/commit/572771430f45591a5d007cc4dbec69ebad018f86))
+* remove dark mode support to reduce CPU overhead ([44794d2](https://github.com/Sina-TehraniFard/hikarino/commit/44794d2cd2bf5522baae0ee3330736b22d7c46e3))
+* モバイルで表示する際に携帯がオーバヒートする問題を解決 ([668dc29](https://github.com/Sina-TehraniFard/hikarino/commit/668dc29a88c34f362ea9d46d56e9ac7309ef053e))
+
+# [1.1.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.0.3...v1.1.0) (2025-10-08)
+
+
 ### Features
 
 * optimize background rendering and remove excessive CSS animations ([5727714](https://github.com/Sina-TehraniFard/hikarino/commit/572771430f45591a5d007cc4dbec69ebad018f86))
