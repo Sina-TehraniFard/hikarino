@@ -127,8 +127,9 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({
                 {coinAnimation ? (
                   <LottieAnimation
                     animationData={coinAnimation}
-                    loop={true}
-                    autoplay={true}
+                    loop={false}
+                    autoplay={false}
+                    initialSegment={[0, 1]}
                     style={{ width: 20, height: 20 }}
                   />
                 ) : (

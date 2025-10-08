@@ -169,7 +169,7 @@ export default function HistoryPage() {
             <PageBackground />
             
             <div className={`flex-1 ${user ? 'md:ml-72' : ''}`}>
-                <div className="w-full max-w-4xl mx-auto bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border border-purple-200/30 dark:border-purple-700/30 shadow-2xl min-h-screen relative">
+                <div className="w-full max-w-4xl mx-auto bg-white/90 backdrop-blur-xl border border-purple-200/30 shadow-2xl min-h-screen relative">
                     <div className="px-6 space-y-6 pb-12">
             {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
 
@@ -210,36 +210,36 @@ export default function HistoryPage() {
 
                                         {/* 統計カード */}
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                                            <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 dark:from-purple-500/20 dark:to-pink-500/20 rounded-xl p-4 text-center transform hover:scale-105 transition-transform duration-200">
-                                                <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">総占い回数</p>
-                                                <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{stats.totalReadings}</p>
-                                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">回</p>
+                                            <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-xl p-4 text-center transform hover:scale-105 transition-transform duration-200">
+                                                <p className="text-xs text-gray-600 mb-1">総占い回数</p>
+                                                <p className="text-2xl font-bold text-purple-600">{stats.totalReadings}</p>
+                                                <p className="text-xs text-gray-500 mt-1">回</p>
                                             </div>
-                                            
+
                                             {stats.mostFrequentCard && (
-                                                <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 dark:from-blue-500/20 dark:to-cyan-500/20 rounded-xl p-4 text-center transform hover:scale-105 transition-transform duration-200">
-                                                    <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">最頻出カード</p>
-                                                    <p className="text-lg font-bold text-blue-600 dark:text-blue-400">{stats.mostFrequentCard.name}</p>
-                                                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{stats.mostFrequentCard.count}回出現</p>
+                                                <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-xl p-4 text-center transform hover:scale-105 transition-transform duration-200">
+                                                    <p className="text-xs text-gray-600 mb-1">最頻出カード</p>
+                                                    <p className="text-lg font-bold text-blue-600">{stats.mostFrequentCard.name}</p>
+                                                    <p className="text-xs text-gray-500 mt-1">{stats.mostFrequentCard.count}回出現</p>
                                                 </div>
                                             )}
-                                            
-                                            <div className="bg-gradient-to-br from-amber-500/10 to-orange-500/10 dark:from-amber-500/20 dark:to-orange-500/20 rounded-xl p-4 text-center transform hover:scale-105 transition-transform duration-200">
-                                                <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">利用頻度</p>
-                                                <p className="text-lg font-bold text-amber-600 dark:text-amber-400">{stats.readingFrequency.average}</p>
-                                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">間隔</p>
+
+                                            <div className="bg-gradient-to-br from-amber-500/10 to-orange-500/10 rounded-xl p-4 text-center transform hover:scale-105 transition-transform duration-200">
+                                                <p className="text-xs text-gray-600 mb-1">利用頻度</p>
+                                                <p className="text-lg font-bold text-amber-600">{stats.readingFrequency.average}</p>
+                                                <p className="text-xs text-gray-500 mt-1">間隔</p>
                                             </div>
-                                            
-                                            <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 dark:from-green-500/20 dark:to-emerald-500/20 rounded-xl p-4 text-center transform hover:scale-105 transition-transform duration-200">
-                                                <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">主要属性</p>
-                                                <p className="text-lg font-bold text-green-600 dark:text-green-400">{stats.dominantElement.element}</p>
-                                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{stats.dominantElement.percentage}%</p>
+
+                                            <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 rounded-xl p-4 text-center transform hover:scale-105 transition-transform duration-200">
+                                                <p className="text-xs text-gray-600 mb-1">主要属性</p>
+                                                <p className="text-lg font-bold text-green-600">{stats.dominantElement.element}</p>
+                                                <p className="text-xs text-gray-500 mt-1">{stats.dominantElement.percentage}%</p>
                                             </div>
                                         </div>
 
                                         {/* 洞察メッセージ */}
                                         <div className="text-center mb-8">
-                                            <p className="text-sm text-gray-600 dark:text-gray-400 italic">
+                                            <p className="text-sm text-gray-600 italic">
                                                 {stats.dominantElement.meaning}
                                             </p>
                                         </div>
@@ -251,10 +251,10 @@ export default function HistoryPage() {
 
                     {/* タイムラインヘッダーと検索・フィルター */}
                     <div id="search-section" className="mb-6 space-y-4">
-                        <h2 className="text-lg font-light text-gray-700 dark:text-gray-300 tracking-wider">
+                        <h2 className="text-lg font-light text-gray-700 tracking-wider">
                             {fortunes.length === 0 ? "利用履歴はありません" : "利用履歴"}
                         </h2>
-                        
+
                         {/* 検索ボックス */}
                         {fortunes.length > 0 && (
                             <div className="relative">
@@ -263,7 +263,7 @@ export default function HistoryPage() {
                                     placeholder="質問や結果から検索..."
                                     value={searchQuery}
                                     onChange={(e) => handleSearch(e.target.value)}
-                                    className="w-full px-4 py-2 pl-10 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                                    className="w-full px-4 py-2 pl-10 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
                                 />
                                 <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -271,7 +271,7 @@ export default function HistoryPage() {
                                 {searchQuery && (
                                     <button
                                         onClick={() => handleSearch("")}
-                                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                                     >
                                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -288,23 +288,23 @@ export default function HistoryPage() {
                                 <div className="flex items-center justify-between">
                                     <button
                                         onClick={() => setShowFilters(!showFilters)}
-                                        className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200"
+                                        className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-purple-600 transition-colors duration-200"
                                     >
                                         <svg className={`w-4 h-4 transform transition-transform duration-200 ${showFilters ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                                         </svg>
                                         詳細フィルター
                                         {hasActiveFilters && (
-                                            <span className="ml-1 px-2 py-1 text-xs bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full">
+                                            <span className="ml-1 px-2 py-1 text-xs bg-purple-100 text-purple-700 rounded-full">
                                                 適用中
                                             </span>
                                         )}
                                     </button>
-                                    
+
                                     {hasActiveFilters && (
                                         <button
                                             onClick={clearFilters}
-                                            className="text-sm text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 transition-colors duration-200"
+                                            className="text-sm text-gray-500 hover:text-red-500 transition-colors duration-200"
                                         >
                                             すべてクリア
                                         </button>
@@ -313,17 +313,17 @@ export default function HistoryPage() {
 
                                 {/* フィルター詳細 */}
                                 {showFilters && (
-                                    <div className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg space-y-4 border border-gray-200 dark:border-gray-700">
+                                    <div className="p-4 bg-gray-50 rounded-lg space-y-4 border border-gray-200">
                                         <div className="space-y-4">
                                             {/* カード種類フィルター */}
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
                                                     カード種類
                                                 </label>
                                                 <select
                                                     value={selectedCard}
                                                     onChange={(e) => {setSelectedCard(e.target.value); resetToFirstPage();}}
-                                                    className="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-base"
+                                                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-base"
                                                 >
                                                     <option value="">すべてのカード</option>
                                                     {allCardNames.map(cardName => (
@@ -336,7 +336,7 @@ export default function HistoryPage() {
 
                                             {/* 日付範囲フィルター */}
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
                                                     期間指定
                                                 </label>
                                                 <div className="space-y-2">
@@ -369,8 +369,8 @@ export default function HistoryPage() {
 
                     {/* フィルター結果の表示 */}
                     {hasActiveFilters && (
-                        <div className="mb-4 p-3 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-700 rounded-lg">
-                            <p className="text-sm text-purple-700 dark:text-purple-300">
+                        <div className="mb-4 p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                            <p className="text-sm text-purple-700">
                                 {filteredFortunes.length > 0 ? (
                                     <span className="flex items-center gap-2">
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -394,12 +394,12 @@ export default function HistoryPage() {
                     <div className="relative">
                         {/* 縦のタイムライン - PC版 */}
                         {paginatedFortunes.length > 0 && (
-                            <div className="hidden md:block absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-purple-300 via-purple-200 to-transparent dark:from-purple-700 dark:via-purple-800 dark:to-transparent" />
+                            <div className="hidden md:block absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-purple-300 via-purple-200 to-transparent" />
                         )}
-                        
+
                         {/* 縦のタイムライン - モバイル版（左端） */}
                         {paginatedFortunes.length > 0 && (
-                            <div className="md:hidden absolute left-4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-purple-300 via-purple-200 to-transparent dark:from-purple-700 dark:via-purple-800 dark:to-transparent" />
+                            <div className="md:hidden absolute left-4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-purple-300 via-purple-200 to-transparent" />
                         )}
                         
                         <div className="space-y-8">
@@ -412,33 +412,33 @@ export default function HistoryPage() {
                                 {/* タイムラインノード - PC版 */}
                                 <div className="hidden md:block absolute left-8 -translate-x-1/2">
                                     <div className="relative">
-                                        <div className="w-4 h-4 bg-purple-500 dark:bg-purple-400 rounded-full shadow-lg" />
-                                        <div className="absolute inset-0 bg-purple-500 dark:bg-purple-400 rounded-full animate-ping opacity-30" />
+                                        <div className="w-4 h-4 bg-purple-500 rounded-full shadow-lg" />
+                                        <div className="absolute inset-0 bg-purple-500 rounded-full animate-ping opacity-30" />
                                     </div>
                                 </div>
-                                
+
                                 {/* タイムラインノード - モバイル版（左端、小さめ） */}
                                 <div className="md:hidden absolute left-4 -translate-x-1/2 top-4">
                                     <div className="relative">
-                                        <div className="w-3 h-3 bg-purple-500 dark:bg-purple-400 rounded-full shadow-md" />
-                                        <div className="absolute inset-0 bg-purple-500 dark:bg-purple-400 rounded-full animate-ping opacity-30" />
+                                        <div className="w-3 h-3 bg-purple-500 rounded-full shadow-md" />
+                                        <div className="absolute inset-0 bg-purple-500 rounded-full animate-ping opacity-30" />
                                     </div>
                                 </div>
-                                
+
                                 {/* カード本体 - レスポンシブマージン */}
-                                <div className="ml-8 md:ml-16 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-xl overflow-hidden hover:shadow-xl transition-shadow duration-200">
+                                <div className="ml-8 md:ml-16 border border-gray-200 bg-white rounded-xl overflow-hidden hover:shadow-xl transition-shadow duration-200">
                                     <button
-                                        className="w-full p-4 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+                                        className="w-full p-4 text-left hover:bg-gray-50 transition"
                                         onClick={() => setExpandedId(expandedId === fortune.id ? null : fortune.id)}
                                     >
                                         <div className="flex justify-between items-start">
                                             <div className="flex-1">
                                                 <div className="flex items-center gap-2 mb-2">
-                                                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                                                    <span className="text-xs text-gray-500">
                                                         {formatDate(fortune.timestamp)}
                                                     </span>
                                                 </div>
-                                                <blockquote className="text-lg font-medium text-gray-800 dark:text-gray-200 italic">
+                                                <blockquote className="text-lg font-medium text-gray-800 italic">
                                                     「{fortune.question}」
                                                 </blockquote>
                                                 
@@ -455,7 +455,7 @@ export default function HistoryPage() {
                                                 </div>
                                             </div>
                                             <svg
-                                                className={`w-5 h-5 text-gray-500 dark:text-gray-400 transform transition-transform duration-200 ${
+                                                className={`w-5 h-5 text-gray-500 transform transition-transform duration-200 ${
                                                     expandedId === fortune.id ? "rotate-180" : ""
                                                 }`}
                                                 fill="none"
@@ -479,14 +479,14 @@ export default function HistoryPage() {
                                         }`}
                                     >
                                         <div className="overflow-hidden">
-                                            <div className="p-6 border-t border-gray-200 dark:border-gray-700">
+                                            <div className="p-6 border-t border-gray-200">
                                                 {/* 占い結果 */}
-                                                <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 rounded-xl p-6">
-                                                    <h3 className="text-sm font-medium text-purple-700 dark:text-purple-300 mb-3">
+                                                <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6">
+                                                    <h3 className="text-sm font-medium text-purple-700 mb-3">
                                                         結果
                                                     </h3>
-                                                    <div className="prose prose-sm dark:prose-invert max-w-none">
-                                                        <p className="whitespace-pre-wrap text-gray-700 dark:text-gray-200 leading-relaxed">
+                                                    <div className="prose prose-sm max-w-none">
+                                                        <p className="whitespace-pre-wrap text-gray-700 leading-relaxed">
                                                             {fortune.result}
                                                         </p>
                                                     </div>
@@ -499,12 +499,12 @@ export default function HistoryPage() {
                         ))}
                         </div>
                     </div>
-                    
+
                     {/* 空状態 */}
                     {fortunes.length === 0 && (
                         <div className="text-center py-12">
                             <div className="text-6xl mb-4 opacity-20">⭐</div>
-                            <p className="text-gray-500 dark:text-gray-400">
+                            <p className="text-gray-500">
                                 利用記録がありません
                             </p>
                         </div>

@@ -85,8 +85,9 @@ const AppIntro = ({ onStepClick }: AppIntroProps) => {
                 {tryMeAnimation ? (
                   <LottieAnimation
                     animationData={tryMeAnimation}
-                    loop={true}
-                    autoplay={true}
+                    loop={false}
+                    autoplay={false}
+                    initialSegment={[0, 1]}
                     style={{ width: 32, height: 32 }}
                   />
                 ) : (
@@ -122,8 +123,9 @@ const AppIntro = ({ onStepClick }: AppIntroProps) => {
                     {animations[index] ? (
                       <LottieAnimation
                         animationData={animations[index]}
-                        loop={true}
-                        autoplay={true}
+                        loop={false}
+                        autoplay={false}
+                        initialSegment={[0, 1]}
                         style={{ width: 32, height: 32 }}
                       />
                     ) : (

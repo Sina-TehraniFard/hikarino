@@ -50,31 +50,31 @@ const NameSetupModal: React.FC<NameSetupModalProps> = ({ isOpen, uid, onComplete
     return (
         <>
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300 p-4">
-                <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-md mx-4 transform transition-all duration-300">
+                <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 transform transition-all duration-300">
                     {/* ヘッダー */}
-                    <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-800">
-                        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                    <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                        <h2 className="text-xl font-semibold text-gray-900">
                             お名前の設定
                         </h2>
                     </div>
-                    
+
                     {/* コンテンツ */}
                     <div className="px-6 py-8">
                         <div className="text-center mb-8">
-                            <div className="bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-xl p-4 mx-auto mb-6">
-                                <p className="text-purple-800 dark:text-purple-200 font-semibold text-lg">
+                            <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-xl p-4 mx-auto mb-6">
+                                <p className="text-purple-800 font-semibold text-lg">
                                     🎉 ご登録ありがとうございます！
                                 </p>
                             </div>
-                            <p className="text-gray-600 dark:text-gray-300 text-base leading-relaxed">
+                            <p className="text-gray-600 text-base leading-relaxed">
                                 あなたのお名前を教えてください。<br />
                                 占い結果で使用させていただきます。
                             </p>
                         </div>
-                        
+
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div>
-                                <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
                                     お名前（ニックネーム可）
                                 </label>
                                 <input
@@ -82,13 +82,13 @@ const NameSetupModal: React.FC<NameSetupModalProps> = ({ isOpen, uid, onComplete
                                     id="name"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
-                                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white text-gray-900"
                                     placeholder="例：ひかり"
                                     maxLength={20}
                                     required
                                     autoFocus
                                 />
-                                <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                                <p className="mt-2 text-sm text-gray-500">
                                     ※後から変更することはできません
                                 </p>
                             </div>
