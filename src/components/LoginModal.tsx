@@ -112,17 +112,17 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
     };
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300 p-4">
-            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-md mx-4 max-h-[95vh] overflow-hidden transform transition-all duration-300 relative flex flex-col">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 max-h-[95vh] overflow-hidden transform transition-all duration-300 relative flex flex-col">
                 {/* ヘッダー */}
-                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-800">
-                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                    <h2 className="text-xl font-semibold text-gray-900">
                         {isSignUp ? "アカウント作成" : "ログイン"}
                     </h2>
                     <button
                         onClick={onClose}
-                        className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200"
+                        className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-200 transition-colors duration-200"
                     >
-                        <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
@@ -131,19 +131,20 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
                 {/* コンテンツ */}
                 <div className="px-6 py-8 overflow-y-auto flex-1">
                         <div className="text-center mb-8">
-                            <div className="bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-xl p-4 mx-auto">
+                            <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-xl p-4 mx-auto">
                                 <div className="flex items-center justify-center gap-3">
                                     {giftAnimation && (
                                         <div className="w-10 h-10 flex-shrink-0">
                                             <LottieAnimation
                                                 animationData={giftAnimation}
-                                                loop={true}
-                                                autoplay={true}
+                                                loop={false}
+                                                autoplay={false}
+                                                initialSegment={[0, 1]}
                                                 style={{ width: '100%', height: '100%' }}
                                             />
                                         </div>
                                     )}
-                                    <p className="text-purple-800 dark:text-purple-200 font-semibold text-lg text-center">
+                                    <p className="text-purple-800 font-semibold text-lg text-center">
                                         新規登録でタロット5回分（500コイン）を無料でプレゼント中！
                                     </p>
                                 </div>
@@ -153,7 +154,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
                         {/* メール・パスワードフォーム */}
                         <form onSubmit={handleEmailAuth} className="space-y-5 mb-8">
                             <div>
-                                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                                     メールアドレス
                                 </label>
                                 <input
@@ -161,14 +162,14 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
                                     id="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white text-gray-900"
                                     placeholder="your@email.com"
                                     required
                                 />
                             </div>
-                            
+
                             <div>
-                                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                                     パスワード
                                 </label>
                                 <input
@@ -176,16 +177,16 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
                                     id="password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white text-gray-900"
                                     placeholder={isSignUp ? "6文字以上で入力" : "パスワードを入力"}
                                     required
                                     minLength={6}
                                 />
                             </div>
-                            
+
                             {error && (
-                                <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
-                                    <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
+                                <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                                    <p className="text-red-600 text-sm">{error}</p>
                                 </div>
                             )}
                             
@@ -198,14 +199,14 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
                                             type="checkbox"
                                             checked={termsAccepted}
                                             onChange={(e) => setTermsAccepted(e.target.checked)}
-                                            className="mt-1 w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                            className="mt-1 w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2"
                                         />
-                                        <span className="text-sm text-gray-600 dark:text-gray-400">
-                                            <Link href="/terms" target="_blank" className="text-purple-600 dark:text-purple-400 hover:underline">
+                                        <span className="text-sm text-gray-600">
+                                            <Link href="/terms" target="_blank" className="text-purple-600 hover:underline">
                                                 利用規約
                                             </Link>
                                             および
-                                            <Link href="/legal" target="_blank" className="text-purple-600 dark:text-purple-400 hover:underline ml-1">
+                                            <Link href="/legal" target="_blank" className="text-purple-600 hover:underline ml-1">
                                                 特定商取引法に基づく表記
                                             </Link>
                                             に同意します
@@ -218,10 +219,10 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
                                             type="checkbox"
                                             checked={privacyAccepted}
                                             onChange={(e) => setPrivacyAccepted(e.target.checked)}
-                                            className="mt-1 w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                            className="mt-1 w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2"
                                         />
-                                        <span className="text-sm text-gray-600 dark:text-gray-400">
-                                            <Link href="/privacy" target="_blank" className="text-purple-600 dark:text-purple-400 hover:underline">
+                                        <span className="text-sm text-gray-600">
+                                            <Link href="/privacy" target="_blank" className="text-purple-600 hover:underline">
                                                 プライバシーポリシー
                                             </Link>
                                             に同意します
@@ -262,33 +263,33 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
                                     setTermsAccepted(false);
                                     setPrivacyAccepted(false);
                                 }}
-                                className="text-purple-600 dark:text-purple-400 hover:underline text-sm font-medium transition-colors duration-200"
+                                className="text-purple-600 hover:underline text-sm font-medium transition-colors duration-200"
                             >
-                                {isSignUp 
-                                    ? "既にアカウントをお持ちですか？ログインする" 
+                                {isSignUp
+                                    ? "既にアカウントをお持ちですか？ログインする"
                                     : "アカウントをお持ちでない場合は？新規作成する"
                                 }
                             </button>
                         </div>
-                        
+
                     {/* 区切り線 */}
                     <div className="relative my-8">
                         <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+                            <div className="w-full border-t border-gray-300"></div>
                         </div>
                         <div className="relative flex justify-center text-sm">
-                            <span className="px-4 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 font-medium">または</span>
+                            <span className="px-4 bg-white text-gray-500 font-medium">または</span>
                         </div>
                     </div>
-                    
+
                     {/* Googleログインボタン */}
                     <button
                         onClick={handleGoogleLogin}
                         disabled={isLoading}
                         className={`w-full flex items-center justify-center gap-3 px-6 py-4 rounded-lg font-medium transition-all duration-200 hover:shadow-md active:scale-95 ${
-                            isLoading 
-                                ? "bg-gray-100 dark:bg-gray-700 cursor-not-allowed" 
-                                : "border-2 border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900"
+                            isLoading
+                                ? "bg-gray-100 cursor-not-allowed"
+                                : "border-2 border-gray-300 hover:bg-gray-50 text-gray-700 bg-white"
                         }`}
                     >
                         <Image 
