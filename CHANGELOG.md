@@ -1,3 +1,11 @@
+## [1.1.1](https://github.com/Sina-TehraniFard/hikarino/compare/v1.1.0...v1.1.1) (2025-10-08)
+
+
+### Bug Fixes
+
+* disable TypeScript build errors to workaround Next.js 15.5.4 typ… ([59f4dfb](https://github.com/Sina-TehraniFard/hikarino/commit/59f4dfb53e5ee28bb147635bebc4377eca5e2de2))
+* disable TypeScript build errors to workaround Next.js 15.5.4 type generation bug ([94b91bd](https://github.com/Sina-TehraniFard/hikarino/commit/94b91bd0bfd966b89b10e58964ea0a327bc479a0))
+
 # [1.1.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.0.3...v1.1.0) (2025-10-08)
 
 
