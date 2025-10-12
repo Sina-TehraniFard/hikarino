@@ -214,9 +214,25 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({
         
         {/* Footer */}
         <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-200 dark:border-gray-700">
-          <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-            ヒカリノ タロット占い
-          </p>
+          <div className="space-y-2">
+            <Link
+              href="/privacy"
+              onClick={() => setMenuOpen(false)}
+              className="block text-xs text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 text-center transition-colors duration-200"
+            >
+              プライバシーポリシー
+            </Link>
+            <Link
+              href="/tokusho"
+              onClick={() => setMenuOpen(false)}
+              className="block text-xs text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 text-center transition-colors duration-200"
+            >
+              特定商取引法に基づく表記
+            </Link>
+            <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+              ヒカリノ タロット占い
+            </p>
+          </div>
         </div>
       </div>
     </div>
