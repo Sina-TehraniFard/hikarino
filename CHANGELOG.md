@@ -1,3 +1,15 @@
+# [1.2.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.1.1...v1.2.0) (2025-10-12)
+
+
+### Bug Fixes
+
+* add tokusho page with legal disclosure information ([918705e](https://github.com/Sina-TehraniFard/hikarino/commit/918705ed13072bcbfe1f00d49c90eb9218468ab2))
+
+
+### Features
+
+* add tokusho page with legal disclosure information ([fd9115d](https://github.com/Sina-TehraniFard/hikarino/commit/fd9115de88d60c796e5e88ca86d1d483fcc962ce))
+
 ## [1.1.1](https://github.com/Sina-TehraniFard/hikarino/compare/v1.1.0...v1.1.1) (2025-10-08)
 
 
