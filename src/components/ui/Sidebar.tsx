@@ -170,6 +170,12 @@ const Sidebar: React.FC<SidebarProps> = ({
             >
               プライバシーポリシー
             </Link>
+            <Link
+              href="/tokusho"
+              className="block text-xs text-gray-500 hover:text-purple-600 text-center transition-colors duration-200"
+            >
+              特定商取引法に基づく表記
+            </Link>
             <p className="text-xs text-gray-500 text-center">
               ヒカリノ タロット占い
             </p>
