@@ -47,6 +47,7 @@ export default function Home() {
         hasFortuned,
         error,
         showWaitingAnimation,
+        streamingProgress,
         setQuestion,
         handleDrawCards,
         handleFortune,
@@ -237,8 +238,9 @@ export default function Home() {
                         </div>
 
                         {showWaitingAnimation ? (
-                            <WaitingAnimation 
+                            <WaitingAnimation
                                 onAnimationComplete={onAnimationComplete}
+                                progress={streamingProgress}
                             />
                         ) : (
                             (hasFortuned || result) && <FortuneResult result={result}/>
@@ -327,8 +329,9 @@ export default function Home() {
 
                                 <div className={`transition-all duration-700 ease-in-out ${showWaitingAnimation || hasFortuned || result ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-4'}`}>
                                     {showWaitingAnimation ? (
-                                        <WaitingAnimation 
+                                        <WaitingAnimation
                                             onAnimationComplete={onAnimationComplete}
+                                            progress={streamingProgress}
                                         />
                                     ) : (
                                         (hasFortuned || result) && <FortuneResult result={result}/>
