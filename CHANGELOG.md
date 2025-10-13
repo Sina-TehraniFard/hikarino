@@ -3,6 +3,19 @@
 
 ### Bug Fixes
 
+* remove unused onAnimationComplete and backgroundResult to resolve ESLint errors ([86cc298](https://github.com/Sina-TehraniFard/hikarino/commit/86cc2989a99d7964ae25d94f54db89426d450659))
+* resolve ESLint unused variable error in WaitingAnimation ([8bcafa8](https://github.com/Sina-TehraniFard/hikarino/commit/8bcafa877d3250b94307443540a96ba8295deed6))
+
+
+### Features
+
+* add streaming progress percentage and smooth result reveal animation ([749f2d9](https://github.com/Sina-TehraniFard/hikarino/commit/749f2d9f4241544f3065121d79e198beb3d96e16))
+
+# [1.3.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.2.0...v1.3.0) (2025-10-13)
+
+
+### Bug Fixes
+
 * resolve ESLint unused variable error in WaitingAnimation ([8bcafa8](https://github.com/Sina-TehraniFard/hikarino/commit/8bcafa877d3250b94307443540a96ba8295deed6))
 
 
