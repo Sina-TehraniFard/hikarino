@@ -53,7 +53,6 @@ export default function Home() {
         handleFortune,
         restoreGuestData,
         resetFortune,
-        onAnimationComplete,
     } = useFortune();
 
     useEffect(() => {
@@ -239,7 +238,6 @@ export default function Home() {
 
                         {showWaitingAnimation ? (
                             <WaitingAnimation
-                                onAnimationComplete={onAnimationComplete}
                                 progress={streamingProgress}
                             />
                         ) : (
@@ -330,7 +328,6 @@ export default function Home() {
                                 <div className={`transition-all duration-700 ease-in-out ${showWaitingAnimation || hasFortuned || result ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-4'}`}>
                                     {showWaitingAnimation ? (
                                         <WaitingAnimation
-                                            onAnimationComplete={onAnimationComplete}
                                             progress={streamingProgress}
                                         />
                                     ) : (
