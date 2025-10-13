@@ -55,9 +55,6 @@ export const useFortune = () => {
   // アニメーション表示状態を管理
   const [showWaitingAnimation, setShowWaitingAnimation] = useState(false);
 
-  // バックグラウンドで蓄積されているテキストを管理
-  const [backgroundResult, setBackgroundResult] = useState("");
-
   // ストリーミング進捗を管理（0-100%）
   const [streamingProgress, setStreamingProgress] = useState(0);
   
@@ -190,25 +187,17 @@ export const useFortune = () => {
         return;
       }
 
-      // ===== バックグラウンドでストリーミング開始 =====
-      // アニメーション表示中はバックグラウンドで結果を蓄積
+      // ===== ストリーミング開始 =====
       const expectedLength = 1000; // 予想される占い結果の文字数
       let lastUpdateTime = Date.now();
 
       const finalResult = await processStreamingResponse(response, (text) => {
-        setBackgroundResult(text);
-
         // 進捗を更新（100msごとにthrottle）
         const now = Date.now();
         if (now - lastUpdateTime > 100) {
           const progress = Math.min(95, (text.length / expectedLength) * 100);
           setStreamingProgress(progress);
           lastUpdateTime = now;
-        }
-
-        // アニメーション非表示時は即座に結果を表示
-        if (!showWaitingAnimation) {
-          setResult(text);
         }
       });
 
@@ -230,7 +219,7 @@ export const useFortune = () => {
       setIsLoading(false);
       setShowWaitingAnimation(false);
     }
-  }, [isLoading, question, cards, coins, consumeCoins, showWaitingAnimation]);
+  }, [isLoading, question, cards, coins, consumeCoins]);
   // ↑ これらの値が変わったときだけ、この関数を新しく作り直す
 
   /**
@@ -274,7 +263,6 @@ export const useFortune = () => {
     setError(null);               // エラーメッセージをクリア
     setHasFortuned(false);        // 占い完了フラグをリセット
     setShowWaitingAnimation(false); // アニメーション状態をリセット
-    setBackgroundResult("");       // バックグラウンド結果をリセット
     setStreamingProgress(0);       // 進捗をリセット
 
     // 一時保存データもクリア
@@ -302,13 +290,5 @@ export const useFortune = () => {
     restoreGuestData,// ゲストデータを復元する関数
     resetFortune,    // 全てをリセットする関数
     setShowWaitingAnimation, // アニメーション状態を制御する関数
-
-    // アニメーション完了時のコールバック
-    onAnimationComplete: useCallback(() => {
-      setShowWaitingAnimation(false);
-      if (backgroundResult) {
-        setResult(backgroundResult);
-      }
-    }, [backgroundResult]),
   };
 };

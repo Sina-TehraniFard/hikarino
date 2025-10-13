@@ -1,11 +1,10 @@
 import GlassBox from './GlassBox';
 
 interface WaitingAnimationProps {
-  onAnimationComplete: () => void;
   progress?: number;
 }
 
-const WaitingAnimation = ({ onAnimationComplete: _onAnimationComplete, progress = 0 }: WaitingAnimationProps) => {
+const WaitingAnimation = ({ progress = 0 }: WaitingAnimationProps) => {
   return (
     <div className="flex items-center justify-center min-h-[200px] w-full">
       <GlassBox className="p-6 flex flex-col items-center justify-center gap-4">
