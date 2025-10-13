@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.2.0...v1.3.0) (2025-10-13)
+
+
+### Features
+
+* add streaming progress percentage and smooth result reveal animation ([749f2d9](https://github.com/Sina-TehraniFard/hikarino/commit/749f2d9f4241544f3065121d79e198beb3d96e16))
+
 # [1.2.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.1.1...v1.2.0) (2025-10-12)
 
 
