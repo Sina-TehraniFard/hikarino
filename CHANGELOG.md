@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.3.0...v1.4.0) (2025-10-18)
+
+
+### Features
+
+* 利用規約の追加 ([bedc9e8](https://github.com/Sina-TehraniFard/hikarino/commit/bedc9e829dd1ed4d34c1c854756afbde07a4a3f6))
+
 # [1.3.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.2.0...v1.3.0) (2025-10-13)
 
 
