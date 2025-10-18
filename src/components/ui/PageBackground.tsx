@@ -1,16 +1,24 @@
-import { memo } from 'react';
+import { memo } from "react";
+import Image from "next/image";
 
-// 共通ページ背景コンポーネント - シンプル版
+// 共通ページ背景コンポーネント
 
 const PageBackground = memo(() => {
   return (
     <div className="fixed inset-0 -z-20">
-      {/* シンプルな静的グラデーション */}
-      <div className="absolute inset-0 bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50" />
+      {/* 背景画像 */}
+      <Image
+        src="/hikarino-bg.jpg"
+        alt=""
+        fill
+        priority
+        quality={90}
+        className="object-cover"
+      />
     </div>
   );
 });
 
-PageBackground.displayName = 'PageBackground';
+PageBackground.displayName = "PageBackground";
 
 export default PageBackground;
