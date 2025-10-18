@@ -1,3 +1,15 @@
+# [1.5.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.4.1...v1.5.0) (2025-10-18)
+
+### Bug Fixes
+
+- フッターの年を動的取得に変更し、利用規約リンクを追加 ([2507688](https://github.com/Sina-TehraniFard/hikarino/commit/25076881f4646cf3028d2dd7e258a113034d2b29))
+- ページレイアウトを修正してフッターが常に表示されるように改善 ([5b47a54](https://github.com/Sina-TehraniFard/hikarino/commit/5b47a54ad6a50239b70e5fe207fd702d7b345c43))
+- メニューヘッダーの削除 ([d61b130](https://github.com/Sina-TehraniFard/hikarino/commit/d61b13055baf11cdc7237405a2524c469451a73f))
+
+### Features
+
+- ページ背景をグラデーションから画像に変更 ([9c56874](https://github.com/Sina-TehraniFard/hikarino/commit/9c568746e138cc296788d4a2c7068060a5159df6))
+
 ## [1.4.1](https://github.com/Sina-TehraniFard/hikarino/compare/v1.4.0...v1.4.1) (2025-10-18)
 
 ### Bug Fixes
