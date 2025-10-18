@@ -44,7 +44,7 @@ RUN addgroup --system --gid 1001 nodejs && \
 # Install production dependencies only
 COPY package*.json ./
 ENV NODE_ENV=production
-RUN npm ci --omit=dev && npm cache clean --force
+RUN npm ci --omit=dev --ignore-scripts && npm cache clean --force
 
 # Copy built application and necessary files from builder stage
 COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
