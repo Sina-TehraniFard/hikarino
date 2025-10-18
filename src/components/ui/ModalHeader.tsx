@@ -1,38 +1,43 @@
-import React from 'react';
+import React from "react";
 import dynamic from "next/dynamic";
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-const LottieAnimation = dynamic(() => import('lottie-react'), { ssr: false });
+const LottieAnimation = dynamic(() => import("lottie-react"), { ssr: false });
 
 interface ModalHeaderProps {
   title: string;
   animationPath?: string;
   onClose?: () => void;
   showCloseButton?: boolean;
-  variant?: 'default' | 'purchase';
+  variant?: "default" | "purchase" | "mobile";
 }
 
-const ModalHeader: React.FC<ModalHeaderProps> = ({ 
-  title, 
-  animationPath, 
-  onClose, 
+const ModalHeader: React.FC<ModalHeaderProps> = ({
+  title,
+  animationPath,
+  onClose,
   showCloseButton = true,
-  variant = 'default'
+  variant = "default",
 }) => {
   const [animation, setAnimation] = useState<object | null>(null);
 
   useEffect(() => {
     if (animationPath) {
       fetch(animationPath)
-        .then(res => res.json())
-        .then(data => setAnimation(data))
-        .catch(error => console.error('アニメーション読み込みエラー:', error));
+        .then((res) => res.json())
+        .then((data) => setAnimation(data))
+        .catch((error) =>
+          console.error("アニメーション読み込みエラー:", error)
+        );
     }
   }, [animationPath]);
 
-  const headerClassName = variant === 'purchase'
-    ? "sticky top-0 z-50 bg-sky-200 rounded-t-2xl px-6 md:px-8 py-4 border-b border-sky-300/50 backdrop-blur-sm"
-    : "sticky top-0 z-50 bg-gradient-to-r from-purple-600/80 to-purple-700/80 rounded-t-2xl px-6 md:px-8 py-4 border-b border-purple-500/30 backdrop-blur-sm";
+  const headerClassName =
+    variant === "purchase"
+      ? "sticky top-0 z-50 bg-sky-200 rounded-t-2xl px-6 md:px-8 py-4 border-b border-sky-300/50 backdrop-blur-sm"
+      : variant === "mobile"
+        ? "sticky top-0 z-50 bg-gradient-to-r from-purple-600/80 to-purple-700/80 px-6 md:px-8 py-4 border-b border-purple-500/30 backdrop-blur-sm"
+        : "sticky top-0 z-50 bg-gradient-to-r from-purple-600/80 to-purple-700/80 rounded-t-2xl px-6 md:px-8 py-4 border-b border-purple-500/30 backdrop-blur-sm";
 
   return (
     <header className={headerClassName}>
@@ -63,8 +68,18 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({
             onClick={onClose}
             className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/20 transition-colors duration-200"
           >
-            <svg className="w-5 h-5 text-gray-600 hover:text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              className="w-5 h-5 text-gray-600 hover:text-gray-900"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         )}
