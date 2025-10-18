@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prepare": "husky"
+    "prepare": "[ -d node_modules/husky ] && husky || true"
   },
   "dependencies": {
     "date-fns": "^4.1.0",
