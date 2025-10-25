@@ -1,3 +1,14 @@
+# [1.6.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.5.0...v1.6.0) (2025-10-25)
+
+### Bug Fixes
+
+- GPT-5 API仕様に対応して占いエンドポイントを修正 ([f9ecaed](https://github.com/Sina-TehraniFard/hikarino/commit/f9ecaedcf323f3224ef059e43726b6bdc480fa13)), closes [#86](https://github.com/Sina-TehraniFard/hikarino/issues/86)
+- GPT-5用にmax_tokensをmax_completion_tokensに修正 ([d162c62](https://github.com/Sina-TehraniFard/hikarino/commit/d162c623eae0903111e143b57ef7ba45120e6eb0))
+
+### Features
+
+- OpenAI APIモデルをGPT-4からGPT-5に更新 ([6a301fc](https://github.com/Sina-TehraniFard/hikarino/commit/6a301fc620e7a919c276fc2da0e9d1a32e5699c3)), closes [#86](https://github.com/Sina-TehraniFard/hikarino/issues/86)
+
 # [1.5.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.4.1...v1.5.0) (2025-10-18)
 
 ### Bug Fixes
