@@ -32,7 +32,7 @@ ${question}
       model: "gpt-5",
       messages: [{ role: "user", content: prompt }],
       temperature: 0.8,
-      max_tokens: 800,
+      max_completion_tokens: 800,
       stream: true,
     });
 
