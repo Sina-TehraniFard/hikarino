@@ -1,3 +1,9 @@
+## [1.6.1](https://github.com/Sina-TehraniFard/hikarino/compare/v1.6.0...v1.6.1) (2025-10-25)
+
+### Bug Fixes
+
+- デプロイワークフローでファイル上書きを許可 ([d17916e](https://github.com/Sina-TehraniFard/hikarino/commit/d17916e3415320c341ff9cc1006ab04aff95edae))
+
 # [1.6.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.5.0...v1.6.0) (2025-10-25)
 
 ### Bug Fixes
