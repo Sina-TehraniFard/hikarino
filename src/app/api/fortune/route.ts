@@ -28,25 +28,20 @@ ${question}
 - ${cards[2].position}：${cards[2].cardName}（${cards[2].isReversed ? "逆位置" : "正位置"}）
 `;
 
-    const stream = await openai.chat.completions.create({
+    const completion = await openai.chat.completions.create({
       model: "gpt-5",
       messages: [{ role: "user", content: prompt }],
-      temperature: 0.8,
-      max_completion_tokens: 800,
-      stream: true,
+      max_completion_tokens: 16000,
+      stream: false,
     });
 
+    const content = completion.choices[0]?.message?.content || "";
     const encoder = new TextEncoder();
 
     const readableStream = new ReadableStream({
       async start(controller) {
         try {
-          for await (const chunk of stream) {
-            const content = chunk.choices[0]?.delta?.content || "";
-            if (content) {
-              controller.enqueue(encoder.encode(content));
-            }
-          }
+          controller.enqueue(encoder.encode(content));
           controller.close();
         } catch (error) {
           controller.error(error);
