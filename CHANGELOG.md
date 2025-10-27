@@ -1,3 +1,9 @@
+## [1.6.2](https://github.com/Sina-TehraniFard/hikarino/compare/v1.6.1...v1.6.2) (2025-10-27)
+
+### Bug Fixes
+
+- GCPのVMにSSHで接続できなくなったことに対する初手 ([ba499d2](https://github.com/Sina-TehraniFard/hikarino/commit/ba499d2c8ff7654e64fbbfad105d696e7d433db2))
+
 ## [1.6.1](https://github.com/Sina-TehraniFard/hikarino/compare/v1.6.0...v1.6.1) (2025-10-25)
 
 ### Bug Fixes
