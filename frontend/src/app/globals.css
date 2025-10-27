@@ -1,0 +1,86 @@
+/* Tailwind CSS のベース・コンポーネント・ユーティリティを読み込む */
+@import "tailwindcss";
+
+/* ライトモード用の色定義：背景色と前景色の変数 */
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+/* Tailwind プラグインや UI テーマ用のインラインテーマ変数 */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  /* Warm Color Palette for CoinPurchaseModal */
+  --color-warm-gold: #ecc356;
+  --color-warm-sky: #abd2dd;
+  --color-warm-cream: #fffdf5;
+  --color-warm-orange: #f7971e;
+  --color-warm-yellow: #ffd200;
+  --color-warm-hover: #efb00c;
+
+  /* Background gradients */
+  --color-warm-gradient: linear-gradient(to right, #f7971e, #ffd200);
+  --color-soft-cream: linear-gradient(135deg, #fff8e7 0%, #fff0c4 100%);
+
+  /* Button specific colors */
+  --color-warm-orange-solid: #f7971e;
+  --color-warm-yellow-solid: #ffd200;
+
+  /* Text colors */
+  --color-text-primary: #1f2937;
+  --color-text-secondary: #6b7280;
+  --color-text-accent: #f7971e;
+
+  /* Semantic colors */
+  --color-success: #10b981;
+  --color-warning: #ef4444;
+  --color-info: #3b82f6;
+
+  /* Overlay */
+  --color-warm-overlay: rgba(255, 253, 245, 0.7);
+}
+
+/* グローバルな body スタイル：デフォルトの文字色とフォントファミリー */
+body {
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* スクロールバーを完全に非表示にする */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
+/* 3Dフリップカード用カスタムクラス */
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* モーダル用シンプルなフェードイン */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-enter {
+  animation: modalFadeIn 0.2s ease-out;
+}

@@ -1,0 +1,35 @@
+{
+  "name": "hikarino-frontend",
+  "version": "1.6.2",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "date-fns": "^4.1.0",
+    "dotenv": "^17.2.1",
+    "firebase": "^11.6.1",
+    "lottie-react": "^2.4.1",
+    "next": "^15.5.4",
+    "openai": "^4.96.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "stripe": "^18.1.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4.1.13",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.3.1",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.6.2",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
