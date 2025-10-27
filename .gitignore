@@ -45,3 +45,5 @@ templates/*
 .next
 
 .idea/*
+
+ai-docs/*
