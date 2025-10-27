@@ -13,11 +13,11 @@ const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   ...compat.extends("prettier"),
   {
-    ignores: ["frontend/next-env.d.ts", "frontend/node_modules/**"],
+    ignores: ["next-env.d.ts"],
   },
   {
     rules: {
-      "@next/next/no-html-link-for-pages": ["error", "./frontend/pages"],
+      "@next/next/no-html-link-for-pages": ["error", "./pages"],
     },
   },
 ];
