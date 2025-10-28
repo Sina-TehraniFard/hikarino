@@ -13,7 +13,7 @@ Stripe → Webhook Server (Express) → Firebase Functions (addCoin)
 ## 📁 ディレクトリ構造
 
 ```
-functions-core/
+firebase-functions/
 ├─ src/
 │   ├─ index.ts                ← Firebase関数エントリ（spendCoin, addCoin）
 │   └─ webhook/
@@ -26,16 +26,19 @@ functions-core/
 ## 🔐 セキュリティ要件
 
 ### 1. Stripe署名検証
+
 - Webhookエンドポイントは必ずStripe署名を検証
 - `STRIPE_WEBHOOK_SECRET`による厳密な検証
 - 署名検証失敗時は400エラーを返却
 
 ### 2. 内部認証
+
 - addCoin関数は`INTERNAL_WEBHOOK_KEY`による認証必須
 - Webhookサーバからのみ呼び出し可能
 - 外部からの直接呼び出しは401エラーで拒否
 
 ### 3. 冪等性保証
+
 - 同一イベントIDの重複処理を防止
 - Firestoreの`processed_webhook_events`コレクションで管理
 - 処理済みイベントは200レスポンスで即座に返却
@@ -64,7 +67,7 @@ WEBHOOK_PORT=3001
 ### 2. 依存関係インストール
 
 ```bash
-cd functions-core
+cd firebase-functions
 npm install
 ```
 
@@ -242,4 +245,4 @@ firebase functions:log
 
 ---
 
-**重要**: この設計は本番稼働の可否に直結します。全ての要件を満たし、十分なテストを実施してから運用を開始してください。 
+**重要**: この設計は本番稼働の可否に直結します。全ての要件を満たし、十分なテストを実施してから運用を開始してください。

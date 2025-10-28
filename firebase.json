@@ -1,7 +1,7 @@
 {
   "functions": [
     {
-      "source": "functions-core",
+      "source": "firebase-functions",
       "codebase": "default"
     }
   ],
