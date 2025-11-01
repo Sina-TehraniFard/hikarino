@@ -1,3 +1,16 @@
+# [1.7.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.6.2...v1.7.0) (2025-11-01)
+
+### Bug Fixes
+
+- Next.js workspace root警告を完全に解決 ([0ca6972](https://github.com/Sina-TehraniFard/hikarino/commit/0ca69729bfe3ea3fe97e587d7bcd3ebcce71f859))
+- Next.js設定警告を解決しワークスペース構成を最適化 ([4ac463d](https://github.com/Sina-TehraniFard/hikarino/commit/4ac463df08b958548f078105088323d75720443c))
+- package-lock.jsonをGit管理に追加してCI/CD対応 ([f79cf7d](https://github.com/Sina-TehraniFard/hikarino/commit/f79cf7d9ef97808cc87c44105a848e1fef45096f))
+- READMEの更新 ([57cd37e](https://github.com/Sina-TehraniFard/hikarino/commit/57cd37e4f5779aea11f4c84e8c2dfad4e1f8d211))
+
+### Features
+
+- フロントエンドをfrontend/ディレクトリに完全移行 ([554c07b](https://github.com/Sina-TehraniFard/hikarino/commit/554c07bc275bc8f34bea40251fddb00152c4f745))
+
 ## [1.6.2](https://github.com/Sina-TehraniFard/hikarino/compare/v1.6.1...v1.6.2) (2025-10-27)
 
 ### Bug Fixes
