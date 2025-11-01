@@ -1,12 +1,16 @@
 {
-  "name": "hikarino",
+  "name": "hikarino-monorepo",
   "version": "1.6.2",
   "private": true,
+  "workspaces": [
+    "frontend",
+    "firebase-functions"
+  ],
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
+    "dev": "npm run dev --workspace=frontend",
+    "build": "npm run build --workspace=frontend",
+    "start": "npm run start --workspace=frontend",
+    "lint": "npm run lint --workspace=frontend",
     "prepare": "[ -d node_modules/husky ] && husky || true"
   },
   "dependencies": {
