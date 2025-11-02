@@ -631,23 +631,25 @@ export default function HistoryPage() {
                                 </div>
                               </div>
                               <div className="flex items-center gap-1">
-                                <svg
-                                  className={`w-5 h-5 text-gray-500 transform transition-transform duration-200 ${
-                                    expandedId === fortune.id
-                                      ? "rotate-180"
-                                      : ""
-                                  }`}
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke="currentColor"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M19 9l-7 7-7-7"
-                                  />
-                                </svg>
+                                <div className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                                  <svg
+                                    className={`w-4 h-4 transform transition-transform duration-200 ${
+                                      expandedId === fortune.id
+                                        ? "rotate-180"
+                                        : ""
+                                    }`}
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M19 9l-7 7-7-7"
+                                    />
+                                  </svg>
+                                </div>
                               </div>
                             </div>
                           </button>
