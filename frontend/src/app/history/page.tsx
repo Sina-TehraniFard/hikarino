@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Sidebar from "@/components/ui/Sidebar";
 import PageBackground from "@/components/ui/PageBackground";
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { getFirebaseAuth } from "@/lib/firebase";
 import { getUserFortunes } from "@/lib/firestore/fortune";
 import { useCoinContext } from "@/contexts/CoinContext";
 import { useCoinAnimation } from "@/hooks/useCoinAnimation";
@@ -18,11 +19,13 @@ import DateInput from "@/components/ui/DateInput";
 import PaginationComponent from "@/components/ui/PaginationComponent";
 import { analyzeFortuneHistory } from "@/lib/fortuneAnalytics";
 import { useFortuneFilters } from "@/hooks/useFortuneFilters";
+import { useFortuneDelete } from "@/hooks/useFortuneDelete";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 
 export default function HistoryPage() {
   const [user, setUser] = useState<User | null>(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [fortunes, setFortunes] = useState<FortuneHistory[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [showLogin, setShowLogin] = useState(false);
@@ -37,15 +40,26 @@ export default function HistoryPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [showErrorDialog, setShowErrorDialog] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<{
+    type: "single" | "all";
+    fortuneId?: string;
+  } | null>(null);
   const router = useRouter();
   const { coins, refreshCoins } = useCoinContext();
   const { displayCoins } = useCoinAnimation(coins, user?.uid);
   const { filterByText, filterByCard, filterByDateRange } = useFortuneFilters();
+  const {
+    isDeleting,
+    error: deleteError,
+    handleDeleteFortune,
+    handleDeleteAllFortunes,
+  } = useFortuneDelete();
 
   const itemsPerPage = 10;
 
   useEffect(() => {
-    const auth = getAuth();
+    const auth = getFirebaseAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser({
@@ -61,8 +75,12 @@ export default function HistoryPage() {
               "占い履歴の読み込みに失敗しました。ページを再読み込みしてください。"
             );
             setShowErrorDialog(true);
+          })
+          .finally(() => {
+            setIsAuthLoading(false);
           });
       } else {
+        setIsAuthLoading(false);
         router.push("/");
       }
     });
@@ -72,7 +90,7 @@ export default function HistoryPage() {
 
   const handleLogout = async () => {
     try {
-      const auth = getAuth();
+      const auth = getFirebaseAuth();
       await signOut(auth);
       router.push("/");
     } catch (error) {
@@ -165,6 +183,47 @@ export default function HistoryPage() {
   const hasActiveFilters =
     searchQuery || selectedCard || dateRange.start || dateRange.end;
 
+  // 認証チェック中はローディング画面を表示
+  if (isAuthLoading) {
+    return (
+      <div className="flex relative overflow-hidden py-20">
+        <div className="flex-1 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+        </div>
+      </div>
+    );
+  }
+
+  // 削除確認ダイアログを開く
+  const openDeleteConfirm = (type: "single" | "all", fortuneId?: string) => {
+    setDeleteTarget({ type, fortuneId });
+    setShowDeleteConfirm(true);
+  };
+
+  // 削除実行
+  const executeDelete = async () => {
+    if (!user || !deleteTarget) return;
+
+    let success = false;
+    if (deleteTarget.type === "single" && deleteTarget.fortuneId) {
+      success = await handleDeleteFortune(user.uid, deleteTarget.fortuneId);
+    } else if (deleteTarget.type === "all") {
+      success = await handleDeleteAllFortunes(user.uid);
+    }
+
+    if (success) {
+      const updatedFortunes = await getUserFortunes(user.uid);
+      setFortunes(updatedFortunes);
+      setShowDeleteConfirm(false);
+      setDeleteTarget(null);
+      setExpandedId(null);
+      setCurrentPage(1);
+    } else if (deleteError) {
+      setErrorMessage(deleteError);
+      setShowErrorDialog(true);
+    }
+  };
+
   return (
     <main className="flex min-h-screen relative overflow-hidden">
       {/* PC版サイドバー（768px以上で表示） */}
@@ -185,8 +244,6 @@ export default function HistoryPage() {
       <div className={`flex-1 ${user ? "md:ml-72" : ""}`}>
         <div className="w-full max-w-4xl mx-auto bg-white/90 backdrop-blur-xl border border-purple-200/30 shadow-2xl min-h-screen relative">
           <div className="px-6 space-y-6 pb-12">
-            {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
-
             {user && (
               <Header
                 user={user}
@@ -281,11 +338,31 @@ export default function HistoryPage() {
                 </div>
               )}
 
-              {/* タイムラインヘッダーと検索・フィルター */}
+              {/* 検索・フィルター */}
               <div id="search-section" className="mb-6 space-y-4">
-                <h2 className="text-lg font-light text-gray-700 tracking-wider">
-                  {fortunes.length === 0 ? "利用履歴はありません" : "利用履歴"}
-                </h2>
+                {fortunes.length > 0 && (
+                  <div className="flex justify-end">
+                    <button
+                      onClick={() => openDeleteConfirm("all")}
+                      className="text-sm text-red-600 hover:text-red-700 hover:underline transition-colors duration-200 flex items-center gap-1"
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
+                      </svg>
+                      すべて削除
+                    </button>
+                  </div>
+                )}
 
                 {/* 検索ボックス */}
                 {fortunes.length > 0 && (
@@ -518,57 +595,89 @@ export default function HistoryPage() {
 
                       {/* カード本体 - レスポンシブマージン */}
                       <div className="ml-8 md:ml-16 border border-gray-200 bg-white rounded-xl overflow-hidden hover:shadow-xl transition-shadow duration-200">
-                        <button
-                          className="w-full p-4 text-left hover:bg-gray-50 transition"
-                          onClick={() =>
-                            setExpandedId(
-                              expandedId === fortune.id ? null : fortune.id
-                            )
-                          }
-                        >
-                          <div className="flex justify-between items-start">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-2">
-                                <span className="text-xs text-gray-500">
-                                  {formatDate(fortune.timestamp)}
-                                </span>
-                              </div>
-                              <blockquote className="text-lg font-medium text-gray-800 italic">
-                                「{fortune.question}」
-                              </blockquote>
+                        <div className="relative">
+                          <button
+                            className="w-full p-4 text-left hover:bg-gray-50 transition"
+                            onClick={() =>
+                              setExpandedId(
+                                expandedId === fortune.id ? null : fortune.id
+                              )
+                            }
+                          >
+                            <div className="flex justify-between items-start gap-2">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <span className="text-xs text-gray-500">
+                                    {formatDate(fortune.timestamp)}
+                                  </span>
+                                </div>
+                                <blockquote className="text-lg font-medium text-gray-800 italic">
+                                  「{fortune.question}」
+                                </blockquote>
 
-                              {/* ミニカードプレビュー */}
-                              <div className="flex gap-2 mt-3 md:justify-center">
-                                {fortune.cards.map((card, cardIndex) => (
-                                  <MiniTarotCard
-                                    key={cardIndex}
-                                    card={{
-                                      name: card.cardName,
-                                      imagePath: "",
-                                    }}
-                                    isReversed={card.isReversed}
-                                    delay={cardIndex * 50}
-                                  />
-                                ))}
+                                {/* ミニカードプレビュー */}
+                                <div className="flex gap-2 mt-3 md:justify-center">
+                                  {fortune.cards.map((card, cardIndex) => (
+                                    <MiniTarotCard
+                                      key={cardIndex}
+                                      card={{
+                                        name: card.cardName,
+                                        imagePath: "",
+                                      }}
+                                      isReversed={card.isReversed}
+                                      delay={cardIndex * 50}
+                                    />
+                                  ))}
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <div className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                                  <svg
+                                    className={`w-4 h-4 transform transition-transform duration-200 ${
+                                      expandedId === fortune.id
+                                        ? "rotate-180"
+                                        : ""
+                                    }`}
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M19 9l-7 7-7-7"
+                                    />
+                                  </svg>
+                                </div>
                               </div>
                             </div>
+                          </button>
+
+                          {/* 削除ボタン */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openDeleteConfirm("single", fortune.id);
+                            }}
+                            className="absolute top-4 right-12 p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
+                            aria-label="この履歴を削除"
+                          >
                             <svg
-                              className={`w-5 h-5 text-gray-500 transform transition-transform duration-200 ${
-                                expandedId === fortune.id ? "rotate-180" : ""
-                              }`}
+                              className="w-4 h-4"
                               fill="none"
-                              viewBox="0 0 24 24"
                               stroke="currentColor"
+                              viewBox="0 0 24 24"
                             >
                               <path
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                                 strokeWidth={2}
-                                d="M19 9l-7 7-7-7"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                               />
                             </svg>
-                          </div>
-                        </button>
+                          </button>
+                        </div>
                         <div
                           className={`grid transition-all duration-200 ease-in-out ${
                             expandedId === fortune.id
@@ -617,22 +726,46 @@ export default function HistoryPage() {
                 </div>
               )}
             </div>
-
-            <CoinPurchaseModal
-              isOpen={showCoinModal}
-              onClose={handleCoinModalClose}
-              uid={user?.uid}
-            />
-
-            <MessageDialog
-              isOpen={showErrorDialog}
-              onClose={() => setShowErrorDialog(false)}
-              type="error"
-              message={errorMessage}
-            />
           </div>
         </div>
       </div>
+
+      {/* モーダル群（fixedポジショニングを正しく機能させるためbackdrop-blurの外に配置） */}
+      {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
+
+      <CoinPurchaseModal
+        isOpen={showCoinModal}
+        onClose={handleCoinModalClose}
+        uid={user?.uid}
+      />
+
+      <MessageDialog
+        isOpen={showErrorDialog}
+        onClose={() => setShowErrorDialog(false)}
+        type="error"
+        message={errorMessage}
+      />
+
+      <MessageDialog
+        isOpen={showDeleteConfirm}
+        onClose={() => {
+          setShowDeleteConfirm(false);
+          setDeleteTarget(null);
+        }}
+        onConfirm={executeDelete}
+        type="warning"
+        title={
+          deleteTarget?.type === "all" ? "すべての履歴を削除" : "履歴を削除"
+        }
+        message={
+          deleteTarget?.type === "all"
+            ? "本当にすべての占い履歴を削除しますか？この操作は取り消せません。"
+            : "この占い履歴を削除しますか？"
+        }
+        confirmLabel="削除する"
+        cancelLabel="キャンセル"
+        isLoading={isDeleting}
+      />
     </main>
   );
 }

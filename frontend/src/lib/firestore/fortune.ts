@@ -6,6 +6,9 @@ import {
   getDocs,
   query,
   orderBy,
+  doc,
+  deleteDoc,
+  writeBatch,
 } from "firebase/firestore";
 import { Fortune, FortuneHistory } from "@/types";
 
@@ -42,4 +45,29 @@ export async function getUserFortunes(uid: string): Promise<FortuneHistory[]> {
       timestamp,
     } as FortuneHistory;
   });
+}
+
+export async function deleteFortune(uid: string, fortuneId: string) {
+  const fortuneRef = doc(db(), "users", uid, "fortunes", fortuneId);
+  await deleteDoc(fortuneRef);
+}
+
+export async function deleteAllFortunes(uid: string) {
+  const userFortuneRef = collection(db(), "users", uid, "fortunes");
+  const snapshot = await getDocs(userFortuneRef);
+
+  // Firestoreのバッチ制限は500ドキュメント
+  const batchSize = 500;
+  const batches = [];
+
+  for (let i = 0; i < snapshot.docs.length; i += batchSize) {
+    const batch = writeBatch(db());
+    const batchDocs = snapshot.docs.slice(i, i + batchSize);
+    batchDocs.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+    batches.push(batch.commit());
+  }
+
+  await Promise.all(batches);
 }
