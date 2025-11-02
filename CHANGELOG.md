@@ -1,3 +1,29 @@
+# [1.11.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.10.0...v1.11.0) (2025-11-02)
+
+### Bug Fixes
+
+- add loading screen during auth check to prevent UI flickering ([c46dd5d](https://github.com/Sina-TehraniFard/hikarino/commit/c46dd5d6ff28414b86c8168ff30c674c68b0fa6a))
+- move modals outside backdrop-blur container for correct viewport centering ([9ff7019](https://github.com/Sina-TehraniFard/hikarino/commit/9ff7019e3a0a59d50da2b1c4c38a19aa44eaea88))
+- PR [#95](https://github.com/Sina-TehraniFard/hikarino/issues/95)レビュー対応 - Firestoreバッチ制限とMarkdown lint修正 ([4dc2a5d](https://github.com/Sina-TehraniFard/hikarino/commit/4dc2a5d7530a62603176f6f2ded067e28a8376a7))
+- prevent sidebar flickering on page reload with auth loading state ([c9b2fe1](https://github.com/Sina-TehraniFard/hikarino/commit/c9b2fe120330dead6782617cdb19efbd0ceb7469))
+- remove redundant no history message from title ([a188735](https://github.com/Sina-TehraniFard/hikarino/commit/a188735734376dd636a0de9da19dd6591e3f8fa6))
+- unify delete and expand button styles for consistent UX ([1782b68](https://github.com/Sina-TehraniFard/hikarino/commit/1782b68adf2df0f32c9230da42e87ba5dc38a880))
+- use getFirebaseAuth for proper Firebase initialization ([8e22aab](https://github.com/Sina-TehraniFard/hikarino/commit/8e22aab30e679e8381b0007ee26a2bd9c1be03bd))
+
+### Features
+
+- add ConfirmDeleteModal component for deletion confirmation ([9291414](https://github.com/Sina-TehraniFard/hikarino/commit/929141418487686f688ded1c922bffab398836fb))
+- add delete button to collapsed card for direct access ([483f58b](https://github.com/Sina-TehraniFard/hikarino/commit/483f58b6147d7e9adb75d38f7e3f53861a32f21b))
+- add delete permission for fortunes in Firestore rules ([d992867](https://github.com/Sina-TehraniFard/hikarino/commit/d99286712aa351738920a1930ef43e5bf5bdbc6e))
+- add deleteFortune and deleteAllFortunes functions ([bf5fa15](https://github.com/Sina-TehraniFard/hikarino/commit/bf5fa157a7597b047d85b72a1aeb18ffe7aab6f9))
+- add useFortuneDelete hook for deletion state management ([c071ce4](https://github.com/Sina-TehraniFard/hikarino/commit/c071ce4219f2b0b9a5d2517998a635f9f92977f0))
+- extend MessageDialog to support confirmation mode with two buttons ([bc3891a](https://github.com/Sina-TehraniFard/hikarino/commit/bc3891a7bd0d1fe9f9a5dd9e10e1060bbd6a98b2))
+- integrate delete buttons into history page UI ([acdf35f](https://github.com/Sina-TehraniFard/hikarino/commit/acdf35f9bf765953ca6aae52ef30e0d3cbb9d988))
+
+### Reverts
+
+- restore original Firestore rules (write includes delete permission) ([e7b7926](https://github.com/Sina-TehraniFard/hikarino/commit/e7b792632a6272a84dc78372164946c468cb53cb))
+
 # [1.10.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.9.0...v1.10.0) (2025-11-02)
 
 ### Features
