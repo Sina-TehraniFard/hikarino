@@ -41,7 +41,8 @@ service cloud.firestore {
       allow delete: if false;
 
       match /fortunes/{fortuneId} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
+        allow read, create, update: if request.auth != null && request.auth.uid == userId;
+        allow delete: if request.auth != null && request.auth.uid == userId;
       }
 
       match /coins/{coinId} {
