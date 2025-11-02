@@ -17,7 +17,6 @@ import MiniTarotCard from "@/components/ui/MiniTarotCard";
 import MessageDialog from "@/components/ui/MessageDialog";
 import DateInput from "@/components/ui/DateInput";
 import PaginationComponent from "@/components/ui/PaginationComponent";
-import ConfirmDeleteModal from "@/components/ConfirmDeleteModal";
 import { analyzeFortuneHistory } from "@/lib/fortuneAnalytics";
 import { useFortuneFilters } from "@/hooks/useFortuneFilters";
 import { useFortuneDelete } from "@/hooks/useFortuneDelete";
@@ -341,13 +340,10 @@ export default function HistoryPage() {
                 </div>
               )}
 
-              {/* タイムラインヘッダーと検索・フィルター */}
+              {/* 検索・フィルター */}
               <div id="search-section" className="mb-6 space-y-4">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-light text-gray-700 tracking-wider">
-                    利用履歴
-                  </h2>
-                  {fortunes.length > 0 && (
+                {fortunes.length > 0 && (
+                  <div className="flex justify-end">
                     <button
                       onClick={() => openDeleteConfirm("all")}
                       className="text-sm text-red-600 hover:text-red-700 hover:underline transition-colors duration-200 flex items-center gap-1"
@@ -367,8 +363,8 @@ export default function HistoryPage() {
                       </svg>
                       すべて削除
                     </button>
-                  )}
-                </div>
+                  </div>
+                )}
 
                 {/* 検索ボックス */}
                 {fortunes.length > 0 && (
@@ -740,13 +736,14 @@ export default function HistoryPage() {
               message={errorMessage}
             />
 
-            <ConfirmDeleteModal
+            <MessageDialog
               isOpen={showDeleteConfirm}
               onClose={() => {
                 setShowDeleteConfirm(false);
                 setDeleteTarget(null);
               }}
               onConfirm={executeDelete}
+              type="warning"
               title={
                 deleteTarget?.type === "all"
                   ? "すべての履歴を削除"
@@ -754,11 +751,12 @@ export default function HistoryPage() {
               }
               message={
                 deleteTarget?.type === "all"
-                  ? "本当にすべての占い履歴を削除しますか？"
+                  ? "本当にすべての占い履歴を削除しますか？この操作は取り消せません。"
                   : "この占い履歴を削除しますか？"
               }
-              isDeleting={isDeleting}
-              deleteType={deleteTarget?.type}
+              confirmLabel="削除する"
+              cancelLabel="キャンセル"
+              isLoading={isDeleting}
             />
           </div>
         </div>
