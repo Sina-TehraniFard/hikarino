@@ -595,57 +595,87 @@ export default function HistoryPage() {
 
                       {/* カード本体 - レスポンシブマージン */}
                       <div className="ml-8 md:ml-16 border border-gray-200 bg-white rounded-xl overflow-hidden hover:shadow-xl transition-shadow duration-200">
-                        <button
-                          className="w-full p-4 text-left hover:bg-gray-50 transition"
-                          onClick={() =>
-                            setExpandedId(
-                              expandedId === fortune.id ? null : fortune.id
-                            )
-                          }
-                        >
-                          <div className="flex justify-between items-start">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-2">
-                                <span className="text-xs text-gray-500">
-                                  {formatDate(fortune.timestamp)}
-                                </span>
-                              </div>
-                              <blockquote className="text-lg font-medium text-gray-800 italic">
-                                「{fortune.question}」
-                              </blockquote>
+                        <div className="relative">
+                          <button
+                            className="w-full p-4 text-left hover:bg-gray-50 transition"
+                            onClick={() =>
+                              setExpandedId(
+                                expandedId === fortune.id ? null : fortune.id
+                              )
+                            }
+                          >
+                            <div className="flex justify-between items-start gap-2">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <span className="text-xs text-gray-500">
+                                    {formatDate(fortune.timestamp)}
+                                  </span>
+                                </div>
+                                <blockquote className="text-lg font-medium text-gray-800 italic">
+                                  「{fortune.question}」
+                                </blockquote>
 
-                              {/* ミニカードプレビュー */}
-                              <div className="flex gap-2 mt-3 md:justify-center">
-                                {fortune.cards.map((card, cardIndex) => (
-                                  <MiniTarotCard
-                                    key={cardIndex}
-                                    card={{
-                                      name: card.cardName,
-                                      imagePath: "",
-                                    }}
-                                    isReversed={card.isReversed}
-                                    delay={cardIndex * 50}
+                                {/* ミニカードプレビュー */}
+                                <div className="flex gap-2 mt-3 md:justify-center">
+                                  {fortune.cards.map((card, cardIndex) => (
+                                    <MiniTarotCard
+                                      key={cardIndex}
+                                      card={{
+                                        name: card.cardName,
+                                        imagePath: "",
+                                      }}
+                                      isReversed={card.isReversed}
+                                      delay={cardIndex * 50}
+                                    />
+                                  ))}
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <svg
+                                  className={`w-5 h-5 text-gray-500 transform transition-transform duration-200 ${
+                                    expandedId === fortune.id
+                                      ? "rotate-180"
+                                      : ""
+                                  }`}
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M19 9l-7 7-7-7"
                                   />
-                                ))}
+                                </svg>
                               </div>
                             </div>
+                          </button>
+
+                          {/* 削除ボタン */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openDeleteConfirm("single", fortune.id);
+                            }}
+                            className="absolute top-4 right-12 p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
+                            aria-label="この履歴を削除"
+                          >
                             <svg
-                              className={`w-5 h-5 text-gray-500 transform transition-transform duration-200 ${
-                                expandedId === fortune.id ? "rotate-180" : ""
-                              }`}
+                              className="w-4 h-4"
                               fill="none"
-                              viewBox="0 0 24 24"
                               stroke="currentColor"
+                              viewBox="0 0 24 24"
                             >
                               <path
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                                 strokeWidth={2}
-                                d="M19 9l-7 7-7-7"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                               />
                             </svg>
-                          </div>
-                        </button>
+                          </button>
+                        </div>
                         <div
                           className={`grid transition-all duration-200 ease-in-out ${
                             expandedId === fortune.id
@@ -654,7 +684,7 @@ export default function HistoryPage() {
                           }`}
                         >
                           <div className="overflow-hidden">
-                            <div className="p-6 border-t border-gray-200 space-y-4">
+                            <div className="p-6 border-t border-gray-200">
                               {/* 占い結果 */}
                               <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6">
                                 <h3 className="text-sm font-medium text-purple-700 mb-3">
@@ -665,32 +695,6 @@ export default function HistoryPage() {
                                     {fortune.result}
                                   </p>
                                 </div>
-                              </div>
-
-                              {/* 削除ボタン */}
-                              <div className="flex justify-end">
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    openDeleteConfirm("single", fortune.id);
-                                  }}
-                                  className="text-sm text-red-600 hover:text-red-700 hover:bg-red-50 px-3 py-2 rounded-lg transition-colors duration-200 flex items-center gap-1"
-                                >
-                                  <svg
-                                    className="w-4 h-4"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                    />
-                                  </svg>
-                                  この履歴を削除
-                                </button>
                               </div>
                             </div>
                           </div>
