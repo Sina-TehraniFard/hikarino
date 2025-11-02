@@ -1,3 +1,9 @@
+# [1.10.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.9.0...v1.10.0) (2025-11-02)
+
+### Features
+
+- セマンティックリリース調査 ([4af01c3](https://github.com/Sina-TehraniFard/hikarino/commit/4af01c3df643fa603ffa6e4abf0241d67c5110cb))
+
 # [1.9.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.8.0...v1.9.0) (2025-11-02)
 
 ### Features
