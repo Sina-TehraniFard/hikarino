@@ -46,5 +46,6 @@ templates/*
 .next
 
 .idea/*
+frontend/.idea/
 
 ai-docs/*

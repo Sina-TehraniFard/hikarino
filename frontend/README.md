@@ -42,6 +42,7 @@ frontend/
 │   │   ├── history/           # 占い履歴ページ
 │   │   ├── privacy/           # プライバシーポリシー
 │   │   ├── terms/             # 利用規約
+│   │   ├── tokusho/           # 特定商取引法ページ
 │   │   └── page.tsx           # トップページ
 │   ├── components/            # Reactコンポーネント
 │   │   ├── ui/               # 再利用可能なUIコンポーネント
@@ -51,7 +52,9 @@ frontend/
 │   ├── lib/                  # ユーティリティ・ヘルパー
 │   │   ├── firebase.ts       # Firebase初期化
 │   │   ├── firestore/        # Firestoreクエリ
-│   │   └── fortune.ts        # 占いビジネスロジック
+│   │   ├── fortune.ts        # 占いビジネスロジック
+│   │   ├── fortuneAnalytics.ts # 占い分析機能
+│   │   └── tarot.ts          # タロットカード定義
 │   ├── prompts/              # AIプロンプトテンプレート
 │   └── types/                # TypeScript型定義
 ├── public/                    # 静的アセット
@@ -132,7 +135,6 @@ graph LR
 ## 関連ドキュメント
 
 - [プロジェクトルートREADME](../README.md): 全体概要
-- [アーキテクチャ設計](../docs/README.md): モノレポ移行の背景
 - [PR #90](https://github.com/Sina-TehraniFard/hikarino/pull/90): フロントエンド分離の詳細
 
 ---
