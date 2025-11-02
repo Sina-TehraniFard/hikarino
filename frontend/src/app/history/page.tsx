@@ -16,8 +16,10 @@ import MiniTarotCard from "@/components/ui/MiniTarotCard";
 import MessageDialog from "@/components/ui/MessageDialog";
 import DateInput from "@/components/ui/DateInput";
 import PaginationComponent from "@/components/ui/PaginationComponent";
+import ConfirmDeleteModal from "@/components/ConfirmDeleteModal";
 import { analyzeFortuneHistory } from "@/lib/fortuneAnalytics";
 import { useFortuneFilters } from "@/hooks/useFortuneFilters";
+import { useFortuneDelete } from "@/hooks/useFortuneDelete";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 
@@ -37,10 +39,21 @@ export default function HistoryPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [showErrorDialog, setShowErrorDialog] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<{
+    type: "single" | "all";
+    fortuneId?: string;
+  } | null>(null);
   const router = useRouter();
   const { coins, refreshCoins } = useCoinContext();
   const { displayCoins } = useCoinAnimation(coins, user?.uid);
   const { filterByText, filterByCard, filterByDateRange } = useFortuneFilters();
+  const {
+    isDeleting,
+    error: deleteError,
+    handleDeleteFortune,
+    handleDeleteAllFortunes,
+  } = useFortuneDelete();
 
   const itemsPerPage = 10;
 
@@ -165,6 +178,36 @@ export default function HistoryPage() {
   const hasActiveFilters =
     searchQuery || selectedCard || dateRange.start || dateRange.end;
 
+  // 削除確認ダイアログを開く
+  const openDeleteConfirm = (type: "single" | "all", fortuneId?: string) => {
+    setDeleteTarget({ type, fortuneId });
+    setShowDeleteConfirm(true);
+  };
+
+  // 削除実行
+  const executeDelete = async () => {
+    if (!user || !deleteTarget) return;
+
+    let success = false;
+    if (deleteTarget.type === "single" && deleteTarget.fortuneId) {
+      success = await handleDeleteFortune(user.uid, deleteTarget.fortuneId);
+    } else if (deleteTarget.type === "all") {
+      success = await handleDeleteAllFortunes(user.uid);
+    }
+
+    if (success) {
+      const updatedFortunes = await getUserFortunes(user.uid);
+      setFortunes(updatedFortunes);
+      setShowDeleteConfirm(false);
+      setDeleteTarget(null);
+      setExpandedId(null);
+      setCurrentPage(1);
+    } else if (deleteError) {
+      setErrorMessage(deleteError);
+      setShowErrorDialog(true);
+    }
+  };
+
   return (
     <main className="flex min-h-screen relative overflow-hidden">
       {/* PC版サイドバー（768px以上で表示） */}
@@ -283,9 +326,34 @@ export default function HistoryPage() {
 
               {/* タイムラインヘッダーと検索・フィルター */}
               <div id="search-section" className="mb-6 space-y-4">
-                <h2 className="text-lg font-light text-gray-700 tracking-wider">
-                  {fortunes.length === 0 ? "利用履歴はありません" : "利用履歴"}
-                </h2>
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-light text-gray-700 tracking-wider">
+                    {fortunes.length === 0
+                      ? "利用履歴はありません"
+                      : "利用履歴"}
+                  </h2>
+                  {fortunes.length > 0 && (
+                    <button
+                      onClick={() => openDeleteConfirm("all")}
+                      className="text-sm text-red-600 hover:text-red-700 hover:underline transition-colors duration-200 flex items-center gap-1"
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
+                      </svg>
+                      すべて削除
+                    </button>
+                  )}
+                </div>
 
                 {/* 検索ボックス */}
                 {fortunes.length > 0 && (
@@ -577,7 +645,7 @@ export default function HistoryPage() {
                           }`}
                         >
                           <div className="overflow-hidden">
-                            <div className="p-6 border-t border-gray-200">
+                            <div className="p-6 border-t border-gray-200 space-y-4">
                               {/* 占い結果 */}
                               <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6">
                                 <h3 className="text-sm font-medium text-purple-700 mb-3">
@@ -588,6 +656,32 @@ export default function HistoryPage() {
                                     {fortune.result}
                                   </p>
                                 </div>
+                              </div>
+
+                              {/* 削除ボタン */}
+                              <div className="flex justify-end">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    openDeleteConfirm("single", fortune.id);
+                                  }}
+                                  className="text-sm text-red-600 hover:text-red-700 hover:bg-red-50 px-3 py-2 rounded-lg transition-colors duration-200 flex items-center gap-1"
+                                >
+                                  <svg
+                                    className="w-4 h-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                    />
+                                  </svg>
+                                  この履歴を削除
+                                </button>
                               </div>
                             </div>
                           </div>
@@ -629,6 +723,27 @@ export default function HistoryPage() {
               onClose={() => setShowErrorDialog(false)}
               type="error"
               message={errorMessage}
+            />
+
+            <ConfirmDeleteModal
+              isOpen={showDeleteConfirm}
+              onClose={() => {
+                setShowDeleteConfirm(false);
+                setDeleteTarget(null);
+              }}
+              onConfirm={executeDelete}
+              title={
+                deleteTarget?.type === "all"
+                  ? "すべての履歴を削除"
+                  : "履歴を削除"
+              }
+              message={
+                deleteTarget?.type === "all"
+                  ? "本当にすべての占い履歴を削除しますか？"
+                  : "この占い履歴を削除しますか？"
+              }
+              isDeleting={isDeleting}
+              deleteType={deleteTarget?.type}
             />
           </div>
         </div>
