@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Sidebar from "@/components/ui/Sidebar";
 import PageBackground from "@/components/ui/PageBackground";
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { getFirebaseAuth } from "@/lib/firebase";
 import { getUserFortunes } from "@/lib/firestore/fortune";
 import { useCoinContext } from "@/contexts/CoinContext";
 import { useCoinAnimation } from "@/hooks/useCoinAnimation";
@@ -58,7 +59,7 @@ export default function HistoryPage() {
   const itemsPerPage = 10;
 
   useEffect(() => {
-    const auth = getAuth();
+    const auth = getFirebaseAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser({
@@ -85,7 +86,7 @@ export default function HistoryPage() {
 
   const handleLogout = async () => {
     try {
-      const auth = getAuth();
+      const auth = getFirebaseAuth();
       await signOut(auth);
       router.push("/");
     } catch (error) {
