@@ -56,10 +56,18 @@ export async function deleteAllFortunes(uid: string) {
   const userFortuneRef = collection(db(), "users", uid, "fortunes");
   const snapshot = await getDocs(userFortuneRef);
 
-  const batch = writeBatch(db());
-  snapshot.docs.forEach((doc) => {
-    batch.delete(doc.ref);
-  });
+  // Firestoreのバッチ制限は500ドキュメント
+  const batchSize = 500;
+  const batches = [];
 
-  await batch.commit();
+  for (let i = 0; i < snapshot.docs.length; i += batchSize) {
+    const batch = writeBatch(db());
+    const batchDocs = snapshot.docs.slice(i, i + batchSize);
+    batchDocs.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+    batches.push(batch.commit());
+  }
+
+  await Promise.all(batches);
 }

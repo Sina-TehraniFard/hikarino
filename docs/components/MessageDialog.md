@@ -4,7 +4,7 @@
 
 ## ファイルパス
 
-```
+```txt
 frontend/src/components/ui/MessageDialog.tsx
 ```
 
