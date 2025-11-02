@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.7.0...v1.8.0) (2025-11-02)
+
+### Features
+
+- gitignoreの更新 ([fed8720](https://github.com/Sina-TehraniFard/hikarino/commit/fed872088fdc774f50779d14ef73fdbc65b709c2))
+- READMEの更新 ([675e194](https://github.com/Sina-TehraniFard/hikarino/commit/675e1947958b19a3c05fdc5ebf5430c908599522))
+
 # [1.7.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.6.2...v1.7.0) (2025-11-01)
 
 ### Bug Fixes
