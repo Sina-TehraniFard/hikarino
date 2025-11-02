@@ -1,3 +1,9 @@
+# [1.9.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.8.0...v1.9.0) (2025-11-02)
+
+### Features
+
+- GCPのVMにSSHで接続できなくなったことに対する初手 ([a39d409](https://github.com/Sina-TehraniFard/hikarino/commit/a39d4096c943467b2862d04573668811e812fe43))
+
 # [1.8.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.7.0...v1.8.0) (2025-11-02)
 
 ### Features
