@@ -6,6 +6,10 @@ interface MessageDialogProps {
   title?: string;
   message: string;
   type?: "info" | "warning" | "error" | "success";
+  onConfirm?: () => void;
+  confirmLabel?: string;
+  cancelLabel?: string;
+  isLoading?: boolean;
 }
 
 const MessageDialog = ({
@@ -14,8 +18,14 @@ const MessageDialog = ({
   title,
   message,
   type = "info",
+  onConfirm,
+  confirmLabel,
+  cancelLabel = "キャンセル",
+  isLoading = false,
 }: MessageDialogProps) => {
   if (!isOpen) return null;
+
+  const isConfirmMode = !!onConfirm;
 
   const typeStyles = {
     info: {
@@ -79,18 +89,46 @@ const MessageDialog = ({
 
         {/* ボタン */}
         <div className="px-6 pb-6">
-          <button
-            onClick={onClose}
-            className={`w-full ${style.buttonColor} text-white font-medium py-3 px-4 rounded-lg transition-all duration-200 hover:shadow-lg active:scale-95`}
-          >
-            {type === "warning"
-              ? "はい"
-              : type === "error"
-                ? "OK"
-                : type === "success"
+          {isConfirmMode ? (
+            <div className="flex gap-3">
+              <button
+                onClick={onClose}
+                disabled={isLoading}
+                className="flex-1 bg-gray-100 text-gray-700 font-medium py-3 px-4 rounded-lg transition-all duration-200 hover:bg-gray-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {cancelLabel}
+              </button>
+              <button
+                onClick={onConfirm}
+                disabled={isLoading}
+                className={`flex-1 ${style.buttonColor} text-white font-medium py-3 px-4 rounded-lg transition-all duration-200 hover:shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed`}
+              >
+                {isLoading
+                  ? "処理中..."
+                  : confirmLabel ||
+                    (type === "warning"
+                      ? "はい"
+                      : type === "error"
+                        ? "OK"
+                        : type === "success"
+                          ? "OK"
+                          : "了解")}
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={onClose}
+              className={`w-full ${style.buttonColor} text-white font-medium py-3 px-4 rounded-lg transition-all duration-200 hover:shadow-lg active:scale-95`}
+            >
+              {type === "warning"
+                ? "はい"
+                : type === "error"
                   ? "OK"
-                  : "了解"}
-          </button>
+                  : type === "success"
+                    ? "OK"
+                    : "了解"}
+            </button>
+          )}
         </div>
       </div>
     </div>
