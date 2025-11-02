@@ -26,6 +26,7 @@ import { ja } from "date-fns/locale";
 
 export default function HistoryPage() {
   const [user, setUser] = useState<User | null>(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [fortunes, setFortunes] = useState<FortuneHistory[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [showLogin, setShowLogin] = useState(false);
@@ -75,8 +76,12 @@ export default function HistoryPage() {
               "占い履歴の読み込みに失敗しました。ページを再読み込みしてください。"
             );
             setShowErrorDialog(true);
+          })
+          .finally(() => {
+            setIsAuthLoading(false);
           });
       } else {
+        setIsAuthLoading(false);
         router.push("/");
       }
     });
@@ -212,7 +217,7 @@ export default function HistoryPage() {
   return (
     <main className="flex min-h-screen relative overflow-hidden">
       {/* PC版サイドバー（768px以上で表示） */}
-      {user && (
+      {!isAuthLoading && user && (
         <div className="hidden md:block">
           <Sidebar
             user={user}
@@ -226,12 +231,12 @@ export default function HistoryPage() {
 
       <PageBackground />
 
-      <div className={`flex-1 ${user ? "md:ml-72" : ""}`}>
+      <div className={`flex-1 ${!isAuthLoading && user ? "md:ml-72" : ""}`}>
         <div className="w-full max-w-4xl mx-auto bg-white/90 backdrop-blur-xl border border-purple-200/30 shadow-2xl min-h-screen relative">
           <div className="px-6 space-y-6 pb-12">
             {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
 
-            {user && (
+            {!isAuthLoading && user && (
               <Header
                 user={user}
                 coins={coins}
