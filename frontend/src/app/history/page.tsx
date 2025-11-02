@@ -184,6 +184,17 @@ export default function HistoryPage() {
   const hasActiveFilters =
     searchQuery || selectedCard || dateRange.start || dateRange.end;
 
+  // 認証チェック中はローディング画面を表示
+  if (isAuthLoading) {
+    return (
+      <div className="flex relative overflow-hidden py-20">
+        <div className="flex-1 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+        </div>
+      </div>
+    );
+  }
+
   // 削除確認ダイアログを開く
   const openDeleteConfirm = (type: "single" | "all", fortuneId?: string) => {
     setDeleteTarget({ type, fortuneId });
@@ -217,7 +228,7 @@ export default function HistoryPage() {
   return (
     <main className="flex min-h-screen relative overflow-hidden">
       {/* PC版サイドバー（768px以上で表示） */}
-      {!isAuthLoading && user && (
+      {user && (
         <div className="hidden md:block">
           <Sidebar
             user={user}
@@ -231,12 +242,12 @@ export default function HistoryPage() {
 
       <PageBackground />
 
-      <div className={`flex-1 ${!isAuthLoading && user ? "md:ml-72" : ""}`}>
+      <div className={`flex-1 ${user ? "md:ml-72" : ""}`}>
         <div className="w-full max-w-4xl mx-auto bg-white/90 backdrop-blur-xl border border-purple-200/30 shadow-2xl min-h-screen relative">
           <div className="px-6 space-y-6 pb-12">
             {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
 
-            {!isAuthLoading && user && (
+            {user && (
               <Header
                 user={user}
                 coins={coins}
