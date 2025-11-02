@@ -244,8 +244,6 @@ export default function HistoryPage() {
       <div className={`flex-1 ${user ? "md:ml-72" : ""}`}>
         <div className="w-full max-w-4xl mx-auto bg-white/90 backdrop-blur-xl border border-purple-200/30 shadow-2xl min-h-screen relative">
           <div className="px-6 space-y-6 pb-12">
-            {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
-
             {user && (
               <Header
                 user={user}
@@ -722,45 +720,46 @@ export default function HistoryPage() {
                 </div>
               )}
             </div>
-
-            <CoinPurchaseModal
-              isOpen={showCoinModal}
-              onClose={handleCoinModalClose}
-              uid={user?.uid}
-            />
-
-            <MessageDialog
-              isOpen={showErrorDialog}
-              onClose={() => setShowErrorDialog(false)}
-              type="error"
-              message={errorMessage}
-            />
-
-            <MessageDialog
-              isOpen={showDeleteConfirm}
-              onClose={() => {
-                setShowDeleteConfirm(false);
-                setDeleteTarget(null);
-              }}
-              onConfirm={executeDelete}
-              type="warning"
-              title={
-                deleteTarget?.type === "all"
-                  ? "すべての履歴を削除"
-                  : "履歴を削除"
-              }
-              message={
-                deleteTarget?.type === "all"
-                  ? "本当にすべての占い履歴を削除しますか？この操作は取り消せません。"
-                  : "この占い履歴を削除しますか？"
-              }
-              confirmLabel="削除する"
-              cancelLabel="キャンセル"
-              isLoading={isDeleting}
-            />
           </div>
         </div>
       </div>
+
+      {/* モーダル群（fixedポジショニングを正しく機能させるためbackdrop-blurの外に配置） */}
+      {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
+
+      <CoinPurchaseModal
+        isOpen={showCoinModal}
+        onClose={handleCoinModalClose}
+        uid={user?.uid}
+      />
+
+      <MessageDialog
+        isOpen={showErrorDialog}
+        onClose={() => setShowErrorDialog(false)}
+        type="error"
+        message={errorMessage}
+      />
+
+      <MessageDialog
+        isOpen={showDeleteConfirm}
+        onClose={() => {
+          setShowDeleteConfirm(false);
+          setDeleteTarget(null);
+        }}
+        onConfirm={executeDelete}
+        type="warning"
+        title={
+          deleteTarget?.type === "all" ? "すべての履歴を削除" : "履歴を削除"
+        }
+        message={
+          deleteTarget?.type === "all"
+            ? "本当にすべての占い履歴を削除しますか？この操作は取り消せません。"
+            : "この占い履歴を削除しますか？"
+        }
+        confirmLabel="削除する"
+        cancelLabel="キャンセル"
+        isLoading={isDeleting}
+      />
     </main>
   );
 }
