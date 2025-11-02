@@ -6,6 +6,9 @@ import {
   getDocs,
   query,
   orderBy,
+  doc,
+  deleteDoc,
+  writeBatch,
 } from "firebase/firestore";
 import { Fortune, FortuneHistory } from "@/types";
 
@@ -42,4 +45,21 @@ export async function getUserFortunes(uid: string): Promise<FortuneHistory[]> {
       timestamp,
     } as FortuneHistory;
   });
+}
+
+export async function deleteFortune(uid: string, fortuneId: string) {
+  const fortuneRef = doc(db(), "users", uid, "fortunes", fortuneId);
+  await deleteDoc(fortuneRef);
+}
+
+export async function deleteAllFortunes(uid: string) {
+  const userFortuneRef = collection(db(), "users", uid, "fortunes");
+  const snapshot = await getDocs(userFortuneRef);
+
+  const batch = writeBatch(db());
+  snapshot.docs.forEach((doc) => {
+    batch.delete(doc.ref);
+  });
+
+  await batch.commit();
 }
