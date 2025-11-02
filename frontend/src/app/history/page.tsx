@@ -345,9 +345,7 @@ export default function HistoryPage() {
               <div id="search-section" className="mb-6 space-y-4">
                 <div className="flex items-center justify-between">
                   <h2 className="text-lg font-light text-gray-700 tracking-wider">
-                    {fortunes.length === 0
-                      ? "利用履歴はありません"
-                      : "利用履歴"}
+                    利用履歴
                   </h2>
                   {fortunes.length > 0 && (
                     <button
