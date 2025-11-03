@@ -19,7 +19,7 @@
  * という機能をまとめて「占い機能セット」として提供しています。
  */
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { DrawnCard, CardData, AuthUser } from "@/types";
 import { drawThreeCards } from "@/lib/tarot";
 import { useCoinContext } from "@/contexts/CoinContext";
@@ -58,6 +58,22 @@ export const useFortune = () => {
   // ストリーミング進捗を管理（0-100%）
   const [streamingProgress, setStreamingProgress] = useState(0);
 
+  // ===== 進行アニメーション管理 =====
+  // 進行アニメーションの制御用Ref
+  // Ref = コンポーネントが更新されても値が消えない特別な保存場所
+
+  // setIntervalのIDを保存（後でクリアするため）
+  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // 4〜7秒の間でランダムに決定された目標時間（ミリ秒）
+  const targetDurationRef = useRef<number>(0);
+
+  // 進行開始時刻を記録（経過時間の計算に使用）
+  const startTimeRef = useRef<number>(0);
+
+  // AIの処理が完了したかどうかを記録
+  const aiCompletedRef = useRef<boolean>(false);
+
   // ===== ゲストユーザー対応 =====
   // ログインしていないユーザーが入力した内容を一時的に覚えておく場所
   // useRef = コンポーネントが更新されても値が消えない特別な保存場所
@@ -70,6 +86,97 @@ export const useFortune = () => {
 
   // コイン機能（他のファイルで定義された機能を使用）
   const { consumeCoins, coins } = useCoinContext();
+
+  /**
+   * 進行バーのアニメーションを開始する
+   *
+   * 【何をする関数？】
+   * 4〜7秒の範囲でランダムな速度で0%から98%まで進行するアニメーションを開始します。
+   *
+   * 【例え話】
+   * 砂時計のように時間経過で進行するイメージです。
+   * ただし、毎回かかる時間が少し違うので、単調にならず自然に見えます。
+   */
+  const startProgressAnimation = useCallback(() => {
+    // 以前のアニメーションがあればクリア
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+    }
+
+    // 目標時間を4000〜7000ミリ秒の範囲でランダムに決定
+    const minDuration = 4000; // 4秒
+    const maxDuration = 7000; // 7秒
+    const targetDuration =
+      minDuration + Math.random() * (maxDuration - minDuration);
+    targetDurationRef.current = targetDuration;
+
+    // 開始時刻を記録
+    startTimeRef.current = Date.now();
+    aiCompletedRef.current = false;
+
+    // 進行率を0%からスタート
+    setStreamingProgress(0);
+
+    // 100msごとに進行率を更新
+    progressIntervalRef.current = setInterval(() => {
+      const elapsed = Date.now() - startTimeRef.current;
+      const progress = Math.min((elapsed / targetDuration) * 98, 98);
+
+      setStreamingProgress(progress);
+
+      // 98%に到達したらアニメーションを停止
+      if (progress >= 98) {
+        if (progressIntervalRef.current) {
+          clearInterval(progressIntervalRef.current);
+          progressIntervalRef.current = null;
+        }
+
+        // AIが既に完了していれば、100%への遷移を開始
+        if (aiCompletedRef.current) {
+          setTimeout(() => {
+            setStreamingProgress(100);
+          }, 1000);
+        }
+      }
+    }, 100);
+  }, []);
+
+  /**
+   * AIの処理が完了したときに呼ぶ関数
+   *
+   * 【何をする関数？】
+   * AIの処理完了を記録し、進行率を100%に向けて遷移させます。
+   *
+   * 【処理の流れ】
+   * 1. 98%に到達済みなら1秒かけて100%へ
+   * 2. まだ98%未満なら、すぐに98%にして1秒後に100%へ
+   */
+  const completeProgress = useCallback(() => {
+    aiCompletedRef.current = true;
+
+    // 進行アニメーションをクリア
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
+
+    // 現在の進行率を確認
+    setStreamingProgress((currentProgress) => {
+      // 98%以上なら1秒かけて100%へ
+      if (currentProgress >= 98) {
+        setTimeout(() => {
+          setStreamingProgress(100);
+        }, 1000);
+        return currentProgress;
+      } else {
+        // まだ98%未満の場合、すぐに98%にして、1秒後に100%へ
+        setTimeout(() => {
+          setStreamingProgress(100);
+        }, 1000);
+        return 98;
+      }
+    });
+  }, []);
 
   /**
    * カードを引く処理
@@ -129,6 +236,10 @@ export const useFortune = () => {
       setIsLoading(true);
       setShowWaitingAnimation(true);
       setStreamingProgress(0); // 進捗をリセット
+
+      // 進行バーのアニメーションを開始
+      startProgressAnimation();
+
       // 前回の結果とエラーをクリア
       setResult("");
       setError(null);
@@ -189,29 +300,25 @@ export const useFortune = () => {
         }
 
         // ===== ストリーミング開始 =====
-        const expectedLength = 1000; // 予想される占い結果の文字数
-        let lastUpdateTime = Date.now();
-
-        const finalResult = await processStreamingResponse(response, (text) => {
-          // 進捗を更新（100msごとにthrottle）
-          const now = Date.now();
-          if (now - lastUpdateTime > 100) {
-            const progress = Math.min(95, (text.length / expectedLength) * 100);
-            setStreamingProgress(progress);
-            lastUpdateTime = now;
-          }
+        // 注: 進行率は時間ベースのアニメーションで管理されるため、ここでは更新しない
+        const finalResult = await processStreamingResponse(response, () => {
+          // 進捗更新は行わない（時間ベースのアニメーションで管理）
         });
 
         // ===== 結果の保存 =====
         // 占い結果をデータベースに保存（履歴として）
         await saveFortuneResult(user, question, cardData, finalResult);
 
-        // 全ての処理が完了
-        setStreamingProgress(100); // 進捗を100%に
-        setResult(finalResult); // 結果を表示
-        setShowWaitingAnimation(false); // アニメーションを非表示
-        setIsLoading(false);
-        setHasFortuned(true);
+        // AIの処理が完了したことを通知（98% → 100%への遷移を開始）
+        completeProgress();
+
+        // 100%表示を待ってから結果を表示（1.5秒後: 1秒の遷移 + 0.5秒のバッファ）
+        setTimeout(() => {
+          setResult(finalResult); // 結果を表示
+          setShowWaitingAnimation(false); // アニメーションを非表示
+          setIsLoading(false);
+          setHasFortuned(true);
+        }, 1500);
       } catch {
         // 予期しないエラーが発生した場合
         // （例：ネットワークエラー、サーバーダウンなど）
@@ -222,7 +329,15 @@ export const useFortune = () => {
         setShowWaitingAnimation(false);
       }
     },
-    [isLoading, question, cards, coins, consumeCoins]
+    [
+      isLoading,
+      question,
+      cards,
+      coins,
+      consumeCoins,
+      startProgressAnimation,
+      completeProgress,
+    ]
   );
   // ↑ これらの値が変わったときだけ、この関数を新しく作り直す
 
@@ -272,6 +387,16 @@ export const useFortune = () => {
     // 一時保存データもクリア
     questionRef.current = "";
     cardsRef.current = [];
+  }, []);
+
+  // ===== クリーンアップ処理 =====
+  // コンポーネントのアンマウント時にアニメーションをクリーンアップ
+  useEffect(() => {
+    return () => {
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+      }
+    };
   }, []);
 
   // ===== 外部に提供する機能 =====
