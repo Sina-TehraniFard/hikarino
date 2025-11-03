@@ -65,14 +65,23 @@ export const useFortune = () => {
   // setIntervalのIDを保存（後でクリアするため）
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // 4〜7秒の間でランダムに決定された目標時間（ミリ秒）
+  // 15〜25秒の間でランダムに決定された目標時間（ミリ秒）
   const targetDurationRef = useRef<number>(0);
+
+  // 89〜95%の間でランダムに決定された最大進行率
+  const targetMaxProgressRef = useRef<number>(0);
 
   // 進行開始時刻を記録（経過時間の計算に使用）
   const startTimeRef = useRef<number>(0);
 
   // AIの処理が完了したかどうかを記録
   const aiCompletedRef = useRef<boolean>(false);
+
+  // 進行速度の変動管理用
+  const virtualElapsedRef = useRef<number>(0);
+  const currentSpeedRef = useRef<number>(1.0);
+  const targetSpeedRef = useRef<number>(1.0);
+  const lastSpeedChangeRef = useRef<number>(0);
 
   // ===== ゲストユーザー対応 =====
   // ログインしていないユーザーが入力した内容を一時的に覚えておく場所
@@ -91,11 +100,12 @@ export const useFortune = () => {
    * 進行バーのアニメーションを開始する
    *
    * 【何をする関数？】
-   * 4〜7秒の範囲でランダムな速度で0%から98%まで進行するアニメーションを開始します。
+   * 15〜25秒の範囲でランダムな速度で0%から89〜95%まで進行するアニメーションを開始します。
+   * 進行速度は時々変化し、より自然な進行に見えます。
    *
    * 【例え話】
-   * 砂時計のように時間経過で進行するイメージです。
-   * ただし、毎回かかる時間が少し違うので、単調にならず自然に見えます。
+   * 砂時計のように時間経過で進行しますが、砂の流れる速さが時々変わるイメージです。
+   * 早く流れたり、ゆっくり流れたりすることで、単調にならず自然に見えます。
    */
   const startProgressAnimation = useCallback(() => {
     // 以前のアニメーションがあればクリア
@@ -110,22 +120,51 @@ export const useFortune = () => {
       minDuration + Math.random() * (maxDuration - minDuration);
     targetDurationRef.current = targetDuration;
 
-    // 開始時刻を記録
+    // 最大進行率を89〜95%の範囲でランダムに決定
+    const minMaxProgress = 89;
+    const maxMaxProgress = 95;
+    const targetMaxProgress =
+      minMaxProgress + Math.random() * (maxMaxProgress - minMaxProgress);
+    targetMaxProgressRef.current = targetMaxProgress;
+
+    // 初期化
     startTimeRef.current = Date.now();
     aiCompletedRef.current = false;
+    virtualElapsedRef.current = 0;
+    currentSpeedRef.current = 1.0;
+    targetSpeedRef.current = 1.0;
+    lastSpeedChangeRef.current = Date.now();
 
     // 進行率を0%からスタート
     setStreamingProgress(0);
 
     // 100msごとに進行率を更新
     progressIntervalRef.current = setInterval(() => {
-      const elapsed = Date.now() - startTimeRef.current;
-      const progress = Math.min((elapsed / targetDuration) * 98, 98);
+      const now = Date.now();
+
+      // 2〜5秒ごとに目標速度をランダムに変更（0.3〜1.2倍）
+      if (now - lastSpeedChangeRef.current > 2000 + Math.random() * 3000) {
+        targetSpeedRef.current = 0.3 + Math.random() * 0.9; // 0.3〜1.2倍
+        lastSpeedChangeRef.current = now;
+      }
+
+      // 現在の速度を目標速度に向かって徐々に変化（スムーズな遷移）
+      currentSpeedRef.current +=
+        (targetSpeedRef.current - currentSpeedRef.current) * 0.1;
+
+      // 仮想経過時間を速度に応じて進める
+      virtualElapsedRef.current += 100 * currentSpeedRef.current;
+
+      // 進行率を計算
+      const progress = Math.min(
+        (virtualElapsedRef.current / targetDuration) * targetMaxProgress,
+        targetMaxProgress
+      );
 
       setStreamingProgress(progress);
 
-      // 98%に到達したらアニメーションを停止
-      if (progress >= 98) {
+      // 最大値に到達したらアニメーションを停止
+      if (progress >= targetMaxProgress) {
         if (progressIntervalRef.current) {
           clearInterval(progressIntervalRef.current);
           progressIntervalRef.current = null;
@@ -148,8 +187,8 @@ export const useFortune = () => {
    * AIの処理完了を記録し、進行率を100%に向けて遷移させます。
    *
    * 【処理の流れ】
-   * 1. 98%に到達済みなら1秒かけて100%へ
-   * 2. まだ98%未満なら、すぐに98%にして1秒後に100%へ
+   * 1. 最大値（89〜95%）に到達済みなら1秒かけて100%へ
+   * 2. まだ最大値未満なら、すぐに最大値にして1秒後に100%へ
    */
   const completeProgress = useCallback(() => {
     aiCompletedRef.current = true;
@@ -160,20 +199,22 @@ export const useFortune = () => {
       progressIntervalRef.current = null;
     }
 
+    const targetMaxProgress = targetMaxProgressRef.current;
+
     // 現在の進行率を確認
     setStreamingProgress((currentProgress) => {
-      // 98%以上なら1秒かけて100%へ
-      if (currentProgress >= 98) {
+      // 最大値以上なら1秒かけて100%へ
+      if (currentProgress >= targetMaxProgress) {
         setTimeout(() => {
           setStreamingProgress(100);
         }, 1000);
         return currentProgress;
       } else {
-        // まだ98%未満の場合、すぐに98%にして、1秒後に100%へ
+        // まだ最大値未満の場合、すぐに最大値にして、1秒後に100%へ
         setTimeout(() => {
           setStreamingProgress(100);
         }, 1000);
-        return 98;
+        return targetMaxProgress;
       }
     });
   }, []);
