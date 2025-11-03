@@ -291,6 +291,12 @@ export const useFortune = () => {
 
         // エラーチェック
         if (!response.ok) {
+          // 進行アニメーションをクリア
+          if (progressIntervalRef.current) {
+            clearInterval(progressIntervalRef.current);
+            progressIntervalRef.current = null;
+          }
+
           // サーバーからエラーが返ってきた場合
           const errorMessage = await handleAPIError(response);
           setError(errorMessage);
@@ -320,6 +326,12 @@ export const useFortune = () => {
           setHasFortuned(true);
         }, 1500);
       } catch {
+        // 進行アニメーションをクリア
+        if (progressIntervalRef.current) {
+          clearInterval(progressIntervalRef.current);
+          progressIntervalRef.current = null;
+        }
+
         // 予期しないエラーが発生した場合
         // （例：ネットワークエラー、サーバーダウンなど）
         setError(
@@ -375,6 +387,12 @@ export const useFortune = () => {
    * 全てをリセットして新しくスタートできるようにします。
    */
   const resetFortune = useCallback(() => {
+    // 進行アニメーションをクリア
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
+
     // 通常の状態をリセット
     setQuestion(""); // 質問文をクリア
     setCards([]); // カード情報をクリア
