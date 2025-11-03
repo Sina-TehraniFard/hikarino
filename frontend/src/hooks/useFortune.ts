@@ -103,9 +103,9 @@ export const useFortune = () => {
       clearInterval(progressIntervalRef.current);
     }
 
-    // 目標時間を4000〜7000ミリ秒の範囲でランダムに決定
-    const minDuration = 4000; // 4秒
-    const maxDuration = 7000; // 7秒
+    // 目標時間を15000〜25000ミリ秒の範囲でランダムに決定
+    const minDuration = 15000; // 15秒
+    const maxDuration = 25000; // 25秒
     const targetDuration =
       minDuration + Math.random() * (maxDuration - minDuration);
     targetDurationRef.current = targetDuration;
