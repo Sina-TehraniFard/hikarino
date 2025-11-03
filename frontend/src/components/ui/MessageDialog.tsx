@@ -1,4 +1,8 @@
-// 共通メッセージダイアログコンポーネント
+/**
+ * 共通メッセージダイアログコンポーネント
+ *
+ * @see 仕様書: docs/specs/components/MessageDialog.md
+ */
 
 interface MessageDialogProps {
   isOpen: boolean;
