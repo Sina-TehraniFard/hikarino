@@ -83,19 +83,35 @@ export const useFortune = () => {
   const questionRef = useRef<string>("");
   const cardsRef = useRef<DrawnCard[]>([]);
 
+  // タイマー管理
+  const timersRef = useRef<NodeJS.Timeout[]>([]);
+
   // コイン機能
   const { consumeCoins, coins } = useCoinContext();
 
   /**
+   * タイマーを登録して実行
+   *
+   * アンマウント時にクリーンアップできるようタイマーを管理。
+   */
+  const scheduleTimeout = useCallback((fn: () => void, delay: number) => {
+    const timer = setTimeout(fn, delay);
+    timersRef.current.push(timer);
+    return timer;
+  }, []);
+
+  /**
    * 進行アニメーションのクリーンアップ
    *
-   * setIntervalをクリアし、参照をnullに設定。
+   * setIntervalと全てのタイマーをクリアし、参照をリセット。
    */
   const cleanupProgressInterval = useCallback(() => {
     if (progressIntervalRef.current) {
       clearInterval(progressIntervalRef.current);
       progressIntervalRef.current = null;
     }
+    timersRef.current.forEach(clearTimeout);
+    timersRef.current = [];
   }, []);
 
   /**
@@ -193,7 +209,7 @@ export const useFortune = () => {
         if (currentProgress >= PROGRESS.percent.finalWait) {
           if (aiCompletedRef.current) {
             cleanupProgressInterval();
-            setTimeout(() => {
+            scheduleTimeout(() => {
               setStreamingProgress(PROGRESS.percent.complete);
             }, PROGRESS.timing.completionDelayMs);
           }
@@ -211,7 +227,7 @@ export const useFortune = () => {
         return currentProgress;
       });
     },
-    [cleanupProgressInterval]
+    [cleanupProgressInterval, scheduleTimeout]
   );
 
   /**
@@ -263,18 +279,18 @@ export const useFortune = () => {
 
     setStreamingProgress((currentProgress) => {
       if (currentProgress >= PROGRESS.percent.finalWait) {
-        setTimeout(() => {
+        scheduleTimeout(() => {
           setStreamingProgress(PROGRESS.percent.complete);
         }, PROGRESS.timing.completionDelayMs);
         return currentProgress;
       } else {
-        setTimeout(() => {
+        scheduleTimeout(() => {
           setStreamingProgress(PROGRESS.percent.complete);
         }, PROGRESS.timing.completionDelayMs);
         return PROGRESS.percent.finalWait;
       }
     });
-  }, [cleanupProgressInterval]);
+  }, [cleanupProgressInterval, scheduleTimeout]);
 
   /**
    * カード抽選
@@ -312,6 +328,7 @@ export const useFortune = () => {
         questionRef.current = question;
         cardsRef.current = cards;
         onRequireLogin();
+        cleanupProgressInterval();
         setIsLoading(false);
         setShowWaitingAnimation(false);
         return;
@@ -320,6 +337,7 @@ export const useFortune = () => {
       // コイン確認
       if (coins < COIN.cost) {
         onRequireCoins();
+        cleanupProgressInterval();
         setIsLoading(false);
         setShowWaitingAnimation(false);
         return;
@@ -351,7 +369,7 @@ export const useFortune = () => {
 
         completeProgress();
 
-        setTimeout(() => {
+        scheduleTimeout(() => {
           setResult(finalResult);
           setShowWaitingAnimation(false);
           setIsLoading(false);
@@ -373,6 +391,7 @@ export const useFortune = () => {
       cleanupProgressInterval,
       startProgressAnimation,
       completeProgress,
+      scheduleTimeout,
     ]
   );
 
