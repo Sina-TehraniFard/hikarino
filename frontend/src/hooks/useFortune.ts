@@ -68,8 +68,12 @@ export const useFortune = () => {
   // 15〜25秒の間でランダムに決定された目標時間（ミリ秒）
   const targetDurationRef = useRef<number>(0);
 
-  // 89〜95%の間でランダムに決定された最大進行率
+  // 84〜88%の間でランダムに決定された最大進行率
   const targetMaxProgressRef = useRef<number>(0);
+
+  // 最大値到達後のゆっくり進行モード用
+  const slowIncrementModeRef = useRef<boolean>(false);
+  const lastIncrementTimeRef = useRef<number>(0);
 
   // 進行開始時刻を記録（経過時間の計算に使用）
   const startTimeRef = useRef<number>(0);
@@ -100,12 +104,12 @@ export const useFortune = () => {
    * 進行バーのアニメーションを開始する
    *
    * 【何をする関数？】
-   * 15〜25秒の範囲でランダムな速度で0%から89〜95%まで進行するアニメーションを開始します。
-   * 進行速度は時々変化し、より自然な進行に見えます。
+   * 15〜25秒の範囲でランダムな速度で0%から84〜88%まで進行するアニメーションを開始します。
+   * 最大値到達後は、2秒ごとに1%ずつ99%まで増加します。
    *
    * 【例え話】
    * 砂時計のように時間経過で進行しますが、砂の流れる速さが時々変わるイメージです。
-   * 早く流れたり、ゆっくり流れたりすることで、単調にならず自然に見えます。
+   * 最大値に達した後は、ゆっくりと一定のペースで進みます。
    */
   const startProgressAnimation = useCallback(() => {
     // 以前のアニメーションがあればクリア
@@ -120,9 +124,9 @@ export const useFortune = () => {
       minDuration + Math.random() * (maxDuration - minDuration);
     targetDurationRef.current = targetDuration;
 
-    // 最大進行率を89〜95%の範囲でランダムに決定
-    const minMaxProgress = 89;
-    const maxMaxProgress = 95;
+    // 最大進行率を84〜88%の範囲でランダムに決定
+    const minMaxProgress = 84;
+    const maxMaxProgress = 88;
     const targetMaxProgress =
       minMaxProgress + Math.random() * (maxMaxProgress - minMaxProgress);
     targetMaxProgressRef.current = targetMaxProgress;
@@ -134,6 +138,8 @@ export const useFortune = () => {
     currentSpeedRef.current = 1.0;
     targetSpeedRef.current = 1.0;
     lastSpeedChangeRef.current = Date.now();
+    slowIncrementModeRef.current = false;
+    lastIncrementTimeRef.current = 0;
 
     // 進行率を0%からスタート
     setStreamingProgress(0);
@@ -142,40 +148,60 @@ export const useFortune = () => {
     progressIntervalRef.current = setInterval(() => {
       const now = Date.now();
 
-      // 2〜5秒ごとに目標速度をランダムに変更（0.3〜1.2倍）
-      if (now - lastSpeedChangeRef.current > 2000 + Math.random() * 3000) {
-        targetSpeedRef.current = 0.3 + Math.random() * 0.9; // 0.3〜1.2倍
-        lastSpeedChangeRef.current = now;
-      }
-
-      // 現在の速度を目標速度に向かって徐々に変化（スムーズな遷移）
-      currentSpeedRef.current +=
-        (targetSpeedRef.current - currentSpeedRef.current) * 0.1;
-
-      // 仮想経過時間を速度に応じて進める
-      virtualElapsedRef.current += 100 * currentSpeedRef.current;
-
-      // 進行率を計算
-      const progress = Math.min(
-        (virtualElapsedRef.current / targetDuration) * targetMaxProgress,
-        targetMaxProgress
-      );
-
-      setStreamingProgress(progress);
-
-      // 最大値に到達したらアニメーションを停止
-      if (progress >= targetMaxProgress) {
-        if (progressIntervalRef.current) {
-          clearInterval(progressIntervalRef.current);
-          progressIntervalRef.current = null;
+      // ゆっくり進行モードでない場合の通常進行
+      if (!slowIncrementModeRef.current) {
+        // 2〜5秒ごとに目標速度をランダムに変更（0.3〜1.2倍）
+        if (now - lastSpeedChangeRef.current > 2000 + Math.random() * 3000) {
+          targetSpeedRef.current = 0.3 + Math.random() * 0.9; // 0.3〜1.2倍
+          lastSpeedChangeRef.current = now;
         }
 
-        // AIが既に完了していれば、100%への遷移を開始
-        if (aiCompletedRef.current) {
-          setTimeout(() => {
-            setStreamingProgress(100);
-          }, 1000);
+        // 現在の速度を目標速度に向かって徐々に変化（スムーズな遷移）
+        currentSpeedRef.current +=
+          (targetSpeedRef.current - currentSpeedRef.current) * 0.1;
+
+        // 仮想経過時間を速度に応じて進める
+        virtualElapsedRef.current += 100 * currentSpeedRef.current;
+
+        // 進行率を計算
+        const progress = Math.min(
+          (virtualElapsedRef.current / targetDuration) * targetMaxProgress,
+          targetMaxProgress
+        );
+
+        setStreamingProgress(progress);
+
+        // 最大値に到達したらゆっくり進行モードに切り替え
+        if (progress >= targetMaxProgress) {
+          slowIncrementModeRef.current = true;
+          lastIncrementTimeRef.current = now;
         }
+      } else {
+        // ゆっくり進行モード: 2秒ごとに1%ずつ増加
+        setStreamingProgress((currentProgress) => {
+          // 99%に到達していたらそこで停止
+          if (currentProgress >= 99) {
+            // AIが既に完了していれば、100%への遷移を開始
+            if (aiCompletedRef.current) {
+              if (progressIntervalRef.current) {
+                clearInterval(progressIntervalRef.current);
+                progressIntervalRef.current = null;
+              }
+              setTimeout(() => {
+                setStreamingProgress(100);
+              }, 1000);
+            }
+            return currentProgress;
+          }
+
+          // 2秒経過していたら1%増加
+          if (now - lastIncrementTimeRef.current >= 2000) {
+            lastIncrementTimeRef.current = now;
+            return Math.min(currentProgress + 1, 99);
+          }
+
+          return currentProgress;
+        });
       }
     }, 100);
   }, []);
@@ -187,8 +213,8 @@ export const useFortune = () => {
    * AIの処理完了を記録し、進行率を100%に向けて遷移させます。
    *
    * 【処理の流れ】
-   * 1. 最大値（89〜95%）に到達済みなら1秒かけて100%へ
-   * 2. まだ最大値未満なら、すぐに最大値にして1秒後に100%へ
+   * 1. 99%に到達済みなら1秒かけて100%へ
+   * 2. まだ99%未満なら、すぐに99%にして1秒後に100%へ
    */
   const completeProgress = useCallback(() => {
     aiCompletedRef.current = true;
@@ -199,22 +225,20 @@ export const useFortune = () => {
       progressIntervalRef.current = null;
     }
 
-    const targetMaxProgress = targetMaxProgressRef.current;
-
     // 現在の進行率を確認
     setStreamingProgress((currentProgress) => {
-      // 最大値以上なら1秒かけて100%へ
-      if (currentProgress >= targetMaxProgress) {
+      // 99%以上なら1秒かけて100%へ
+      if (currentProgress >= 99) {
         setTimeout(() => {
           setStreamingProgress(100);
         }, 1000);
         return currentProgress;
       } else {
-        // まだ最大値未満の場合、すぐに最大値にして、1秒後に100%へ
+        // まだ99%未満の場合、すぐに99%にして、1秒後に100%へ
         setTimeout(() => {
           setStreamingProgress(100);
         }, 1000);
-        return targetMaxProgress;
+        return 99;
       }
     });
   }, []);
