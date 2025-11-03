@@ -15,6 +15,42 @@ import {
   handleAPIError,
 } from "@/lib/fortune";
 
+// 進行アニメーション設定
+const PROGRESS = {
+  duration: {
+    min: 15000, // 15秒
+    max: 25000, // 25秒
+  },
+  percent: {
+    initialTargetMin: 84,
+    initialTargetMax: 88,
+    finalWait: 99,
+    complete: 100,
+  },
+  speed: {
+    min: 0.3,
+    max: 1.2,
+    smoothing: 0.1,
+    changeIntervalMin: 2000,
+    changeIntervalMax: 5000,
+  },
+  timing: {
+    intervalMs: 100,
+    slowIncrementIntervalMs: 2000,
+    completionDelayMs: 1000,
+    resultDisplayDelayMs: 1500,
+  },
+} as const;
+
+const COIN = {
+  cost: 100,
+} as const;
+
+const ERROR_MESSAGES = {
+  paymentFailed:
+    "決済処理中に問題が発生しました。コインが消費されていないか確認の上、もう一度お試しください。",
+} as const;
+
 export const useFortune = () => {
   // 状態管理
   const [question, setQuestion] = useState("");
@@ -49,94 +85,169 @@ export const useFortune = () => {
   const { consumeCoins, coins } = useCoinContext();
 
   /**
+   * 進行アニメーションのクリーンアップ
+   *
+   * setIntervalをクリアし、参照をnullに設定。
+   */
+  const cleanupProgressInterval = useCallback(() => {
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
+  }, []);
+
+  /**
+   * 進行アニメーション状態の初期化
+   *
+   * 全てのRef値を初期状態にリセット。
+   */
+  const initializeProgressState = useCallback(
+    (targetDuration: number, targetMaxProgress: number) => {
+      startTimeRef.current = Date.now();
+      aiCompletedRef.current = false;
+      virtualElapsedRef.current = 0;
+      currentSpeedRef.current = 1.0;
+      targetSpeedRef.current = 1.0;
+      lastSpeedChangeRef.current = Date.now();
+      slowIncrementModeRef.current = false;
+      lastIncrementTimeRef.current = 0;
+      targetDurationRef.current = targetDuration;
+      targetMaxProgressRef.current = targetMaxProgress;
+      setStreamingProgress(0);
+    },
+    []
+  );
+
+  /**
+   * 進行速度の更新
+   *
+   * 2〜5秒ごとに目標速度をランダムに変更。
+   */
+  const updateProgressSpeed = useCallback((now: number) => {
+    const changeInterval =
+      PROGRESS.speed.changeIntervalMin +
+      Math.random() *
+        (PROGRESS.speed.changeIntervalMax - PROGRESS.speed.changeIntervalMin);
+
+    if (now - lastSpeedChangeRef.current > changeInterval) {
+      const speedRange = PROGRESS.speed.max - PROGRESS.speed.min;
+      targetSpeedRef.current = PROGRESS.speed.min + Math.random() * speedRange;
+      lastSpeedChangeRef.current = now;
+    }
+
+    currentSpeedRef.current +=
+      (targetSpeedRef.current - currentSpeedRef.current) *
+      PROGRESS.speed.smoothing;
+  }, []);
+
+  /**
+   * 通常進行の進行率計算
+   *
+   * 仮想経過時間から進行率を算出。
+   */
+  const calculateNormalProgress = useCallback(
+    (targetDuration: number, targetMaxProgress: number) => {
+      virtualElapsedRef.current +=
+        PROGRESS.timing.intervalMs * currentSpeedRef.current;
+
+      return Math.min(
+        (virtualElapsedRef.current / targetDuration) * targetMaxProgress,
+        targetMaxProgress
+      );
+    },
+    []
+  );
+
+  /**
+   * 通常進行モードの更新処理
+   *
+   * 速度を更新し、進行率を計算・設定。最大値到達で緩速モードへ切り替え。
+   */
+  const handleNormalProgressUpdate = useCallback(
+    (now: number, targetDuration: number, targetMaxProgress: number) => {
+      updateProgressSpeed(now);
+      const progress = calculateNormalProgress(
+        targetDuration,
+        targetMaxProgress
+      );
+      setStreamingProgress(progress);
+
+      if (progress >= targetMaxProgress) {
+        slowIncrementModeRef.current = true;
+        lastIncrementTimeRef.current = now;
+      }
+    },
+    [updateProgressSpeed, calculateNormalProgress]
+  );
+
+  /**
+   * 緩速進行モードの更新処理
+   *
+   * 2秒ごとに1%増加。99%到達時、AI完了なら100%へ遷移。
+   */
+  const handleSlowProgressUpdate = useCallback(
+    (now: number) => {
+      setStreamingProgress((currentProgress) => {
+        if (currentProgress >= PROGRESS.percent.finalWait) {
+          if (aiCompletedRef.current) {
+            cleanupProgressInterval();
+            setTimeout(() => {
+              setStreamingProgress(PROGRESS.percent.complete);
+            }, PROGRESS.timing.completionDelayMs);
+          }
+          return currentProgress;
+        }
+
+        if (
+          now - lastIncrementTimeRef.current >=
+          PROGRESS.timing.slowIncrementIntervalMs
+        ) {
+          lastIncrementTimeRef.current = now;
+          return Math.min(currentProgress + 1, PROGRESS.percent.finalWait);
+        }
+
+        return currentProgress;
+      });
+    },
+    [cleanupProgressInterval]
+  );
+
+  /**
    * 進行アニメーションの開始
    *
    * 15〜25秒で0%から84〜88%まで可変速度で進行。
    * 最大値到達後は2秒ごとに1%ずつ99%まで増加。
    */
   const startProgressAnimation = useCallback(() => {
-    if (progressIntervalRef.current) {
-      clearInterval(progressIntervalRef.current);
-    }
+    cleanupProgressInterval();
 
     // 目標時間と最大進行率をランダムに決定
-    const minDuration = 15000;
-    const maxDuration = 25000;
+    const durationRange = PROGRESS.duration.max - PROGRESS.duration.min;
     const targetDuration =
-      minDuration + Math.random() * (maxDuration - minDuration);
-    targetDurationRef.current = targetDuration;
+      PROGRESS.duration.min + Math.random() * durationRange;
 
-    const minMaxProgress = 84;
-    const maxMaxProgress = 88;
+    const progressRange =
+      PROGRESS.percent.initialTargetMax - PROGRESS.percent.initialTargetMin;
     const targetMaxProgress =
-      minMaxProgress + Math.random() * (maxMaxProgress - minMaxProgress);
-    targetMaxProgressRef.current = targetMaxProgress;
+      PROGRESS.percent.initialTargetMin + Math.random() * progressRange;
 
-    // 初期化
-    startTimeRef.current = Date.now();
-    aiCompletedRef.current = false;
-    virtualElapsedRef.current = 0;
-    currentSpeedRef.current = 1.0;
-    targetSpeedRef.current = 1.0;
-    lastSpeedChangeRef.current = Date.now();
-    slowIncrementModeRef.current = false;
-    lastIncrementTimeRef.current = 0;
-
-    setStreamingProgress(0);
+    initializeProgressState(targetDuration, targetMaxProgress);
 
     progressIntervalRef.current = setInterval(() => {
       const now = Date.now();
 
       if (!slowIncrementModeRef.current) {
-        // 通常進行: 2〜5秒ごとに速度を0.3〜1.2倍で変動
-        if (now - lastSpeedChangeRef.current > 2000 + Math.random() * 3000) {
-          targetSpeedRef.current = 0.3 + Math.random() * 0.9;
-          lastSpeedChangeRef.current = now;
-        }
-
-        // 速度を滑らかに遷移
-        currentSpeedRef.current +=
-          (targetSpeedRef.current - currentSpeedRef.current) * 0.1;
-
-        virtualElapsedRef.current += 100 * currentSpeedRef.current;
-
-        const progress = Math.min(
-          (virtualElapsedRef.current / targetDuration) * targetMaxProgress,
-          targetMaxProgress
-        );
-
-        setStreamingProgress(progress);
-
-        if (progress >= targetMaxProgress) {
-          slowIncrementModeRef.current = true;
-          lastIncrementTimeRef.current = now;
-        }
+        handleNormalProgressUpdate(now, targetDuration, targetMaxProgress);
       } else {
-        // 緩速進行: 2秒ごとに1%増加
-        setStreamingProgress((currentProgress) => {
-          if (currentProgress >= 99) {
-            if (aiCompletedRef.current) {
-              if (progressIntervalRef.current) {
-                clearInterval(progressIntervalRef.current);
-                progressIntervalRef.current = null;
-              }
-              setTimeout(() => {
-                setStreamingProgress(100);
-              }, 1000);
-            }
-            return currentProgress;
-          }
-
-          if (now - lastIncrementTimeRef.current >= 2000) {
-            lastIncrementTimeRef.current = now;
-            return Math.min(currentProgress + 1, 99);
-          }
-
-          return currentProgress;
-        });
+        handleSlowProgressUpdate(now);
       }
-    }, 100);
-  }, []);
+    }, PROGRESS.timing.intervalMs);
+  }, [
+    cleanupProgressInterval,
+    initializeProgressState,
+    handleNormalProgressUpdate,
+    handleSlowProgressUpdate,
+  ]);
 
   /**
    * 処理完了時の最終遷移
@@ -146,25 +257,22 @@ export const useFortune = () => {
   const completeProgress = useCallback(() => {
     aiCompletedRef.current = true;
 
-    if (progressIntervalRef.current) {
-      clearInterval(progressIntervalRef.current);
-      progressIntervalRef.current = null;
-    }
+    cleanupProgressInterval();
 
     setStreamingProgress((currentProgress) => {
-      if (currentProgress >= 99) {
+      if (currentProgress >= PROGRESS.percent.finalWait) {
         setTimeout(() => {
-          setStreamingProgress(100);
-        }, 1000);
+          setStreamingProgress(PROGRESS.percent.complete);
+        }, PROGRESS.timing.completionDelayMs);
         return currentProgress;
       } else {
         setTimeout(() => {
-          setStreamingProgress(100);
-        }, 1000);
-        return 99;
+          setStreamingProgress(PROGRESS.percent.complete);
+        }, PROGRESS.timing.completionDelayMs);
+        return PROGRESS.percent.finalWait;
       }
     });
-  }, []);
+  }, [cleanupProgressInterval]);
 
   /**
    * カード抽選
@@ -208,7 +316,7 @@ export const useFortune = () => {
       }
 
       // コイン確認
-      if (coins < 100) {
+      if (coins < COIN.cost) {
         onRequireCoins();
         setIsLoading(false);
         setShowWaitingAnimation(false);
@@ -216,7 +324,7 @@ export const useFortune = () => {
       }
 
       try {
-        await consumeCoins(100);
+        await consumeCoins(COIN.cost);
 
         const cardData: CardData[] = cards.map((c) => ({
           cardName: c.card.name,
@@ -227,10 +335,7 @@ export const useFortune = () => {
         const response = await callFortuneAPI({ question, cards: cardData });
 
         if (!response.ok) {
-          if (progressIntervalRef.current) {
-            clearInterval(progressIntervalRef.current);
-            progressIntervalRef.current = null;
-          }
+          cleanupProgressInterval();
           const errorMessage = await handleAPIError(response);
           setError(errorMessage);
           setIsLoading(false);
@@ -249,15 +354,10 @@ export const useFortune = () => {
           setShowWaitingAnimation(false);
           setIsLoading(false);
           setHasFortuned(true);
-        }, 1500);
+        }, PROGRESS.timing.resultDisplayDelayMs);
       } catch {
-        if (progressIntervalRef.current) {
-          clearInterval(progressIntervalRef.current);
-          progressIntervalRef.current = null;
-        }
-        setError(
-          "決済処理中に問題が発生しました。コインが消費されていないか確認の上、もう一度お試しください。"
-        );
+        cleanupProgressInterval();
+        setError(ERROR_MESSAGES.paymentFailed);
         setIsLoading(false);
         setShowWaitingAnimation(false);
       }
@@ -268,6 +368,7 @@ export const useFortune = () => {
       cards,
       coins,
       consumeCoins,
+      cleanupProgressInterval,
       startProgressAnimation,
       completeProgress,
     ]
@@ -293,10 +394,7 @@ export const useFortune = () => {
    * 全ての占い状態を初期化し、新規占いを可能にする。
    */
   const resetFortune = useCallback(() => {
-    if (progressIntervalRef.current) {
-      clearInterval(progressIntervalRef.current);
-      progressIntervalRef.current = null;
-    }
+    cleanupProgressInterval();
 
     setQuestion("");
     setCards([]);
@@ -308,7 +406,7 @@ export const useFortune = () => {
 
     questionRef.current = "";
     cardsRef.current = [];
-  }, []);
+  }, [cleanupProgressInterval]);
 
   // アンマウント時のクリーンアップ
   useEffect(() => {
