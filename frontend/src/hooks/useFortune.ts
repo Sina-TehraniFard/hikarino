@@ -2,6 +2,8 @@
  * 占い機能の制御
  *
  * 質問管理、カード抽選、結果取得、エラー処理を統合したカスタムフック。
+ *
+ * @see 仕様書: docs/specs/hooks/useFortune.md
  */
 
 import { useState, useCallback, useRef, useEffect } from "react";
