@@ -279,11 +279,13 @@ export const useFortune = () => {
 
     setStreamingProgress((currentProgress) => {
       if (currentProgress >= PROGRESS.percent.finalWait) {
+        // 既に99%到達済み: 1秒後に100%へ
         scheduleTimeout(() => {
           setStreamingProgress(PROGRESS.percent.complete);
         }, PROGRESS.timing.completionDelayMs);
         return currentProgress;
       } else {
+        // 99%未到達: 即座に99%へ設定後、1秒で100%へ
         scheduleTimeout(() => {
           setStreamingProgress(PROGRESS.percent.complete);
         }, PROGRESS.timing.completionDelayMs);
@@ -363,6 +365,7 @@ export const useFortune = () => {
           return;
         }
 
+        // 進行状態は独立したアニメーションで管理しているため、コールバックは不要
         const finalResult = await processStreamingResponse(response, () => {});
 
         await saveFortuneResult(user, question, cardData, finalResult);
@@ -432,11 +435,9 @@ export const useFortune = () => {
   // アンマウント時のクリーンアップ
   useEffect(() => {
     return () => {
-      if (progressIntervalRef.current) {
-        clearInterval(progressIntervalRef.current);
-      }
+      cleanupProgressInterval();
     };
-  }, []);
+  }, [cleanupProgressInterval]);
 
   return {
     question,
