@@ -1,25 +1,12 @@
 /**
- * 占い機能のカスタムフック
+ * 占い機能の制御
  *
- * 【カスタムフックって何？】
- * ReactというWebアプリ作成ツールの「便利機能をまとめたもの」です。
+ * 質問管理、カード抽選、結果取得、エラー処理を統合したカスタムフック。
  *
- * 【例え話】
- * 料理をするとき、「野菜炒め用セット」として
- * - 野菜を切る
- * - 油を熱する
- * - 炒める
- * という手順をまとめて用意しておくと便利ですよね。
- *
- * このファイルも同じで、占い機能に必要な
- * - 質問を管理する
- * - カードを引く
- * - 占い結果を取得する
- * - エラーを処理する
- * という機能をまとめて「占い機能セット」として提供しています。
+ * @see 仕様書: docs/specs/hooks/useFortune.md
  */
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { DrawnCard, CardData, AuthUser } from "@/types";
 import { drawThreeCards } from "@/lib/tarot";
 import { useCoinContext } from "@/contexts/CoinContext";
@@ -30,157 +17,352 @@ import {
   handleAPIError,
 } from "@/lib/fortune";
 
+// 進行アニメーション設定
+const PROGRESS = {
+  duration: {
+    min: 15000, // 15秒
+    max: 25000, // 25秒
+  },
+  percent: {
+    initialTargetMin: 84,
+    initialTargetMax: 88,
+    finalWait: 99,
+    complete: 100,
+  },
+  speed: {
+    min: 0.3,
+    max: 1.2,
+    smoothing: 0.1,
+    changeIntervalMin: 2000,
+    changeIntervalMax: 5000,
+  },
+  timing: {
+    intervalMs: 100,
+    slowIncrementIntervalMs: 2000,
+    completionDelayMs: 1000,
+    resultDisplayDelayMs: 1500,
+  },
+} as const;
+
+const COIN = {
+  cost: 100,
+} as const;
+
+const ERROR_MESSAGES = {
+  paymentFailed:
+    "決済処理中に問題が発生しました。コインが消費されていないか確認の上、もう一度お試しください。",
+} as const;
+
 export const useFortune = () => {
-  // ===== 状態管理 =====
-  // 状態（state）= アプリの「今の状況」を記録しておく場所
-
-  // ユーザーが入力した質問文を保存
+  // 状態管理
   const [question, setQuestion] = useState("");
-
-  // 引いたカードの情報を保存（最初は空の配列）
   const [cards, setCards] = useState<DrawnCard[]>([]);
-
-  // AIからの占い結果を保存
   const [result, setResult] = useState("");
-
-  // 今、占い処理中かどうかを記録（ローディング表示用）
   const [isLoading, setIsLoading] = useState(false);
-
-  // 占いが完了したかどうかを記録
   const [hasFortuned, setHasFortuned] = useState(false);
-
-  // エラーが起きた場合のメッセージを保存
   const [error, setError] = useState<string | null>(null);
-
-  // アニメーション表示状態を管理
   const [showWaitingAnimation, setShowWaitingAnimation] = useState(false);
-
-  // ストリーミング進捗を管理（0-100%）
   const [streamingProgress, setStreamingProgress] = useState(0);
 
-  // ===== ゲストユーザー対応 =====
-  // ログインしていないユーザーが入力した内容を一時的に覚えておく場所
-  // useRef = コンポーネントが更新されても値が消えない特別な保存場所
+  // 進行アニメーション制御
+  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const targetDurationRef = useRef<number>(0); // 15〜25秒のランダム値
+  const targetMaxProgressRef = useRef<number>(0); // 84〜88%のランダム値
+  const slowIncrementModeRef = useRef<boolean>(false);
+  const lastIncrementTimeRef = useRef<number>(0);
+  const startTimeRef = useRef<number>(0);
+  const aiCompletedRef = useRef<boolean>(false);
 
-  // ゲストが入力した質問を一時保存
+  // 進行速度の変動管理
+  const virtualElapsedRef = useRef<number>(0);
+  const currentSpeedRef = useRef<number>(1.0);
+  const targetSpeedRef = useRef<number>(1.0);
+  const lastSpeedChangeRef = useRef<number>(0);
+
+  // ゲストユーザーのデータ一時保存
   const questionRef = useRef<string>("");
-
-  // ゲストが引いたカードを一時保存
   const cardsRef = useRef<DrawnCard[]>([]);
 
-  // コイン機能（他のファイルで定義された機能を使用）
+  // タイマー管理
+  const timersRef = useRef<NodeJS.Timeout[]>([]);
+
+  // コイン機能
   const { consumeCoins, coins } = useCoinContext();
 
   /**
-   * カードを引く処理
+   * タイマーを登録して実行
    *
-   * 【何をする関数？】
-   * タロットカードを3枚ランダムで引く処理です。
-   *
-   * 【例え話】
-   * トランプの山札から3枚引くのと同じです。
-   * ただし、各カードが「正位置」か「逆位置」かもランダムで決まります。
-   *
-   * 【useCallbackって何？】
-   * 関数を「記憶」しておく仕組みです。
-   * 毎回新しく作るのではなく、一度作った関数を使い回すことで、
-   * アプリの動作が速くなります。
+   * アンマウント時にクリーンアップできるようタイマーを管理。
    */
-  const handleDrawCards = useCallback(() => {
-    // 前回の占い結果をクリア（新しく占うため）
-    setResult("");
-
-    // drawThreeCards() = tarot.tsで定義された「3枚引く」関数
-    setCards(drawThreeCards());
-  }, []); // [] = この関数は他の値に依存しないという意味
+  const scheduleTimeout = useCallback((fn: () => void, delay: number) => {
+    const timer = setTimeout(fn, delay);
+    timersRef.current.push(timer);
+    return timer;
+  }, []);
 
   /**
-   * 占いを実行する処理
+   * 進行アニメーションのクリーンアップ
    *
-   * 【何をする関数？】
-   * ユーザーの質問とカード情報をAIに送って、占い結果を受け取る一連の処理です。
+   * setIntervalと全てのタイマーをクリアし、参照をリセット。
+   */
+  const cleanupProgressInterval = useCallback(() => {
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
+    timersRef.current.forEach(clearTimeout);
+    timersRef.current = [];
+  }, []);
+
+  /**
+   * 進行アニメーション状態の初期化
    *
-   * 【処理の流れ】
-   * 1. ログインチェック（ログインしていなければログイン画面を表示）
-   * 2. コインチェック（足りなければ購入画面を表示）
-   * 3. コインを消費
-   * 4. AIに占いを依頼
-   * 5. 結果を受け取って画面に表示
-   * 6. 結果を履歴として保存
+   * 全てのRef値を初期状態にリセット。
+   */
+  const initializeProgressState = useCallback(
+    (targetDuration: number, targetMaxProgress: number) => {
+      startTimeRef.current = Date.now();
+      aiCompletedRef.current = false;
+      virtualElapsedRef.current = 0;
+      currentSpeedRef.current = 1.0;
+      targetSpeedRef.current = 1.0;
+      lastSpeedChangeRef.current = Date.now();
+      slowIncrementModeRef.current = false;
+      lastIncrementTimeRef.current = 0;
+      targetDurationRef.current = targetDuration;
+      targetMaxProgressRef.current = targetMaxProgress;
+      setStreamingProgress(0);
+    },
+    []
+  );
+
+  /**
+   * 進行速度の更新
    *
-   * 【例え話】
-   * コンビニで買い物をするときの流れと似ています：
-   * 1. 商品を選ぶ（質問とカード）
-   * 2. お金が足りるかチェック（コイン）
-   * 3. お金を払う（コイン消費）
-   * 4. 商品をもらう（占い結果）
-   * 5. レシートをもらう（履歴保存）
+   * 2〜5秒ごとに目標速度をランダムに変更。
+   */
+  const updateProgressSpeed = useCallback((now: number) => {
+    const changeInterval =
+      PROGRESS.speed.changeIntervalMin +
+      Math.random() *
+        (PROGRESS.speed.changeIntervalMax - PROGRESS.speed.changeIntervalMin);
+
+    if (now - lastSpeedChangeRef.current > changeInterval) {
+      const speedRange = PROGRESS.speed.max - PROGRESS.speed.min;
+      targetSpeedRef.current = PROGRESS.speed.min + Math.random() * speedRange;
+      lastSpeedChangeRef.current = now;
+    }
+
+    currentSpeedRef.current +=
+      (targetSpeedRef.current - currentSpeedRef.current) *
+      PROGRESS.speed.smoothing;
+  }, []);
+
+  /**
+   * 通常進行の進行率計算
+   *
+   * 仮想経過時間から進行率を算出。
+   */
+  const calculateNormalProgress = useCallback(
+    (targetDuration: number, targetMaxProgress: number) => {
+      virtualElapsedRef.current +=
+        PROGRESS.timing.intervalMs * currentSpeedRef.current;
+
+      return Math.min(
+        (virtualElapsedRef.current / targetDuration) * targetMaxProgress,
+        targetMaxProgress
+      );
+    },
+    []
+  );
+
+  /**
+   * 通常進行モードの更新処理
+   *
+   * 速度を更新し、進行率を計算・設定。最大値到達で緩速モードへ切り替え。
+   */
+  const handleNormalProgressUpdate = useCallback(
+    (now: number, targetDuration: number, targetMaxProgress: number) => {
+      updateProgressSpeed(now);
+      const progress = calculateNormalProgress(
+        targetDuration,
+        targetMaxProgress
+      );
+      setStreamingProgress(progress);
+
+      if (progress >= targetMaxProgress) {
+        slowIncrementModeRef.current = true;
+        lastIncrementTimeRef.current = now;
+      }
+    },
+    [updateProgressSpeed, calculateNormalProgress]
+  );
+
+  /**
+   * 緩速進行モードの更新処理
+   *
+   * 2秒ごとに1%増加。99%到達時は維持。
+   */
+  const handleSlowProgressUpdate = useCallback((now: number) => {
+    setStreamingProgress((currentProgress) => {
+      if (currentProgress >= PROGRESS.percent.finalWait) {
+        return currentProgress;
+      }
+
+      if (
+        now - lastIncrementTimeRef.current >=
+        PROGRESS.timing.slowIncrementIntervalMs
+      ) {
+        lastIncrementTimeRef.current = now;
+        return Math.min(currentProgress + 1, PROGRESS.percent.finalWait);
+      }
+
+      return currentProgress;
+    });
+  }, []);
+
+  // 99%到達時の完了処理（AI完了後に100%へ遷移）
+  useEffect(() => {
+    if (
+      streamingProgress >= PROGRESS.percent.finalWait &&
+      aiCompletedRef.current &&
+      progressIntervalRef.current !== null
+    ) {
+      cleanupProgressInterval();
+      scheduleTimeout(() => {
+        setStreamingProgress(PROGRESS.percent.complete);
+      }, PROGRESS.timing.completionDelayMs);
+    }
+  }, [streamingProgress, cleanupProgressInterval, scheduleTimeout]);
+
+  /**
+   * 進行アニメーションの開始
+   *
+   * 15〜25秒で0%から84〜88%まで可変速度で進行。
+   * 最大値到達後は2秒ごとに1%ずつ99%まで増加。
+   */
+  const startProgressAnimation = useCallback(() => {
+    cleanupProgressInterval();
+
+    // 目標時間と最大進行率をランダムに決定
+    const durationRange = PROGRESS.duration.max - PROGRESS.duration.min;
+    const targetDuration =
+      PROGRESS.duration.min + Math.random() * durationRange;
+
+    const progressRange =
+      PROGRESS.percent.initialTargetMax - PROGRESS.percent.initialTargetMin;
+    const targetMaxProgress =
+      PROGRESS.percent.initialTargetMin + Math.random() * progressRange;
+
+    initializeProgressState(targetDuration, targetMaxProgress);
+
+    progressIntervalRef.current = setInterval(() => {
+      const now = Date.now();
+
+      if (!slowIncrementModeRef.current) {
+        handleNormalProgressUpdate(now, targetDuration, targetMaxProgress);
+      } else {
+        handleSlowProgressUpdate(now);
+      }
+    }, PROGRESS.timing.intervalMs);
+  }, [
+    cleanupProgressInterval,
+    initializeProgressState,
+    handleNormalProgressUpdate,
+    handleSlowProgressUpdate,
+  ]);
+
+  /**
+   * 処理完了時の最終遷移
+   *
+   * 99%到達済みなら1秒で100%へ、未到達なら即座に99%へ設定後100%へ遷移。
+   */
+  const completeProgress = useCallback(() => {
+    aiCompletedRef.current = true;
+
+    cleanupProgressInterval();
+
+    // 現在の進行率を取得して、次の進行率を計算
+    setStreamingProgress((currentProgress) => {
+      const nextProgress =
+        currentProgress >= PROGRESS.percent.finalWait
+          ? currentProgress
+          : PROGRESS.percent.finalWait;
+
+      // 副作用はupdaterの外で実行するため、nextProgressを返す
+      return nextProgress;
+    });
+
+    // 1秒後に100%へ遷移
+    scheduleTimeout(() => {
+      setStreamingProgress(PROGRESS.percent.complete);
+    }, PROGRESS.timing.completionDelayMs);
+  }, [cleanupProgressInterval, scheduleTimeout]);
+
+  /**
+   * カード抽選
+   *
+   * 3枚のタロットカードをランダムに抽選し、正位置・逆位置を決定。
+   */
+  const handleDrawCards = useCallback(() => {
+    setResult("");
+    setCards(drawThreeCards());
+  }, []);
+
+  /**
+   * 占い実行
+   *
+   * ログイン・コイン確認後、質問とカード情報をAPIに送信し、
+   * ストリーミングで結果を受信・保存。
    */
   const handleFortune = useCallback(
     async (
-      user: AuthUser | null, // ログインしているユーザー情報
-      onRequireLogin: () => void, // ログインが必要な時に呼ぶ関数
-      onRequireCoins: () => void // コインが必要な時に呼ぶ関数
+      user: AuthUser | null,
+      onRequireLogin: () => void,
+      onRequireCoins: () => void
     ) => {
-      // 既に処理中の場合は何もしない（重複実行防止）
       if (isLoading) return;
 
-      // ローディング状態開始
       setIsLoading(true);
       setShowWaitingAnimation(true);
-      setStreamingProgress(0); // 進捗をリセット
-      // 前回の結果とエラーをクリア
+      setStreamingProgress(0);
+      startProgressAnimation();
       setResult("");
       setError(null);
 
-      // ===== ログインチェック =====
+      // ログイン確認
       if (!user) {
-        // ログインしていない場合：
-        // 1. 入力内容を一時保存（ログイン後に復元するため）
         questionRef.current = question;
         cardsRef.current = cards;
-
-        // 2. ログイン画面を表示
         onRequireLogin();
-
-        // 3. 処理を中断
+        cleanupProgressInterval();
         setIsLoading(false);
         setShowWaitingAnimation(false);
         return;
       }
 
-      // ===== コインチェック =====
-      if (coins < 100) {
-        // コインが足りない場合：
-        // 1. コイン購入画面を表示
+      // コイン確認
+      if (coins < COIN.cost) {
         onRequireCoins();
-
-        // 2. 処理を中断
+        cleanupProgressInterval();
         setIsLoading(false);
         setShowWaitingAnimation(false);
         return;
       }
 
       try {
-        // ===== コイン消費 =====
-        // 占い料金として100コインを消費
-        await consumeCoins(100);
+        await consumeCoins(COIN.cost);
 
-        // ===== カードデータの準備 =====
-        // 画面表示用のカード情報から、API送信用のデータに変換
         const cardData: CardData[] = cards.map((c) => ({
-          cardName: c.card.name, // カードの名前
-          isReversed: c.isReversed, // 正位置か逆位置か
-          position: c.position, // カードの位置（1枚目、2枚目、3枚目）
+          cardName: c.card.name,
+          isReversed: c.isReversed,
+          position: c.position,
         }));
 
-        // ===== AI API呼び出し =====
-        // callFortuneAPI = fortune.tsで定義された関数
         const response = await callFortuneAPI({ question, cards: cardData });
 
-        // エラーチェック
         if (!response.ok) {
-          // サーバーからエラーが返ってきた場合
+          cleanupProgressInterval();
           const errorMessage = await handleAPIError(response);
           setError(errorMessage);
           setIsLoading(false);
@@ -188,111 +370,94 @@ export const useFortune = () => {
           return;
         }
 
-        // ===== ストリーミング開始 =====
-        const expectedLength = 1000; // 予想される占い結果の文字数
-        let lastUpdateTime = Date.now();
+        // 進行状態は独立したアニメーションで管理しているため、コールバックは不要
+        const finalResult = await processStreamingResponse(response, () => {});
 
-        const finalResult = await processStreamingResponse(response, (text) => {
-          // 進捗を更新（100msごとにthrottle）
-          const now = Date.now();
-          if (now - lastUpdateTime > 100) {
-            const progress = Math.min(95, (text.length / expectedLength) * 100);
-            setStreamingProgress(progress);
-            lastUpdateTime = now;
-          }
-        });
-
-        // ===== 結果の保存 =====
-        // 占い結果をデータベースに保存（履歴として）
         await saveFortuneResult(user, question, cardData, finalResult);
 
-        // 全ての処理が完了
-        setStreamingProgress(100); // 進捗を100%に
-        setResult(finalResult); // 結果を表示
-        setShowWaitingAnimation(false); // アニメーションを非表示
-        setIsLoading(false);
-        setHasFortuned(true);
+        completeProgress();
+
+        scheduleTimeout(() => {
+          setResult(finalResult);
+          setShowWaitingAnimation(false);
+          setIsLoading(false);
+          setHasFortuned(true);
+        }, PROGRESS.timing.resultDisplayDelayMs);
       } catch {
-        // 予期しないエラーが発生した場合
-        // （例：ネットワークエラー、サーバーダウンなど）
-        setError(
-          "決済処理中に問題が発生しました。コインが消費されていないか確認の上、もう一度お試しください。"
-        );
+        cleanupProgressInterval();
+        setError(ERROR_MESSAGES.paymentFailed);
         setIsLoading(false);
         setShowWaitingAnimation(false);
       }
     },
-    [isLoading, question, cards, coins, consumeCoins]
+    [
+      isLoading,
+      question,
+      cards,
+      coins,
+      consumeCoins,
+      cleanupProgressInterval,
+      startProgressAnimation,
+      completeProgress,
+      scheduleTimeout,
+    ]
   );
-  // ↑ これらの値が変わったときだけ、この関数を新しく作り直す
 
   /**
-   * ゲストユーザーのデータを復元する関数
+   * ゲストデータの復元
    *
-   * 【何をする関数？】
-   * ログインしていない状態で入力した内容を、ログイン後に復元する関数です。
-   *
-   * 【例え話】
-   * ネットショッピングで商品をカートに入れた後、
-   * ログインしても商品がカートに残っているのと同じです。
-   * ユーザーの手間を省いて、スムーズに続きができるようにしています。
+   * ログイン前に入力された質問とカード情報を復元。
    */
   const restoreGuestData = useCallback((user: AuthUser | null) => {
-    // ログインしたユーザーがいて、かつ一時保存されたデータがある場合
     if (user && questionRef.current) {
-      // 一時保存されていた質問文を復元
       setQuestion(questionRef.current);
     }
     if (user && cardsRef.current.length > 0) {
-      // 一時保存されていたカード情報を復元
       setCards(cardsRef.current);
     }
   }, []);
 
   /**
-   * 占い状態をリセットする関数
+   * 状態リセット
    *
-   * 【何をする関数？】
-   * 新しく占いをやり直すために、全ての状態を初期値に戻す関数です。
-   *
-   * 【例え話】
-   * ゲームの「最初から始める」ボタンを押したときのように、
-   * 全てをリセットして新しくスタートできるようにします。
+   * 全ての占い状態を初期化し、新規占いを可能にする。
    */
   const resetFortune = useCallback(() => {
-    // 通常の状態をリセット
-    setQuestion(""); // 質問文をクリア
-    setCards([]); // カード情報をクリア
-    setResult(""); // 占い結果をクリア
-    setError(null); // エラーメッセージをクリア
-    setHasFortuned(false); // 占い完了フラグをリセット
-    setShowWaitingAnimation(false); // アニメーション状態をリセット
-    setStreamingProgress(0); // 進捗をリセット
+    cleanupProgressInterval();
 
-    // 一時保存データもクリア
+    setQuestion("");
+    setCards([]);
+    setResult("");
+    setError(null);
+    setHasFortuned(false);
+    setShowWaitingAnimation(false);
+    setStreamingProgress(0);
+
     questionRef.current = "";
     cardsRef.current = [];
-  }, []);
+  }, [cleanupProgressInterval]);
 
-  // ===== 外部に提供する機能 =====
-  // この関数を使う側（Reactコンポーネント）に渡す値と関数
+  // アンマウント時のクリーンアップ
+  useEffect(() => {
+    return () => {
+      cleanupProgressInterval();
+    };
+  }, [cleanupProgressInterval]);
+
   return {
-    // 現在の状態（読み取り専用）
-    question, // 現在の質問文
-    cards, // 現在のカード情報
-    result, // 現在の占い結果
-    isLoading, // 処理中かどうか
-    hasFortuned, // 占いが完了したかどうか
-    error, // エラーメッセージ
-    showWaitingAnimation, // アニメーション表示状態
-    streamingProgress, // ストリーミング進捗（0-100%）
-
-    // 状態を変更する関数（アクション）
-    setQuestion, // 質問文を変更する関数
-    handleDrawCards, // カードを引く関数
-    handleFortune, // 占いを実行する関数
-    restoreGuestData, // ゲストデータを復元する関数
-    resetFortune, // 全てをリセットする関数
-    setShowWaitingAnimation, // アニメーション状態を制御する関数
+    question,
+    cards,
+    result,
+    isLoading,
+    hasFortuned,
+    error,
+    showWaitingAnimation,
+    streamingProgress,
+    setQuestion,
+    handleDrawCards,
+    handleFortune,
+    restoreGuestData,
+    resetFortune,
+    setShowWaitingAnimation,
   };
 };
