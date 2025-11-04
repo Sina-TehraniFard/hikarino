@@ -1,3 +1,19 @@
+## [1.11.1](https://github.com/Sina-TehraniFard/hikarino/compare/v1.11.0...v1.11.1) (2025-11-04)
+
+### Bug Fixes
+
+- add proper cleanup for progress animation on errors ([79796f2](https://github.com/Sina-TehraniFard/hikarino/commit/79796f2932198946c524bf3f7eb0d970fab1bf45))
+- adjust progress duration to 15-25 seconds ([e64892f](https://github.com/Sina-TehraniFard/hikarino/commit/e64892fb8491682a43a369299280107158dc694a))
+- change max progress to 84-88% and increment by 1% every 2s until 99% ([48a1a1c](https://github.com/Sina-TehraniFard/hikarino/commit/48a1a1c3af3f48e958352e4d541274dfc9c434a5))
+- implement time-based progress animation from 0% to 98% ([8ddbd45](https://github.com/Sina-TehraniFard/hikarino/commit/8ddbd45071b211ee2049598213751931e427c99d))
+- implement variable speed and random max progress (89-95%) ([b760956](https://github.com/Sina-TehraniFard/hikarino/commit/b760956a82b7aa95615c6609bbbfd869e1f6f8f2))
+- refactor comments to be concise and professional ([1058ca5](https://github.com/Sina-TehraniFard/hikarino/commit/1058ca535b70206550b439d251910e2684c06848))
+- refactor useFortune hook for improved readability ([f5b3a9d](https://github.com/Sina-TehraniFard/hikarino/commit/f5b3a9d27591669892f6a7590ff4db090454969a))
+- replace spinner with horizontal progress bar ([38c5bb1](https://github.com/Sina-TehraniFard/hikarino/commit/38c5bb1a65cadeab5d7a7c68f2f62e084ed0706e))
+- state updater内の副作用をStrictMode対応のため外部に移動 ([e01bf46](https://github.com/Sina-TehraniFard/hikarino/commit/e01bf4672b79f15fb222669998cb778a017627fb))
+- アンマウント時のクリーンアップとコメント改善 ([1e28d58](https://github.com/Sina-TehraniFard/hikarino/commit/1e28d58c6d3feb244eccc9a7240cef65292a327a))
+- 進行アニメーションのタイマークリーンアップ処理を改善 ([d60b9dd](https://github.com/Sina-TehraniFard/hikarino/commit/d60b9dd9552158fd6eb7342e915763d6de43fc14))
+
 # [1.11.0](https://github.com/Sina-TehraniFard/hikarino/compare/v1.10.0...v1.11.0) (2025-11-02)
 
 ### Bug Fixes
