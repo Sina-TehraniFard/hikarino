@@ -201,34 +201,39 @@ export const useFortune = () => {
   /**
    * 緩速進行モードの更新処理
    *
-   * 2秒ごとに1%増加。99%到達時、AI完了なら100%へ遷移。
+   * 2秒ごとに1%増加。99%到達時は維持。
    */
-  const handleSlowProgressUpdate = useCallback(
-    (now: number) => {
-      setStreamingProgress((currentProgress) => {
-        if (currentProgress >= PROGRESS.percent.finalWait) {
-          if (aiCompletedRef.current) {
-            cleanupProgressInterval();
-            scheduleTimeout(() => {
-              setStreamingProgress(PROGRESS.percent.complete);
-            }, PROGRESS.timing.completionDelayMs);
-          }
-          return currentProgress;
-        }
-
-        if (
-          now - lastIncrementTimeRef.current >=
-          PROGRESS.timing.slowIncrementIntervalMs
-        ) {
-          lastIncrementTimeRef.current = now;
-          return Math.min(currentProgress + 1, PROGRESS.percent.finalWait);
-        }
-
+  const handleSlowProgressUpdate = useCallback((now: number) => {
+    setStreamingProgress((currentProgress) => {
+      if (currentProgress >= PROGRESS.percent.finalWait) {
         return currentProgress;
-      });
-    },
-    [cleanupProgressInterval, scheduleTimeout]
-  );
+      }
+
+      if (
+        now - lastIncrementTimeRef.current >=
+        PROGRESS.timing.slowIncrementIntervalMs
+      ) {
+        lastIncrementTimeRef.current = now;
+        return Math.min(currentProgress + 1, PROGRESS.percent.finalWait);
+      }
+
+      return currentProgress;
+    });
+  }, []);
+
+  // 99%到達時の完了処理（AI完了後に100%へ遷移）
+  useEffect(() => {
+    if (
+      streamingProgress >= PROGRESS.percent.finalWait &&
+      aiCompletedRef.current &&
+      progressIntervalRef.current !== null
+    ) {
+      cleanupProgressInterval();
+      scheduleTimeout(() => {
+        setStreamingProgress(PROGRESS.percent.complete);
+      }, PROGRESS.timing.completionDelayMs);
+    }
+  }, [streamingProgress, cleanupProgressInterval, scheduleTimeout]);
 
   /**
    * 進行アニメーションの開始
@@ -277,21 +282,21 @@ export const useFortune = () => {
 
     cleanupProgressInterval();
 
+    // 現在の進行率を取得して、次の進行率を計算
     setStreamingProgress((currentProgress) => {
-      if (currentProgress >= PROGRESS.percent.finalWait) {
-        // 既に99%到達済み: 1秒後に100%へ
-        scheduleTimeout(() => {
-          setStreamingProgress(PROGRESS.percent.complete);
-        }, PROGRESS.timing.completionDelayMs);
-        return currentProgress;
-      } else {
-        // 99%未到達: 即座に99%へ設定後、1秒で100%へ
-        scheduleTimeout(() => {
-          setStreamingProgress(PROGRESS.percent.complete);
-        }, PROGRESS.timing.completionDelayMs);
-        return PROGRESS.percent.finalWait;
-      }
+      const nextProgress =
+        currentProgress >= PROGRESS.percent.finalWait
+          ? currentProgress
+          : PROGRESS.percent.finalWait;
+
+      // 副作用はupdaterの外で実行するため、nextProgressを返す
+      return nextProgress;
     });
+
+    // 1秒後に100%へ遷移
+    scheduleTimeout(() => {
+      setStreamingProgress(PROGRESS.percent.complete);
+    }, PROGRESS.timing.completionDelayMs);
   }, [cleanupProgressInterval, scheduleTimeout]);
 
   /**
