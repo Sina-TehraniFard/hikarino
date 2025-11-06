@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Sidebar from "@/components/ui/Sidebar";
 import PageBackground from "@/components/ui/PageBackground";
+import GlassBox from "@/components/ui/GlassBox";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { getFirebaseAuth } from "@/lib/firebase";
 import { getUserFortunes } from "@/lib/firestore/fortune";
@@ -186,9 +187,30 @@ export default function HistoryPage() {
   // 認証チェック中はローディング画面を表示
   if (isAuthLoading) {
     return (
-      <div className="flex relative overflow-hidden py-20">
-        <div className="flex-1 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+      <div className="flex relative overflow-hidden">
+        <PageBackground />
+        <div className="flex-1 flex items-center justify-center min-h-screen">
+          <GlassBox
+            className="p-8 flex flex-col items-center justify-center gap-4 max-w-sm mx-4"
+            role="status"
+            aria-live="polite"
+          >
+            {/* エレガントなスピナー */}
+            <div className="relative w-16 h-16" aria-label="読み込み中">
+              <div className="absolute inset-0 rounded-full border-4 border-purple-200/30"></div>
+              <div className="absolute inset-0 rounded-full border-4 border-t-purple-600 border-r-transparent border-b-transparent border-l-transparent animate-spin"></div>
+            </div>
+
+            {/* ローディングテキスト */}
+            <div className="text-center">
+              <div className="text-purple-600 font-semibold text-lg">
+                読み込み中...
+              </div>
+              <div className="text-gray-500 text-sm mt-1">
+                しばらくお待ちください
+              </div>
+            </div>
+          </GlassBox>
         </div>
       </div>
     );
