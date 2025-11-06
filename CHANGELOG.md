@@ -1,3 +1,10 @@
+## [1.11.2](https://github.com/Sina-TehraniFard/hikarino/compare/v1.11.1...v1.11.2) (2025-11-06)
+
+### Bug Fixes
+
+- ローディング画面にアクセシビリティ対応を追加 ([120f5c9](https://github.com/Sina-TehraniFard/hikarino/commit/120f5c972c284066b6a64a6e7281a2e81534d635))
+- 画面ロード時のローディング表示を改善 ([9205547](https://github.com/Sina-TehraniFard/hikarino/commit/9205547b714716cf434a281fc78bf753d8a2d286)), closes [#91](https://github.com/Sina-TehraniFard/hikarino/issues/91)
+
 ## [1.11.1](https://github.com/Sina-TehraniFard/hikarino/compare/v1.11.0...v1.11.1) (2025-11-04)
 
 ### Bug Fixes
