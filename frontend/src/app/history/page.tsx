@@ -190,9 +190,13 @@ export default function HistoryPage() {
       <div className="flex relative overflow-hidden">
         <PageBackground />
         <div className="flex-1 flex items-center justify-center min-h-screen">
-          <GlassBox className="p-8 flex flex-col items-center justify-center gap-4 max-w-sm mx-4">
+          <GlassBox
+            className="p-8 flex flex-col items-center justify-center gap-4 max-w-sm mx-4"
+            role="status"
+            aria-live="polite"
+          >
             {/* エレガントなスピナー */}
-            <div className="relative w-16 h-16">
+            <div className="relative w-16 h-16" aria-label="読み込み中">
               <div className="absolute inset-0 rounded-full border-4 border-purple-200/30"></div>
               <div className="absolute inset-0 rounded-full border-4 border-t-purple-600 border-r-transparent border-b-transparent border-l-transparent animate-spin"></div>
             </div>

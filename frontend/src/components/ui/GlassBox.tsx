@@ -1,8 +1,8 @@
 // 共通ガラスボックスコンポーネント - エレガントで洗練されたデザイン
 
-import { ReactNode } from "react";
+import { ReactNode, HTMLAttributes } from "react";
 
-interface GlassBoxProps {
+interface GlassBoxProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
   className?: string;
   onClick?: () => void;
@@ -16,6 +16,7 @@ const GlassBox = ({
   onClick,
   disabled = false,
   focusable = false,
+  ...props
 }: GlassBoxProps) => {
   const baseStyles = `
     relative w-full
@@ -35,6 +36,7 @@ const GlassBox = ({
     <div
       className={`${baseStyles} ${className}`}
       onClick={disabled ? undefined : onClick}
+      {...props}
     >
       {children}
 
